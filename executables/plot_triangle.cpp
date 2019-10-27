@@ -13,7 +13,7 @@ int main(int argc, char** argv)
   double ex = std::stod(argv[2]);
 
   // Plotting bounds
-  double low = 0;
+  double low = sthPi + 1.e-6;
   double high = 1.;
 
   if (ex * ex + 3. * mPi * mPi > dec * dec)
@@ -22,21 +22,24 @@ int main(int argc, char** argv)
     exit(0);
   }
 
-  triangle tri(dec * dec);
+  triangle tri(dec);
 
   std::vector<double> s;
-  vector< std::complex<double> > fx;
+  vector< std::complex<double> > feyn, disp;
 
   for (int i = 0; i < 160; i++)
   {
     double si = low + double(i) * (high - low) / 160.;
-    complex<double> fx_i = tri.eval(si, ex * ex);
+    complex<double> fx_f = tri.eval_feynman(si, ex * ex);
+    complex<double> fx_d = tri.eval_dispersive(si, ex * ex);
 
     s.push_back(si);
-    fx.push_back(fx_i);
+    feyn.push_back(fx_f);
+    disp.push_back(fx_d);
   }
 
-  quick_plot(s, fx, "triangle");
+  quick_plot(s, feyn, "feynman");
+  quick_plot(s, disp, "dispersive");
 
   return 1.;
 };

@@ -1,3 +1,8 @@
+// This object defines a Triangle amplitude, i.e. the rescattering
+// diagram associated with an intermediate isobar exchange.
+//
+// Methods allow the evaluation using the Feynman triangle representation or the
+// standard dispersive form associated with KT equations.
 //
 // Author:       Daniel Winney (2019)
 // Affiliation:  Joint Physics Analysis Center (JPAC)
@@ -10,33 +15,41 @@
 #include <complex>
 #include <vector>
 
+#include "t_integral.hpp"
 #include "constants.hpp"
 #include "utilities.hpp"
+
+using namespace std;
 
 class triangle
 {
 public:
   // Constructor
+  // The diagram is entirely determined by the decaying particle mass
   triangle(double mass)
-  : decM(mass)
+  : mDec(mass), cross_channel(mass)
   {};
 
   // Evaluate the triangle amplitude
-  std::complex<double> eval(double s, double t);
+  complex<double> eval_feynman(double s, double t);
+  complex<double> eval_dispersive(double s, double t);
 
 private:
-  double decM = 0.; // Decay mass squared
+  double mDec = 0.; // Decay mass squared
   double EPS = 1.e-6; // small epsilon for i epsilon :)
 
   // Integration quantities
   int xN = 60;
   bool WG_GENERATED = false;
-  std::vector<double> weights, abscissas;
+  vector<double> weights, abscissas;
   void check_weights();
 
-  // Triangle kernel, function of s and t as well as two Feynman parameters
-  std::complex<double> integrand(double s, double t, double x, double y);
+  // Feynman triangle kernel
+  // function of energies s and t as well as two Feynman parameters
+  complex<double> feyn_integrand(double s, double t, double x, double y);
 
+  // Dispersive KT integral
+  t_integral cross_channel;
 };
 
 #endif
