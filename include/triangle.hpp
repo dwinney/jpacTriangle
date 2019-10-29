@@ -14,6 +14,7 @@
 
 #include <complex>
 #include <vector>
+#include <cmath>
 
 #include "t_integral.hpp"
 #include "constants.hpp"
@@ -31,22 +32,23 @@ public:
   {};
 
   // Evaluate the triangle amplitude
-  complex<double> eval_feynman(double s, double t);
+  complex<double> eval_feynman(complex<double> s, complex<double> t);
   complex<double> eval_dispersive(double s, double t);
 
 private:
   double mDec = 0.; // Decay mass squared
   double EPS = 1.e-6; // small epsilon for i epsilon :)
+  complex<double> ieps = xi * EPS;
 
   // Integration quantities
-  int xN = 60;
+  int xN = 30;
   bool WG_GENERATED = false;
   vector<double> weights, abscissas;
   void check_weights();
 
   // Feynman triangle kernel
   // function of energies s and t as well as two Feynman parameters
-  complex<double> feyn_integrand(double s, double t, double x, double y);
+  complex<double> feyn_integrand(complex<double> s, complex<double> t, double x);
 
   // Dispersive KT integral
   t_integral cross_channel;

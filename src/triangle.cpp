@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------------------
 // EVALUTE THE TRIANGLE THE FEYNMAN WAY
 
-complex<double> triangle::eval_feynman(double s, double t)
+complex<double> triangle::eval_feynman(complex<double> s, complex<double> t)
 {
   check_weights();
 
@@ -22,34 +22,32 @@ complex<double> triangle::eval_feynman(double s, double t)
   complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
   {
-    double x_i = abscissas[5];
-
-    // integrate over y
-    complex<double> sum_y = 0.;
-    for (int j = 0; j < xN; j++)
-    {
-      double y_j = abscissas[j];
-
-      sum_y += weights[j] * feyn_integrand(s, t, x_i, y_j);
-    }
-
-    sum += weights[i] * sum_y;
+    double x_i = abscissas[i];
+    sum += weights[i] * feyn_integrand(s, t, x_i);
   }
 
   return sum / M_PI;
 };
 
-complex<double> triangle::feyn_integrand(double s, double t, double x, double y)
+complex<double> triangle::feyn_integrand(complex<double> s, complex<double> t, double x)
 {
-  // third feynman parameter fixed by delta function
-  double z = 1. - x - y;
+  complex<double> a, b, c, d;
+  a = (sthPi - s);
+  b = x * (mPi * mPi - mDec * mDec) + (x - 1.) * (sthPi - s);
+  c = x * t + (1. - x) * mPi * mPi + x * (x - 1.) * mDec * mDec;
+  d = b * b - 4. * a * c; // discriminant
 
-  complex<double> denominator = x * t;
-  denominator += (1. - x - x * y) * (mPi * mPi);
-  denominator -= z * ( x * mDec*mDec - y * s);
-  denominator -= xi * EPS;
+  complex<double> result;
 
-  return xr / denominator;
+  // Roots of the polynomial
+  complex<double> y_plus = - b + sqrt(xr * d);
+  complex<double> y_minus = - b - sqrt(xr * d);
+  y_plus /= 2. * a; y_minus /= 2. * a;
+
+  result = log((1. - x + y_minus) / y_minus) - log((1. - x + y_plus) / y_plus);
+  result /= sqrt(d);
+
+  return result;
 };
 
 // ---------------------------------------------------------------------------
@@ -60,11 +58,11 @@ complex<double> triangle::eval_dispersive(double s, double t)
   check_weights();
 
   complex<double> sum = 0.;
-  for (int i = 1; i < xN + 1; i++)
+  for (int i = 1; i <= xN; i++)
   {
     double sp = (sthPi + EPS) + tan(M_PI * abscissas[i] / 2.);
 
-    complex<double> temp = cross_channel(s, t);
+    complex<double> temp = cross_channel(sp, t) - cross_channel(s,t);
     temp *= s / sp;
     temp /=  (sp - s - xi * EPS);
 
@@ -76,6 +74,8 @@ complex<double> triangle::eval_dispersive(double s, double t)
 
 
   return sum / M_PI;
+
+  // return cross_channel(s,t);
 };
 
 // ---------------------------------------------------------------------------
