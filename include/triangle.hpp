@@ -24,31 +24,37 @@ using namespace std;
 class triangle
 {
 public:
-  // Constructor
+  // Empty Constructor
   triangle()
   {};
 
+  // Parameterized Constructor
+  // triangle(double m1, double m2, double q1, double q2)
+
+  // ---------------------------------------------------------------------------
+  // Utilities
   void set_Nint(int n)
   {
     xN = n;
   }
 
-  void set_external(double m1, double m2)
+  void set_externalMasses(double m1, double m2)
   {
     p2 = m1; p3 = m2;
 
   };
 
-  void set_internal(double q1, double q2)
+  void set_internalMass(double q1, double q2)
   {
     m2 = q1; m3 = q2;
   };
 
-  void set_exchange(double mEx, double gamEx = 0.)
+  void set_exchangeMass(double mEx, double gamEx = 0.001)
   {
     t = mEx * mEx - xi * mEx * gamEx;
   };
 
+  // ---------------------------------------------------------------------------
   // Evaluate the triangle amplitude
   complex<double> eval_feynman(double s);
   complex<double> eval_dispersive(double s);
@@ -59,9 +65,6 @@ private:
 
   // t = complex invariant mass of exchange particle
   complex<double> t = 0.;
-
-  // double pthresh = (mDec - mPi) * (mDec - mPi); // Pseudo-threshold
-  // double thresh = (mDec + mPi) * (mDec + mPi); // Scattering threshold
 
   // Integration quantities
   int xN = 900;
@@ -76,15 +79,15 @@ private:
   // function of energies s and one feynman parameter x
   complex<double> feyn_integrand(double s, double x);
 
-  // // ---------------------------------------------------------------------------
-  // // Dispersive FUNCTIONS
-  //
-  // // Kacser function analytically continues momenta between s and t channels
-  // complex<double> Kacser(double s);
-  // complex<double> Kallen(double x, double y, double z)
-  // {
-  //   return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
-  // };
+  // ---------------------------------------------------------------------------
+  // Dispersive FUNCTIONS
+
+  // Kacser function analytically continues momenta between s and t channels
+  complex<double> Kacser(double s);
+  complex<double> Kallen(double x, double y, double z)
+  {
+    return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
+  };
   //
   // // Complex bounds of integtion associated
   // complex<double> t_minus(double s);

@@ -26,20 +26,21 @@ complex<double> triangle::eval_feynman(double s)
     sum += weights[i] * feyn_integrand(s, x_i);
   }
 
-  return  sum / (16. * M_PI * M_PI);
+  return  sum;
 };
 
+// Logarithm from integrating over y and z
 complex<double> triangle::feyn_integrand(double s, double x)
 {
   complex<double> a, b, c, d;
   a = s;
   b = (m3 * m3 - m2 * m2) - x * (p2 * p2 - p3 * p3) - (x - 1.) * s;
-  c = x * t + (1. - x) * m3 * m3 + x * (x - 1.) * p2 * p2;
+  c = x * (t - ieps) + (1. - x) * m3 * m3 + x * (x - 1.) * p2 * p2;
   d = b * b - 4. * a * c; // discriminant
 
   // Roots of the polynomial
-  complex<double> y_plus = (-b + sqrt(xr * d)) / (2. * a);
-  complex<double> y_minus = (-b - sqrt(xr * d)) / (2. * a);
+  complex<double> y_plus = (-b + sqrt(xr * d + ieps)) / (2. * a);
+  complex<double> y_minus = (-b - sqrt(xr * d + ieps)) / (2. * a);
 
   complex<double> result;
   result = log(xr - x + y_minus) - log(xr - x + y_plus);
