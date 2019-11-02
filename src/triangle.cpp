@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------------------
 // EVALUTE THE TRIANGLE THE FEYNMAN WAY
 
-complex<double> triangle::eval_feynman(complex<double> s, complex<double> t)
+complex<double> triangle::eval_feynman(double s)
 {
   check_weights();
 
@@ -23,61 +23,132 @@ complex<double> triangle::eval_feynman(complex<double> s, complex<double> t)
   for (int i = 0; i < xN; i++)
   {
     double x_i = abscissas[i];
-    sum += weights[i] * feyn_integrand(s, t, x_i);
+    sum += weights[i] * feyn_integrand(s, x_i);
   }
 
-  return sum / M_PI;
+  return  sum / (16. * M_PI * M_PI);
 };
 
-complex<double> triangle::feyn_integrand(complex<double> s, complex<double> t, double x)
+complex<double> triangle::feyn_integrand(double s, double x)
 {
   complex<double> a, b, c, d;
-  a = (sthPi - s);
-  b = x * (mPi * mPi - mDec * mDec) + (x - 1.) * (sthPi - s);
-  c = x * t + (1. - x) * mPi * mPi + x * (x - 1.) * mDec * mDec;
+  a = s;
+  b = (m3 * m3 - m2 * m2) - x * (p2 * p2 - p3 * p3) - (x - 1.) * s;
+  c = x * t + (1. - x) * m3 * m3 + x * (x - 1.) * p2 * p2;
   d = b * b - 4. * a * c; // discriminant
 
-  complex<double> result;
-
   // Roots of the polynomial
-  complex<double> y_plus = - b + sqrt(xr * d);
-  complex<double> y_minus = - b - sqrt(xr * d);
-  y_plus /= 2. * a; y_minus /= 2. * a;
+  complex<double> y_plus = (-b + sqrt(xr * d)) / (2. * a);
+  complex<double> y_minus = (-b - sqrt(xr * d)) / (2. * a);
 
-  result = log((1. - x + y_minus) / y_minus) - log((1. - x + y_plus) / y_plus);
-  result /= sqrt(d);
+  complex<double> result;
+  result = log(xr - x + y_minus) - log(xr - x + y_plus);
+  result -= log(y_minus) - log(y_plus);
+  result /= sqrt(xr * d + ieps);
 
   return result;
 };
 
-// ---------------------------------------------------------------------------
-// EVALUTE THE TRIANGLE THE KT WAY
-
-complex<double> triangle::eval_dispersive(double s, double t)
-{
-  check_weights();
-
-  complex<double> sum = 0.;
-  for (int i = 1; i <= xN; i++)
-  {
-    double sp = (sthPi + EPS) + tan(M_PI * abscissas[i] / 2.);
-
-    complex<double> temp = cross_channel(sp, t) - cross_channel(s,t);
-    temp *= s / sp;
-    temp /=  (sp - s - xi * EPS);
-
-    temp *=  (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
-    sum += weights[i] * temp;
-  }
-
-  sum -= cross_channel(s,t) * (log(xr * (sthPi - s - xi * EPS)) - log(xr * sthPi));
-
-
-  return sum / M_PI;
-
-  // return cross_channel(s,t);
-};
-
+// // ---------------------------------------------------------------------------
+// // EVALUTE THE TRIANGLE THE KT WAY
+//
+// complex<double> triangle::eval_dispersive(double s)
+// {
+//   check_weights();
+//
+//   complex<double> sum = 0.;
+//   for (int i = 0; i < xN; i++)
+//   {
+//     double sp = (sthPi + EPS) + tan(M_PI * abscissas[i] / 2.);
+//
+//     complex<double> temp;
+//     temp = t_dispersion(sp);
+//     temp -= t_dispersion(s);
+//     temp *= s / sp;
+//     temp /= (sp - s + ieps);
+//     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
+//
+//     sum += weights[i] * temp;
+//   }
+//
+//   complex<double> logg = - t_dispersion(s) * log(xr - s / sthPi);
+//
+//   return (sum + logg) / M_PI;
+//   // return t_dispersion(s);
+// };
+//
+// complex<double> triangle::t_dispersion(double s)
+// {
+//   check_weights();
+//
+//   complex<double> sum = 0.;
+//
+//   for (int i = 0; i < xN; i++)
+//   {
+//     double tp = (1. - abscissas[i]) * (sthPi + EPS) + abscissas[i] * (pthresh - 0.06);
+//
+//     complex<double> temp;
+//     temp = imag(propagator(tp)) * projection(s, tp);
+//     temp *= (pthresh - 0.06) - (sthPi + EPS);
+//     sum += weights[i] * temp;
+//   }
+//
+//   for (int i = 0; i < xN; i++)
+//   {
+//     double tp = (pthresh + 0.06) + tan(M_PI * abscissas[i] / 2.);
+//
+//     complex<double> temp;
+//     temp = imag(propagator(tp)) * projection(s, tp);
+//     temp *= (M_PI / 2.);
+//     temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
+//
+//     sum += weights[i] * temp;
+//   }
+//
+//   sum /= M_PI;
+//
+//   return sum;
+// };
+//
+// // Kacser function which includes the correct analytic structure of
+// // product of breakup momenta and phase space factor.
+// complex<double> triangle::Kacser(double s)
+// {
+//   complex<double> result;
+//   result = sqrt(xr * (s - sthPi - EPS) / s); //includes phase-space factor
+//   result *= sqrt(xr * (pthresh - s)) * sqrt(xr * (thresh - s));
+//
+//   return result;
+// };
+//
+// // ---------------------------------------------------------------------------
+// // Complex Bounds of integration
+// complex<double> triangle::t_minus(double s)
+// {
+//   return (mDec * mDec + 3. * mPi * mPi - s) / 2. - Kacser(s) / 2.;
+// };
+//
+// complex<double> triangle::t_plus(double s)
+// {
+//   return (mDec * mDec + 3. * mPi * mPi - s) / 2. + Kacser(s) / 2.;
+// };
+//
+// // ---------------------------------------------------------------------------
+// complex<double> triangle::projection(double s, double tp)
+// {
+//   complex<double> result;
+//   result = log((tp - t_minus(s) - ieps) / (tp - t_plus(s) - ieps));
+//   result /= Kacser(s);
+//
+//   return result;
+// };
+//
+// complex<double> triangle::propagator(double tp)
+// {
+//   return xr / (t - tp);
+// };
+//
+//
 // ---------------------------------------------------------------------------
 // UTILITY FUNCTIONS
 

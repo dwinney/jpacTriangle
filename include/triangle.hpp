@@ -1,8 +1,7 @@
 // This object defines a Triangle amplitude, i.e. the rescattering
-// diagram associated with an intermediate isobar exchange.
+// diagram associated with an intermediate t-channel exchange.
 //
-// Methods allow the evaluation using the Feynman triangle representation or the
-// standard dispersive form associated with KT equations.
+// Methods allow the evaluation using the Feynman triangle representation
 //
 // Author:       Daniel Winney (2019)
 // Affiliation:  Joint Physics Analysis Center (JPAC)
@@ -26,32 +25,75 @@ class triangle
 {
 public:
   // Constructor
-  // The diagram is entirely determined by the decaying particle mass
-  triangle(double mass)
-  : mDec(mass), cross_channel(mass)
+  triangle()
   {};
 
+  void set_Nint(int n)
+  {
+    xN = n;
+  }
+
+  void set_external(double m1, double m2)
+  {
+    p2 = m1; p3 = m2;
+
+  };
+
+  void set_internal(double q1, double q2)
+  {
+    m2 = q1; m3 = q2;
+  };
+
+  void set_exchange(double mEx, double gamEx = 0.)
+  {
+    t = mEx * mEx - xi * mEx * gamEx;
+  };
+
   // Evaluate the triangle amplitude
-  complex<double> eval_feynman(complex<double> s, complex<double> t);
-  complex<double> eval_dispersive(double s, double t);
+  complex<double> eval_feynman(double s);
+  complex<double> eval_dispersive(double s);
 
 private:
-  double mDec = 0.; // Decay mass squared
-  double EPS = 1.e-6; // small epsilon for i epsilon :)
-  complex<double> ieps = xi * EPS;
+  double p2 = 0., p3 = 0.; // external masses
+  double m2 = 0., m3 = 0.; // internal loop mass
+
+  // t = complex invariant mass of exchange particle
+  complex<double> t = 0.;
+
+  // double pthresh = (mDec - mPi) * (mDec - mPi); // Pseudo-threshold
+  // double thresh = (mDec + mPi) * (mDec + mPi); // Scattering threshold
 
   // Integration quantities
-  int xN = 30;
+  int xN = 900;
   bool WG_GENERATED = false;
   vector<double> weights, abscissas;
   void check_weights();
 
-  // Feynman triangle kernel
-  // function of energies s and t as well as two Feynman parameters
-  complex<double> feyn_integrand(complex<double> s, complex<double> t, double x);
+  // ---------------------------------------------------------------------------
+  // Feynman FUNCTIONS
 
-  // Dispersive KT integral
-  t_integral cross_channel;
+  // Feynman triangle kernel
+  // function of energies s and one feynman parameter x
+  complex<double> feyn_integrand(double s, double x);
+
+  // // ---------------------------------------------------------------------------
+  // // Dispersive FUNCTIONS
+  //
+  // // Kacser function analytically continues momenta between s and t channels
+  // complex<double> Kacser(double s);
+  // complex<double> Kallen(double x, double y, double z)
+  // {
+  //   return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
+  // };
+  //
+  // // Complex bounds of integtion associated
+  // complex<double> t_minus(double s);
+  // complex<double> t_plus(double s);
+  //
+  // // Dispersion kernel functions
+  // complex<double> projection(double s, double tp);
+  // complex<double> propagator(double tp);
+  // complex<double> t_dispersion(double s);
 };
 
 #endif

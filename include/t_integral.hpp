@@ -28,30 +28,31 @@ public:
   {
     a = (mDec - mPi) * (mDec - mPi); // Pseudo-threshold
     b = (mDec + mPi) * (mDec + mPi); // threshold
-    c = 0.5 *  (mDec * mDec - mPi * mPi);
+    c = 0.5 *  (mDec * mDec - mPi * mPi); // turnaround point above cut
   };
 
-  complex<double> operator() (double s, double t);
+  complex<double> operator() (complex<double> s, complex<double> t);
 private:
   double mDec;
   double a, b, c;
 
   //
-  int xN = 30;
+  int xN = 60;
   double EPS = 1.e-6;
-  complex<double> integrand(double t, complex<double> tp);
+  complex<double> ieps = xi * EPS;
+  complex<double> integrand(complex<double> t, complex<double> tp);
 
 
   // Dispersive functions
   complex<double> Kacser(complex<double> s);
-  complex<double> t_minus(double s);
-  complex<double> t_plus(double s);
+  complex<double> t_minus(complex<double> s);
+  complex<double> t_plus(complex<double> s);
 
   // complex integration
-  complex<double> integ_sthPi_c(double s, double t);
-  complex<double> integ_c_a(double s, double t);
-  complex<double> integ_a_b(double s, double t);
-  complex<double> integ_b(double s, double t);
+  complex<double> integ_sthPi_c(complex<double> s, complex<double> t);
+  complex<double> integ_c_a(complex<double> s, complex<double> t);
+  complex<double> integ_a_b(complex<double> s, complex<double> t);
+  complex<double> integ_b(complex<double> s, complex<double> t);
 };
 
 #endif
