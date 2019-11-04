@@ -221,11 +221,12 @@ void quick_print(vector<double> s, vector<complex<double>> fx, string file)
     cout << "ERROR: quick_print input vectors not of the same size" << std::endl;
     return;
   }
+
   string namedat = file + ".dat";
   std::ofstream output;
   output.open(namedat.c_str());
 
-  for (int i; i < s.size(); i++)
+  for (int i = 0; i < s.size(); i++)
   {
     double s_i = s[i];
     complex<double> fx_i = fx[i];
