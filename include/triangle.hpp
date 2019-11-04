@@ -51,7 +51,7 @@ public:
 
   void set_exchangeMass(double mEx, double gamEx = 0.001)
   {
-    t = mEx * mEx - xi * mEx * gamEx;
+    t = mEx * mEx - xi * gamEx;
   };
 
   // ---------------------------------------------------------------------------
@@ -67,7 +67,7 @@ private:
   complex<double> t = 0.;
 
   // Integration quantities
-  int xN = 900;
+  int xN = 800;
   bool WG_GENERATED = false;
   vector<double> weights, abscissas;
   void check_weights();
@@ -84,19 +84,19 @@ private:
 
   // Kacser function analytically continues momenta between s and t channels
   complex<double> Kacser(double s);
-  complex<double> Kallen(double x, double y, double z)
+  complex<double> Kallen(complex<double> x, complex<double> y, complex<double> z)
   {
     return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
   };
-  //
-  // // Complex bounds of integtion associated
-  // complex<double> t_minus(double s);
-  // complex<double> t_plus(double s);
-  //
-  // // Dispersion kernel functions
-  // complex<double> projection(double s, double tp);
-  // complex<double> propagator(double tp);
-  // complex<double> t_dispersion(double s);
+
+  // Complex bounds of integtion associated
+  complex<double> t_minus(double s);
+  complex<double> t_plus(double s);
+
+  // Dispersion kernel functions
+  complex<double> projection(double s, double tp);
+  complex<double> propagator(double tp);
+  complex<double> t_dispersion(double s);
 };
 
 #endif
