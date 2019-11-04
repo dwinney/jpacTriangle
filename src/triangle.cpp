@@ -77,7 +77,6 @@ complex<double> triangle::eval_dispersive(double s)
   log_term *= log(s_thresh - s - ieps) - log(s_thresh);
 
   return (sum + log_term) / M_PI;
-  // return t_dispersion(s);
 };
 
 complex<double> triangle::t_dispersion(double s)
