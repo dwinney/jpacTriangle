@@ -43,8 +43,8 @@ complex<double> triangle::feyn_integrand(double s, double x)
   complex<double> y_minus = (-b - sqrt(xr * d + ieps)) / (2. * a);
 
   complex<double> result;
-  result = log(xr - x + y_minus) - log(xr - x + y_plus);
-  result -= log(y_minus) - log(y_plus);
+  result = log(xr - x + y_minus - ieps) - log(xr - x + y_plus + ieps);
+  result -= log(y_minus - ieps) - log(y_plus + ieps);
   result /= sqrt(xr * d + ieps);
 
   return result;
@@ -55,35 +55,86 @@ complex<double> triangle::feyn_integrand(double s, double x)
 
 complex<double> triangle::eval_dispersive(double s)
 {
+  double s_thresh = (m2 + m3) * (m2 + m3);
+
+  double pseudothresh = (p2 - p3) * (p2 - p3);
+
+  // if pseudo threshold is in the bounds of integration, exclude a small interval around it
+  if (pseudothresh < s_thresh)
+  {
+    return s_dispersion_inf(s, s_thresh);
+  }
+  else
+  {
+    complex<double> temp;
+    temp = s_dispersion(s, s_thresh + EPS, pseudothresh - exc);
+    temp += s_dispersion_inf(s, pseudothresh + exc);
+
+    return temp;
+  }
+};
+
+// ---------------------------------------------------------------------------
+// calculate the dispersion integral over s with finite bounds of integration
+complex<double> triangle::s_dispersion(double s, double low, double high)
+{
+  double w[xN + 1 ], x[xN + 1];
+  gauleg(low, high, x, w, xN);
+
+  // Subtract off the pole at s = sp
+  complex<double> sub_point = t_dispersion(s);
+
+  complex<double> sum = 0.;
+  for (int i = 1; i <= xN; i++)
+  {
+    complex<double> temp;
+    temp = t_dispersion(x[i]) - sub_point;
+    temp /= x[i] * (x[i] - s - ieps);
+
+    sum += w[i] * temp;
+  }
+
+  complex<double> log_term;
+  log_term = log(high - s - ieps) - log(high);
+  log_term -= log(low - s - ieps) - log(low);
+  log_term *= sub_point / s;
+
+  return (sum + log_term) / M_PI;
+};
+
+// calculate the dispersion integral over s up to infinity
+complex<double> triangle::s_dispersion_inf(double s, double low)
+{
   check_weights();
 
-  double s_thresh = (m2 + m3) * (m2 + m3);
-  complex<double> t_disp = t_dispersion(s);
+  complex<double> sub_point = t_dispersion(s);
 
   complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
   {
-    double sp = (s_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
+    double sp = low + tan(M_PI * abscissas[i] / 2.);
 
     complex<double> temp;
-    temp = t_dispersion(sp) - t_disp;
+    temp = t_dispersion(sp) - sub_point;
     temp /= sp * (sp - s - ieps);
     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
     sum += weights[i] * temp;
   }
 
-  complex<double> log_term = - t_disp / s_thresh;
-  log_term *= log(s_thresh - s - ieps) - log(s_thresh);
+  complex<double> log_term = - sub_point / s;
+  log_term *= log(low - s - ieps) - log(low);
 
   return (sum + log_term) / M_PI;
 };
 
+// ---------------------------------------------------------------------------
+// calculate the dispersion intgral over t
 complex<double> triangle::t_dispersion(double s)
 {
   check_weights();
 
-  double t_thresh = (p2 + m2) * (p2 + m2);
+  double t_thresh = (p3 + m2) * (p3 + m2);
 
   complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
@@ -103,13 +154,14 @@ complex<double> triangle::t_dispersion(double s)
   return sqrt(Kallen(s, m2*m2, m3*m3)) * sum;
 };
 
+// ---------------------------------------------------------------------------
 // Kacser function which includes the correct analytic structure of
 // product of breakup momenta, p(s) * q(s)
 complex<double> triangle::Kacser(double s)
 {
   complex<double> result;
   double threshold = (p2 + p3) * (p2 + p3);
-  double pseudothreshold = (p2 - p3) * (p2 - p3);
+  double pseudothreshold = (p3 - p2) * (p3 - p2);
 
   result = sqrt(threshold - s - ieps);
   result *= sqrt(pseudothreshold - s + ieps);
@@ -123,15 +175,16 @@ complex<double> triangle::Kacser(double s)
 // Complex Bounds of integration
 complex<double> triangle::t_minus(double s)
 {
-  return p2*p2 + m2*m2 - (s + p2*p2 - p3*p3) * (s + m2*m2 - m3*m3) / (2. * s) - Kacser(s) / 2.;
+  return p3*p3 + m2*m2 - (s + p3*p3 - p2*p2) * (s + m2*m2 - m3*m3) / (2. * s) - Kacser(s) / 2.;
 };
 
 complex<double> triangle::t_plus(double s)
 {
-  return p2*p2 + m2*m2 - (s + p2*p2 - p3*p3) * (s + m2*m2 - m3*m3) / (2. * s) + Kacser(s) / 2.;
+  return p3*p3 + m2*m2 - (s + p3*p3 - p2*p2) * (s + m2*m2 - m3*m3) / (2. * s) + Kacser(s) / 2.;
 };
 
 // ---------------------------------------------------------------------------
+// projection kernel
 complex<double> triangle::projection(double s, double tp)
 {
   complex<double> result;
@@ -142,6 +195,7 @@ complex<double> triangle::projection(double s, double tp)
   return result;
 };
 
+// simple breit-wigner propogator
 complex<double> triangle::propagator(double tp)
 {
   return xr / (t - tp);

@@ -15,7 +15,6 @@
 #include <vector>
 #include <cmath>
 
-#include "t_integral.hpp"
 #include "constants.hpp"
 #include "utilities.hpp"
 
@@ -49,7 +48,7 @@ public:
     m2 = q1; m3 = q2;
   };
 
-  void set_exchangeMass(double mEx, double gamEx = 0.001)
+  void set_exchangeMass(double mEx, double gamEx = 0.0001)
   {
     t = mEx * mEx - xi * gamEx;
   };
@@ -89,9 +88,15 @@ private:
     return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
   };
 
-  // Complex bounds of integtion associated
+  // Complex bounds of integtion
   complex<double> t_minus(double s);
   complex<double> t_plus(double s);
+
+  // Calculation of dispersion integrals
+  double exc = 0.005; // small interval around pseudo-threshold to exclude
+  complex<double> s_dispersion(double s, double low, double high);
+  complex<double> s_dispersion_inf(double s, double low);
+
 
   // Dispersion kernel functions
   complex<double> projection(double s, double tp);
