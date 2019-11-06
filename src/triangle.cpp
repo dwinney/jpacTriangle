@@ -55,20 +55,17 @@ std::complex<double> triangle::feyn_integrand(double s, double x)
 
 std::complex<double> triangle::eval_dispersive(double s)
 {
-  double s_thresh = (m1 + m2) * (m1 + m2);
-  double pseudothresh = (p1 - p2) * (p1 - p2);
-
   // if pseudo threshold is in the bounds of integration, exclude a small interval around it
   // this is alwys the case for decays, but to keep the code general I consider the other case
-  if (pseudothresh < s_thresh)
+  if (p_thresh < s_thresh)
   {
     return s_dispersion_inf(s, s_thresh);
   }
   else
   {
     std::complex<double> temp;
-    temp = s_dispersion(s, s_thresh + EPS, pseudothresh - exc);
-    temp += s_dispersion_inf(s, pseudothresh + exc);
+    temp = s_dispersion(s, s_thresh + EPS, p_thresh - exc);
+    temp += s_dispersion_inf(s, p_thresh + exc);
 
     return temp;
   }
@@ -134,8 +131,6 @@ std::complex<double> triangle::t_dispersion(double s)
 {
   check_weights();
 
-  double t_thresh = (p2 + m1) * (p2 + m1);
-
   std::complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
   {
@@ -160,11 +155,9 @@ std::complex<double> triangle::t_dispersion(double s)
 std::complex<double> triangle::Kacser(double s)
 {
   std::complex<double> result;
-  double threshold = (p1 + p2) * (p1 + p2);
-  double pseudothreshold = (p2 - p1) * (p2 - p1);
 
-  result = sqrt(threshold - s - ieps);
-  result *= sqrt(pseudothreshold - s + ieps);
+  result = sqrt(r_thresh - s - ieps);
+  result *= sqrt(p_thresh - s + ieps);
   result *= sqrt(Kallen(s, m1*m1, m2*m2));
   result /= s;
 

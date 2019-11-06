@@ -27,7 +27,7 @@ int main()
   double low = 1.e-3;
   double high = 81. * mPi * mPi;
 
-  int Np = 100; // Number of points to plot
+  int Np = 25; // Number of points to plot
 
 // ---------------------------------------------------------------------------
 // You shouldnt need to change anything below this line
@@ -40,17 +40,17 @@ int main()
   std::cout << "Calulating Feynman triangle... \n";
 
   std::vector<double> s;
-  vector< std::complex<double> > feyn;
+  std::vector< std::complex<double> > feyn;
 
   clock_t begin = clock();
 
-  complex<double> fxf_0 = tri.eval_feynman(low);   // Normalization
+  std::complex<double> fxf_0 = tri.eval_feynman(low);   // Normalization
 
   for (int i = 0; i < Np; i++)
   {
     double si = low + double(i) * (high - low) / double(Np);
 
-    complex<double> fx_f = tri.eval_feynman(si) / fxf_0;
+    std::complex<double> fx_f = tri.eval_feynman(si) / fxf_0;
 
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);
@@ -75,15 +75,15 @@ int main()
 
   begin = clock();
 
-  vector<std::complex<double>> disp;
-  complex<double> fxd_0 = tri.eval_dispersive(low);
+  std::vector<std::complex<double>> disp;
+  std::complex<double> fxd_0 = tri.eval_dispersive(low);
 
   s.clear();
   for (int i = 0; i < Np; i++)
   {
     double si = low + double(i) * (high - low) / double(Np);
 
-    complex<double> fx_d = tri.eval_dispersive(si) / fxd_0;
+    std::complex<double> fx_d = tri.eval_dispersive(si) / fxd_0;
 
     s.push_back(sqrt(si) / mPi);
     disp.push_back(fx_d);

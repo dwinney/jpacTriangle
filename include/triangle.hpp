@@ -26,24 +26,31 @@ public:
   {};
 
   // Parameterized Constructor
-  // triangle(double m1, double m1, double q1, double q2)
+  triangle(double x1, double x2, double q1, double q2)
+  : p1(x1), p2(x2), m1(q1), m2(q2)
+  {
+    update_thresholds();
+  }
 
   // ---------------------------------------------------------------------------
   // Utilities
+
   void set_Nint(int n)
   {
     xN = n;
+    WG_GENERATED = false;
   }
 
   void set_externalMasses(double m1, double m2)
   {
     p1 = m1; p2 = m2;
-
+    update_thresholds();
   };
 
   void set_internalMass(double q1, double q2)
   {
     m1 = q1; m2 = q2;
+    update_thresholds();
   };
 
   void set_exchangeMass(double mEx, double gamEx = 0.0001)
@@ -62,6 +69,19 @@ private:
 
   // t = complex invariant mass of exchange particle
   std::complex<double> t = 0.;
+
+  // Physical thresholds
+  double s_thresh, t_thresh, p_thresh, r_thresh;
+  void update_thresholds()
+  {
+    // s & t final-state thresholds
+    s_thresh =  (m1 + m2) * (m1 + m2);
+    t_thresh = (p2 + m1) * (p2 + m1);
+
+    // regular and psueodo threshold
+    p_thresh = (p1 - p2) * (p1 - p2);
+    r_thresh = (p1 + p2) * (p1 + p2);
+  };
 
   // Integration quantities
   int xN = 800;

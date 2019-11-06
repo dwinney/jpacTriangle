@@ -12,8 +12,6 @@
 #include <cmath>
 #include <complex>
 
-using namespace std;
-
 //-----------------------------------------------------------------------------
 const double conv = (M_PI / 180.);
 const double EPS = 1.e-6;
@@ -32,8 +30,8 @@ const double sthK = 4.*mK*mK;
 const double sthEta = 4.*mEta*mEta;
 
 //Unit imaginary and real
-const complex<double> xr(1., 0.);
-const complex<double> xi(0., 1.);
-const complex<double> ieps(0., EPS);
+const std::complex<double> xr(1., 0.);
+const std::complex<double> xi(0., 1.);
+const std::complex<double> ieps(0., EPS);
 
 #endif
