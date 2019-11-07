@@ -14,7 +14,31 @@
 // ---------------------------------------------------------------------------
 // EVALUTE THE TRIANGLE THE FEYNMAN WAY
 
+// Evaluate the convolution of the LHC function with triangle function
 std::complex<double> triangle::eval_feynman(double s)
+{
+    check_weights();
+
+    std::complex<double> sum = 0.;
+    for (int i = 0; i < xN; i++)
+    {
+      double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
+
+      std::complex<double> temp;
+      temp = lhc_func->eval(tp) * triangle_kernel(s, tp);
+      temp *= (M_PI / 2.);
+      temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
+
+      sum += weights[i] * temp;
+    }
+
+    sum /= M_PI;
+
+    return sum;
+};
+
+// Triangle function from the perturbation theory result
+std::complex<double> triangle::triangle_kernel(double s, double t)
 {
   check_weights();
 
@@ -23,20 +47,28 @@ std::complex<double> triangle::eval_feynman(double s)
   for (int i = 0; i < xN; i++)
   {
     double x_i = abscissas[i];
-    sum += weights[i] * feyn_integrand(s, x_i);
+    sum += weights[i] * kernel_integrand(s, t, x_i);
   }
 
   return  sum;
 };
 
 // Logarithm from integrating over y and z
-std::complex<double> triangle::feyn_integrand(double s, double x)
+std::complex<double> triangle::kernel_integrand(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
   a = s;
   b = (m2 * m2 - m1 * m1) - x * (p1 * p1 - p2 * p2) - (x - 1.) * s;
   c = x * (t - ieps) + (1. - x) * m2 * m2 + x * (x - 1.) * p1 * p1;
   d = b * b - 4. * a * c; // discriminant
+
+  if (std::abs(d) < 0.000001)
+  {
+    std::cout << std::left;
+    std::cout << std::setw(10) << s;
+    std::cout << std::setw(10) << t;
+    std::cout << std::setw(10) << x << "\n";
+  }
 
   // Roots of the polynomial
   std::complex<double> y_plus = (-b + sqrt(xr * d + ieps)) / (2. * a);
@@ -55,6 +87,7 @@ std::complex<double> triangle::feyn_integrand(double s, double x)
 
 std::complex<double> triangle::eval_dispersive(double s)
 {
+  // return t_dispersion(s);
   // if pseudo threshold is in the bounds of integration, exclude a small interval around it
   // this is alwys the case for decays, but to keep the code general I consider the other case
   if (p_thresh < s_thresh)
@@ -137,7 +170,7 @@ std::complex<double> triangle::t_dispersion(double s)
     double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = imag(propagator(tp)) * projection(s, tp);
+    temp = lhc_func->disc(tp) * projection(s, tp);
     temp *= (M_PI / 2.);
     temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -186,12 +219,6 @@ std::complex<double> triangle::projection(double s, double tp)
   result /= Kacser(s);
 
   return result;
-};
-
-// simple breit-wigner propogator
-std::complex<double> triangle::propagator(double tp)
-{
-  return xr / (t - tp);
 };
 
 // ---------------------------------------------------------------------------

@@ -14,20 +14,23 @@
 #include <complex>
 #include <vector>
 #include <cmath>
+#include <iomanip>
 
 #include "constants.hpp"
 #include "utilities.hpp"
+#include "propagator.hpp"
 
 class triangle
 {
 public:
   // Empty Constructor
-  triangle()
+  triangle(propagator * b_x)
+  : lhc_func(b_x)
   {};
 
   // Parameterized Constructor
-  triangle(double x1, double x2, double q1, double q2)
-  : p1(x1), p2(x2), m1(q1), m2(q2)
+  triangle(propagator * b_x, double x1, double x2, double q1, double q2)
+  : lhc_func(b_x), p1(x1), p2(x2), m1(q1), m2(q2)
   {
     update_thresholds();
   }
@@ -47,15 +50,10 @@ public:
     update_thresholds();
   };
 
-  void set_internalMass(double q1, double q2)
+  void set_internalMasses(double q1, double q2)
   {
     m1 = q1; m2 = q2;
     update_thresholds();
-  };
-
-  void set_exchangeMass(double mEx, double gamEx = 0.0001)
-  {
-    t = mEx * mEx - xi * gamEx;
   };
 
   // ---------------------------------------------------------------------------
@@ -64,11 +62,10 @@ public:
   std::complex<double> eval_dispersive(double s);
 
 private:
+  propagator * lhc_func;
+
   double p1 = 0., p2 = 0.; // external masses
   double m1 = 0., m2 = 0.; // internal loop mass
-
-  // t = complex invariant mass of exchange particle
-  std::complex<double> t = 0.;
 
   // Physical thresholds
   double s_thresh, t_thresh, p_thresh, r_thresh;
@@ -94,7 +91,8 @@ private:
 
   // Feynman triangle kernel
   // function of energies s and one feynman parameter x
-  std::complex<double> feyn_integrand(double s, double x);
+  std::complex<double> kernel_integrand(double s, double t, double x);
+  std::complex<double> triangle_kernel(double s, double t);
 
   // ---------------------------------------------------------------------------
   // Dispersive FUNCTIONS
@@ -118,7 +116,6 @@ private:
 
   // Dispersion kernel functions
   std::complex<double> projection(double s, double tp);
-  std::complex<double> propagator(double tp);
   std::complex<double> t_dispersion(double s);
 };
 
