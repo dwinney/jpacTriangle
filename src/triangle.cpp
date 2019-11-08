@@ -25,7 +25,7 @@ std::complex<double> triangle::eval_feynman(double s)
       double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
       std::complex<double> temp;
-      temp = lhc_func->eval(tp) * triangle_kernel(s, tp);
+      temp = lhc_func->disc(tp) * triangle_kernel(s, tp) / tp;
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -50,7 +50,7 @@ std::complex<double> triangle::triangle_kernel(double s, double t)
     sum += weights[i] * kernel_integrand(s, t, x_i);
   }
 
-  return  sum;
+  return sum;
 };
 
 // Logarithm from integrating over y and z
@@ -61,14 +61,6 @@ std::complex<double> triangle::kernel_integrand(double s, double t, double x)
   b = (m2 * m2 - m1 * m1) - x * (p1 * p1 - p2 * p2) - (x - 1.) * s;
   c = x * (t - ieps) + (1. - x) * m2 * m2 + x * (x - 1.) * p1 * p1;
   d = b * b - 4. * a * c; // discriminant
-
-  if (std::abs(d) < 0.000001)
-  {
-    std::cout << std::left;
-    std::cout << std::setw(10) << s;
-    std::cout << std::setw(10) << t;
-    std::cout << std::setw(10) << x << "\n";
-  }
 
   // Roots of the polynomial
   std::complex<double> y_plus = (-b + sqrt(xr * d + ieps)) / (2. * a);
@@ -87,7 +79,6 @@ std::complex<double> triangle::kernel_integrand(double s, double t, double x)
 
 std::complex<double> triangle::eval_dispersive(double s)
 {
-  // return t_dispersion(s);
   // if pseudo threshold is in the bounds of integration, exclude a small interval around it
   // this is alwys the case for decays, but to keep the code general I consider the other case
   if (p_thresh < s_thresh)

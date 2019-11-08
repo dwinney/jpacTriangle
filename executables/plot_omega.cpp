@@ -36,7 +36,7 @@ int main()
   std::string filename = "omega";
 
   // Plotting bounds
-  double low = 4. * mPi * mPi;
+  double low = 1.e-3;
   double high = 81. * mPi * mPi;
 
   int Np = 100; // Number of points to plot
@@ -79,38 +79,38 @@ int main()
   quick_print(s, feyn, filename + "_feyn");
 
   std::cout << "\n";
-//
-// // ---------------------------------------------------------------------------
-// // Calculate the same thing now with the dispersive representation
-//
-//   std::cout << "Calulating Dispersive triangle... \n";
-//
-//   begin = clock();
-//
-//   std::vector<std::complex<double>> disp;
-//   std::complex<double> fxd_0 = tri.eval_dispersive(low);
-//
-//   s.clear();
-//   for (int i = 0; i < Np; i++)
-//   {
-//     double si = low + double(i) * (high - low) / double(Np);
-//
-//     std::complex<double> fx_d = tri.eval_dispersive(si) / fxd_0;
-//
-//     s.push_back(sqrt(si) / mPi);
-//     disp.push_back(fx_d);
-//   }
-//
-//   end = clock();
-//   elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-//
-//   std::cout << "Done in " << elapsed_secs << " seconds. \n";
-//   std::cout << "\n";
-//
-//   quick_plot(s, disp, filename + "_disp");
-//   quick_print(s, disp, filename + "_disp");
-//
-//   std::cout << "\n";
+
+// ---------------------------------------------------------------------------
+// Calculate the same thing now with the dispersive representation
+
+  std::cout << "Calulating Dispersive triangle... \n";
+
+  begin = clock();
+
+  std::vector<std::complex<double>> disp;
+  std::complex<double> fxd_0 = tri.eval_dispersive(low);
+
+  s.clear();
+  for (int i = 0; i < Np; i++)
+  {
+    double si = low + double(i) * (high - low) / double(Np);
+
+    std::complex<double> fx_d = tri.eval_dispersive(si) / fxd_0;
+
+    s.push_back(sqrt(si) / mPi);
+    disp.push_back(fx_d);
+  }
+
+  end = clock();
+  elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+  std::cout << "Done in " << elapsed_secs << " seconds. \n";
+  std::cout << "\n";
+
+  quick_plot(s, disp, filename + "_disp");
+  quick_print(s, disp, filename + "_disp");
+
+  std::cout << "\n";
 
 // ---------------------------------------------------------------------------
   return 1.;
