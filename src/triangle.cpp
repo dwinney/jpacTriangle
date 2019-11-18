@@ -57,9 +57,10 @@ std::complex<double> triangle::triangle_kernel(double s, double t)
 std::complex<double> triangle::kernel_integrand(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
-  a = s;
-  b = (m2 * m2 - m1 * m1) - x * (p1 * p1 - p2 * p2) - (x - 1.) * s;
-  c = x * (t - ieps) + (1. - x) * m2 * m2 + x * (x - 1.) * p1 * p1;
+  
+  a = p2 * p2;
+  b =  (t - ieps) + x * s - m1*m1 - (x - 1.) * p2*p2 - x * p1*p1 ;
+  c = (1. - x) * (t - ieps) + x * m1*m1 + x*(x-1.)* p1*p1;
   d = b * b - 4. * a * c; // discriminant
 
   // Roots of the polynomial
@@ -67,8 +68,8 @@ std::complex<double> triangle::kernel_integrand(double s, double t, double x)
   std::complex<double> y_minus = (-b - sqrt(xr * d + ieps)) / (2. * a);
 
   std::complex<double> result;
-  result = log(xr - x + y_minus - ieps) - log(xr - x + y_plus + ieps);
-  result -= log(y_minus - ieps) - log(y_plus + ieps);
+  result = log(xr - x + y_minus) - log(xr - x + y_plus);
+  result -= log(y_minus) - log(y_plus);
   result /= sqrt(xr * d + ieps);
 
   return result;
