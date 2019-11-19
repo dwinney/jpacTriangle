@@ -6,9 +6,9 @@ Requires ROOT (tested with version 6.17).
 
 The primary class of interest is the `triangle` class which calculates the Feynman rescattering diagram as a function of center-of-mass energy for a given set of fixed masses (two internal propagating masses and two external masses) and a given parameterization of the left-hand cut amplitude.
 
-The LHC amplitudes can be user-implemented by inheriting from the abstract `propagator` class. All that is needed is a way to evaluate the discontinuity across the cut in a dispersive representation. For example:
+The LHC amplitudes can be user-implemented by inheriting from the abstract `lefthand_cut` class. All that is needed is a way to evaluate the discontinuity across the cut in a dispersive representation. For example:
 ```
- class my_Model : public propagator
+ class my_Model : public lefthand_cut
  {
    my_Model( my_inputs )
    {};

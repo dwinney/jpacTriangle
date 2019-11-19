@@ -11,10 +11,10 @@
 #ifndef _BW_
 #define _BW_
 
-#include "propagator.hpp"
+#include "lefthand_cut.hpp"
 #include "constants.hpp"
 
-class breit_wigner : public propagator
+class breit_wigner : public lefthand_cut
 {
 public:
   breit_wigner(double mass, double width = 0.001)

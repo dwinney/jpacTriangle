@@ -18,18 +18,18 @@
 
 #include "constants.hpp"
 #include "utilities.hpp"
-#include "propagator.hpp"
+#include "lefthand_cut.hpp"
 
 class triangle
 {
 public:
   // Empty Constructor
-  triangle(propagator * b_x)
+  triangle(lefthand_cut * b_x)
   : lhc_func(b_x)
   {};
 
   // Parameterized Constructor
-  triangle(propagator * b_x, double x1, double x2, double q1, double q2)
+  triangle(lefthand_cut * b_x, double x1, double x2, double q1, double q2)
   : lhc_func(b_x), p1(x1), p2(x2), m1(q1), m2(q2)
   {
     update_thresholds();
@@ -62,7 +62,7 @@ public:
   std::complex<double> eval_dispersive(double s);
 
 private:
-  propagator * lhc_func;
+  lefthand_cut * lhc_func;
 
   double p1 = 0., p2 = 0.; // external masses
   double m1 = 0., m2 = 0.; // internal loop mass

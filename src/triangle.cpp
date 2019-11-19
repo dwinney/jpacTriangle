@@ -57,9 +57,9 @@ std::complex<double> triangle::triangle_kernel(double s, double t)
 std::complex<double> triangle::kernel_integrand(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
-  
+
   a = p2 * p2;
-  b =  (t - ieps) + x * s - m1*m1 - (x - 1.) * p2*p2 - x * p1*p1 ;
+  b = m1*m1 + (x - 1.) * p2*p2 + x * p1*p1 - x * s - t;
   c = (1. - x) * (t - ieps) + x * m1*m1 + x*(x-1.)* p1*p1;
   d = b * b - 4. * a * c; // discriminant
 
@@ -68,8 +68,8 @@ std::complex<double> triangle::kernel_integrand(double s, double t, double x)
   std::complex<double> y_minus = (-b - sqrt(xr * d + ieps)) / (2. * a);
 
   std::complex<double> result;
-  result = log(xr - x + y_minus) - log(xr - x + y_plus);
-  result -= log(y_minus) - log(y_plus);
+  result = log(y_plus + x - xr) - log(y_minus + x - xr);
+  result -= log(y_plus) - log(y_minus);
   result /= sqrt(xr * d + ieps);
 
   return result;
