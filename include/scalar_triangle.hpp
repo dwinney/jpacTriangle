@@ -20,16 +20,16 @@
 #include "utilities.hpp"
 #include "lefthand_cut.hpp"
 
-class triangle
+class scalar_triangle
 {
 public:
   // Empty Constructor
-  triangle(lefthand_cut * b_x)
+  scalar_triangle(lefthand_cut * b_x)
   : lhc_func(b_x)
   {};
 
   // Parameterized Constructor
-  triangle(lefthand_cut * b_x, double x1, double x2, double q1, double q2)
+  scalar_triangle(lefthand_cut * b_x, double x1, double x2, double q1, double q2)
   : lhc_func(b_x), p1(x1), p2(x2), m1(q1), m2(q2)
   {
     update_thresholds();

@@ -9,7 +9,7 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
-#include "triangle.hpp"
+#include "scalar_triangle.hpp"
 #include "breit_wigner.hpp"
 
 #include <iostream>
@@ -23,7 +23,7 @@ int main()
   breit_wigner left_hand_cut(.770, .145);
 
   // Initialize a triangle object passing the above propogator
-  triangle tri(&left_hand_cut);
+  scalar_triangle tri(&left_hand_cut);
 
   // Set the two external particles: omega and pion
   // here argument 1 >= argument 2
@@ -49,7 +49,7 @@ int main()
 // Calculate the triangle function first with the feynman representation
 
   std::cout << "\n";
-  std::cout << "Calulating Feynman triangle... \n";
+  std::cout << "Calculating Feynman triangle... \n";
 
   std::vector<double> s;
   std::vector< std::complex<double> > feyn;

@@ -9,13 +9,13 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
-#include "triangle.hpp"
+#include "scalar_triangle.hpp"
 
 // ---------------------------------------------------------------------------
 // EVALUTE THE TRIANGLE THE FEYNMAN WAY
 
 // Evaluate the convolution of the LHC function with triangle function
-std::complex<double> triangle::eval_feynman(double s)
+std::complex<double> scalar_triangle::eval_feynman(double s)
 {
     check_weights();
 
@@ -38,7 +38,7 @@ std::complex<double> triangle::eval_feynman(double s)
 };
 
 // Triangle function from the perturbation theory result
-std::complex<double> triangle::triangle_kernel(double s, double t)
+std::complex<double> scalar_triangle::triangle_kernel(double s, double t)
 {
   check_weights();
 
@@ -54,7 +54,7 @@ std::complex<double> triangle::triangle_kernel(double s, double t)
 };
 
 // Logarithm from integrating over y and z
-std::complex<double> triangle::kernel_integrand(double s, double t, double x)
+std::complex<double> scalar_triangle::kernel_integrand(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
 
@@ -78,7 +78,7 @@ std::complex<double> triangle::kernel_integrand(double s, double t, double x)
 // ---------------------------------------------------------------------------
 // EVALUTE THE TRIANGLE THE KT WAY
 
-std::complex<double> triangle::eval_dispersive(double s)
+std::complex<double> scalar_triangle::eval_dispersive(double s)
 {
   // if pseudo threshold is in the bounds of integration, exclude a small interval around it
   // this is alwys the case for decays, but to keep the code general I consider the other case
@@ -98,7 +98,7 @@ std::complex<double> triangle::eval_dispersive(double s)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion integral over s with finite bounds of integration
-std::complex<double> triangle::s_dispersion(double s, double low, double high)
+std::complex<double> scalar_triangle::s_dispersion(double s, double low, double high)
 {
   double w[xN + 1 ], x[xN + 1];
   gauleg(low, high, x, w, xN);
@@ -125,7 +125,7 @@ std::complex<double> triangle::s_dispersion(double s, double low, double high)
 };
 
 // calculate the dispersion integral over s up to infinity
-std::complex<double> triangle::s_dispersion_inf(double s, double low)
+std::complex<double> scalar_triangle::s_dispersion_inf(double s, double low)
 {
   check_weights();
 
@@ -152,7 +152,7 @@ std::complex<double> triangle::s_dispersion_inf(double s, double low)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion intgral over t
-std::complex<double> triangle::t_dispersion(double s)
+std::complex<double> scalar_triangle::t_dispersion(double s)
 {
   check_weights();
 
@@ -177,7 +177,7 @@ std::complex<double> triangle::t_dispersion(double s)
 // ---------------------------------------------------------------------------
 // Kacser function which includes the correct analytic structure of
 // product of breakup momenta, p(s) * q(s)
-std::complex<double> triangle::Kacser(double s)
+std::complex<double> scalar_triangle::Kacser(double s)
 {
   std::complex<double> result;
 
@@ -191,19 +191,19 @@ std::complex<double> triangle::Kacser(double s)
 
 // ---------------------------------------------------------------------------
 // complex Bounds of integration
-std::complex<double> triangle::t_minus(double s)
+std::complex<double> scalar_triangle::t_minus(double s)
 {
   return p2*p2 + m1*m1 - (s + p2*p2 - p1*p1) * (s + m1*m1 - m2*m2) / (2. * s) - Kacser(s) / 2.;
 };
 
-std::complex<double> triangle::t_plus(double s)
+std::complex<double> scalar_triangle::t_plus(double s)
 {
   return p2*p2 + m1*m1 - (s + p2*p2 - p1*p1) * (s + m1*m1 - m2*m2) / (2. * s) + Kacser(s) / 2.;
 };
 
 // ---------------------------------------------------------------------------
 // Angular projection kernel
-std::complex<double> triangle::projection(double s, double tp)
+std::complex<double> scalar_triangle::projection(double s, double tp)
 {
   std::complex<double> result;
   result = log((tp - ieps) - t_minus(s));
@@ -218,7 +218,7 @@ std::complex<double> triangle::projection(double s, double tp)
 
 // -----------------------------------------------------------------------------
 // Check whether or not the integration weights are already saved.
-void triangle::check_weights()
+void scalar_triangle::check_weights()
 {
   if (WG_GENERATED == false)
   {
