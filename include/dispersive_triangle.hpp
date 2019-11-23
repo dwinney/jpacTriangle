@@ -87,6 +87,7 @@ private:
   {
     return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
   };
+  std::complex<double> phase_space(double s);
 
   // Complex bounds of integtion
   std::complex<double> t_minus(double s);
