@@ -57,7 +57,7 @@ endif()
 # BUILD LIBRARY FROM LOCAL FiLES
 include_directories("include")
 include_directories("src")
-file(GLOB INC "include/*.hpp")
+file(GLOB_RECURSE INC "include/*.hpp")
 file(GLOB_RECURSE SRC "src/*.cpp")
 add_library( KT_triangle ${INC} ${SRC} )
 

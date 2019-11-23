@@ -22,7 +22,7 @@ int main()
   breit_wigner left_hand_cut(.770, .145);
 
   // Initialize a triangle object passing the above propogator
-  dispersive_triangle tri(&left_hand_cut);
+  feynman_triangle tri(&left_hand_cut);
 
   // Set the two external particles: omega and pion
   // here argument 1 >= argument 2

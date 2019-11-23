@@ -28,7 +28,7 @@ public:
   {};
 
   // Evalate the diagram
-  std::complex<double> eval(double s);
+  std::complex<double> eval(int jp, double s);
 
   // ---------------------------------------------------------------------------
   // Utilities
@@ -41,12 +41,15 @@ public:
   void set_externalMasses(double m1, double m2)
   {
     p1 = m1; p2 = m2;
+    p1sq = m1 * m1; p2sq = m2*m2;
+
     update_thresholds();
   };
 
   void set_internalMasses(double q1, double q2)
   {
     m1 = q1; m2 = q2;
+    m1sq = q1 * q1; m2sq = q2*q2;
     update_thresholds();
   };
 
@@ -56,6 +59,8 @@ private:
 
   double p1 = 0., p2 = 0.; // external masses
   double m1 = 0., m2 = 0.; // internal loop mass
+
+  double p1sq, p2sq, m1sq, m2sq; // masses squared
 
   // Physical thresholds
   double s_thresh, t_thresh, p_thresh, r_thresh;
@@ -71,7 +76,7 @@ private:
   };
 
   // Integration quantities
-  int xN = 800;
+  int xN = 200;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();
@@ -89,13 +94,17 @@ private:
 
   // Calculation of dispersion integrals
   double exc = 0.005; // small interval around pseudo-threshold to exclude
-  std::complex<double> s_dispersion(double s, double low, double high);
-  std::complex<double> s_dispersion_inf(double s, double low);
+  std::complex<double> s_dispersion(int jp, double s, double low, double high);
+  std::complex<double> s_dispersion_inf(int jp, double s, double low);
 
+  // Dispersion over t
+  std::complex<double> t_dispersion(int jp, double s);
 
   // Dispersion kernel functions
-  std::complex<double> projection(double s, double tp);
-  std::complex<double> t_dispersion(double s);
+  std::complex<double> projection(int jp, double s, double tp);
+  std::complex<double> Q_0(double s, double tp);
+  std::complex<double> Q_1(double s, double tp);
+
 
 };
 

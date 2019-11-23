@@ -21,7 +21,8 @@ std::complex<double> feynman_triangle::eval(double s)
       double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
       std::complex<double> temp;
-      temp = lhc_func->disc(tp) * kernel(s, tp) / tp;
+      temp = (2. * s + tp - p1sq - p2sq - m1sq - m2sq) / 4.;
+      temp *= lhc_func->disc(tp) * kernel(s, tp);
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 

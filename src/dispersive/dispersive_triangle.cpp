@@ -10,19 +10,19 @@
 
 #include "dispersive_triangle.hpp"
 
-std::complex<double> dispersive_triangle::eval(double s)
+std::complex<double> dispersive_triangle::eval(int jp, double s)
 {
   // if pseudo threshold is in the bounds of integration, exclude a small interval around it
   // this is alwys the case for decays, but to keep the code general I consider the other case
   if (p_thresh < s_thresh)
   {
-    return s_dispersion_inf(s, s_thresh);
+    return s_dispersion_inf(jp, s, s_thresh);
   }
   else
   {
     std::complex<double> temp;
-    temp = s_dispersion(s, s_thresh + EPS, p_thresh - exc);
-    temp += s_dispersion_inf(s, p_thresh + exc);
+    temp = s_dispersion(jp, s, s_thresh + EPS, p_thresh - exc);
+    temp += s_dispersion_inf(jp, s, p_thresh + exc);
 
     return temp;
   }
@@ -30,19 +30,19 @@ std::complex<double> dispersive_triangle::eval(double s)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion integral over s with finite bounds of integration
-std::complex<double> dispersive_triangle::s_dispersion(double s, double low, double high)
+std::complex<double> dispersive_triangle::s_dispersion(int jp, double s, double low, double high)
 {
   double w[xN + 1 ], x[xN + 1];
   gauleg(low, high, x, w, xN);
 
   // Subtract off the pole at s = sp
-  std::complex<double> sub_point = t_dispersion(s);
+  std::complex<double> sub_point = t_dispersion(jp, s);
 
   std::complex<double> sum = 0.;
   for (int i = 1; i <= xN; i++)
   {
     std::complex<double> temp;
-    temp = t_dispersion(x[i]) - sub_point;
+    temp = t_dispersion(jp, x[i]) - sub_point;
     temp /= x[i] * (x[i] - s - ieps);
 
     sum += w[i] * temp;
@@ -57,11 +57,11 @@ std::complex<double> dispersive_triangle::s_dispersion(double s, double low, dou
 };
 
 // calculate the dispersion integral over s up to infinity
-std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
+std::complex<double> dispersive_triangle::s_dispersion_inf(int jp, double s, double low)
 {
   check_weights();
 
-  std::complex<double> sub_point = t_dispersion(s);
+  std::complex<double> sub_point = t_dispersion(jp, s);
 
   std::complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
@@ -69,7 +69,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
     double sp = low + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = t_dispersion(sp) - sub_point;
+    temp = t_dispersion(jp, sp) - sub_point;
     temp /= sp * (sp - s - ieps);
     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -84,7 +84,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion intgral over t
-std::complex<double> dispersive_triangle::t_dispersion(double s)
+std::complex<double> dispersive_triangle::t_dispersion(int jp, double s)
 {
   check_weights();
 
@@ -94,7 +94,7 @@ std::complex<double> dispersive_triangle::t_dispersion(double s)
     double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = lhc_func->disc(tp) * projection(s, tp);
+    temp = lhc_func->disc(tp) * projection(jp, s, tp);
     temp *= (M_PI / 2.);
     temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -103,7 +103,7 @@ std::complex<double> dispersive_triangle::t_dispersion(double s)
 
   sum /= M_PI;
 
-  return sqrt(Kallen(s, m1*m1, m2*m2)) * sum;
+  return sqrt(Kallen(s, m1sq, m2sq)) * sum;
 };
 
 // ---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ std::complex<double> dispersive_triangle::Kacser(double s)
 
   result = sqrt(r_thresh - s - ieps);
   result *= sqrt(p_thresh - s + ieps);
-  result *= sqrt(Kallen(s, m1*m1, m2*m2));
+  result *= sqrt(Kallen(s, m1sq, m2sq));
   result /= s;
 
   return result;
@@ -131,18 +131,6 @@ std::complex<double> dispersive_triangle::t_minus(double s)
 std::complex<double> dispersive_triangle::t_plus(double s)
 {
   return p2*p2 + m1*m1 - (s + p2*p2 - p1*p1) * (s + m1*m1 - m2*m2) / (2. * s) + Kacser(s) / 2.;
-};
-
-// ---------------------------------------------------------------------------
-// Angular projection kernel
-std::complex<double> dispersive_triangle::projection(double s, double tp)
-{
-  std::complex<double> result;
-  result = log((tp - ieps) - t_minus(s));
-  result -= log((tp - ieps) - t_plus(s));
-  result /= Kacser(s);
-
-  return result;
 };
 
 // ---------------------------------------------------------------------------
