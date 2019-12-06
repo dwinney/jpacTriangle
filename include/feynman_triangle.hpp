@@ -67,7 +67,7 @@ private:
   void update_thresholds()
   {
     // s & t final-state thresholds
-    s_thresh =  (m1 + m2) * (m1 + m2);
+    s_thresh = (m1 + m2) * (m1 + m2);
     t_thresh = (p2 + m1) * (p2 + m1);
 
     // regular and psueodo threshold
