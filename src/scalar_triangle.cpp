@@ -22,10 +22,10 @@ std::complex<double> scalar_triangle::eval_feynman(double s)
     std::complex<double> sum = 0.;
     for (int i = 0; i < xN; i++)
     {
-      double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
+      double tp = (t_thresh) + tan(M_PI * abscissas[i] / 2.);
 
       std::complex<double> temp;
-      temp = lhc_func->disc(tp) * triangle_kernel(s, tp) / tp;
+      temp = lhc_func->disc(tp) * triangle_kernel(s, tp);
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -59,18 +59,18 @@ std::complex<double> scalar_triangle::kernel_integrand(double s, double t, doubl
   std::complex<double> a, b, c, d;
 
   a = p2 * p2;
-  b = m1*m1 + (x - 1.) * p2*p2 + x * p1*p1 - x * s - t;
-  c = (1. - x) * (t - ieps) + x * m1*m1 + x*(x-1.)* p1*p1;
+  b = m1*m1 + (x - 1.) * p2*p2 + x * (p1*p1 + ieps) - x * s - t;
+  c = (1. - x) * t + x * m1*m1 + x*(x-1.)* (p1*p1 + ieps);
   d = b * b - 4. * a * c; // discriminant
 
   // Roots of the polynomial
-  std::complex<double> y_plus = (-b + sqrt(xr * d + ieps)) / (2. * a);
-  std::complex<double> y_minus = (-b - sqrt(xr * d + ieps)) / (2. * a);
+  std::complex<double> y_plus = (-b + sqrt(xr * d)) / (2. * a);
+  std::complex<double> y_minus = (-b - sqrt(xr * d)) / (2. * a);
 
   std::complex<double> result;
   result = log(y_plus + x - xr) - log(y_minus + x - xr);
   result -= log(y_plus) - log(y_minus);
-  result /= sqrt(xr * d + ieps);
+  result /= sqrt(xr * d);
 
   return result;
 };
@@ -84,7 +84,7 @@ std::complex<double> scalar_triangle::eval_dispersive(double s)
   // this is alwys the case for decays, but to keep the code general I consider the other case
   if (p_thresh < s_thresh)
   {
-    return s_dispersion_inf(s, s_thresh);
+    return s_dispersion_inf(s, s_thresh + EPS);
   }
   else
   {
@@ -117,8 +117,8 @@ std::complex<double> scalar_triangle::s_dispersion(double s, double low, double 
   }
 
   std::complex<double> log_term;
-  log_term = log(high - s - ieps) - log(high);
-  log_term -= log(low - s - ieps) - log(low);
+  log_term = log(high - s * xr) - log(high);
+  log_term -= log(low - s * xr) - log(low);
   log_term *= sub_point / s;
 
   return (sum + log_term) / M_PI;
@@ -145,7 +145,7 @@ std::complex<double> scalar_triangle::s_dispersion_inf(double s, double low)
   }
 
   std::complex<double> log_term = - sub_point / s;
-  log_term *= log(low - s - ieps) - log(low);
+  log_term *= log(low - s * xr) - log(low);
 
   return (sum + log_term) / M_PI;
 };
@@ -181,8 +181,8 @@ std::complex<double> scalar_triangle::Kacser(double s)
 {
   std::complex<double> result;
 
-  result = sqrt(r_thresh - s - ieps);
-  result *= sqrt(p_thresh - s + ieps);
+  result = sqrt(pow(sqrt(s) - p2, 2.) - p1*p1 - ieps);
+  result *= sqrt(pow(sqrt(s) + p2, 2.) - p1*p1 - ieps);
   result *= sqrt(Kallen(s, m1*m1, m2*m2));
   result /= s;
 
@@ -193,12 +193,12 @@ std::complex<double> scalar_triangle::Kacser(double s)
 // complex Bounds of integration
 std::complex<double> scalar_triangle::t_minus(double s)
 {
-  return p2*p2 + m1*m1 - (s + p2*p2 - p1*p1) * (s + m1*m1 - m2*m2) / (2. * s) - Kacser(s) / 2.;
+  return p1*p1 + ieps + m1*m1 - (s - p2*p2 + p1*p1 + ieps) * (s + m1*m1 - m2*m2) / (2. * s) - Kacser(s) / 2.;
 };
 
 std::complex<double> scalar_triangle::t_plus(double s)
 {
-  return p2*p2 + m1*m1 - (s + p2*p2 - p1*p1) * (s + m1*m1 - m2*m2) / (2. * s) + Kacser(s) / 2.;
+  return p1*p1 + ieps + m1*m1 - (s - p2*p2 + p1*p1 + ieps) * (s + m1*m1 - m2*m2) / (2. * s) + Kacser(s) / 2.;
 };
 
 // ---------------------------------------------------------------------------
@@ -206,8 +206,8 @@ std::complex<double> scalar_triangle::t_plus(double s)
 std::complex<double> scalar_triangle::projection(double s, double tp)
 {
   std::complex<double> result;
-  result = log((tp - ieps) - t_minus(s));
-  result -= log((tp - ieps) - t_plus(s));
+  result = log(tp - t_minus(s));
+  result -= log(tp - t_plus(s));
   result /= Kacser(s);
 
   return result;

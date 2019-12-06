@@ -109,7 +109,7 @@ private:
   std::complex<double> t_plus(double s);
 
   // Calculation of dispersion integrals
-  double exc = 0.005; // small interval around pseudo-threshold to exclude
+  double exc = EPS; // small interval around pseudo-threshold to exclude
   std::complex<double> s_dispersion(double s, double low, double high);
   std::complex<double> s_dispersion_inf(double s, double low);
 
