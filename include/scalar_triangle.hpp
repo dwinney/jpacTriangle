@@ -81,7 +81,7 @@ private:
   };
 
   // Integration quantities
-  int xN = 800;
+  int xN = 200;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();

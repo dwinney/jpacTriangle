@@ -50,7 +50,7 @@ std::complex<double> scalar_triangle::triangle_kernel(double s, double t)
     sum += weights[i] * kernel_integrand(s, t, x_i);
   }
 
-  return sum;
+  return sum / M_PI;
 };
 
 // Logarithm from integrating over y and z

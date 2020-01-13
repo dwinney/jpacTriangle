@@ -56,13 +56,11 @@ int main()
 
   clock_t begin = clock();
 
-  std::complex<double> fxf_0 = tri.eval_feynman(low);   // Normalization
-
   for (int i = 0; i < Np; i++)
   {
     double si = low + double(i) * (high - low) / double(Np);
 
-    std::complex<double> fx_f = tri.eval_feynman(si) / fxf_0;
+    std::complex<double> fx_f = tri.eval_feynman(si);
 
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);
@@ -88,14 +86,13 @@ int main()
   begin = clock();
 
   std::vector<std::complex<double>> disp;
-  std::complex<double> fxd_0 = tri.eval_dispersive(low);
 
   s.clear();
   for (int i = 0; i < Np; i++)
   {
     double si = low + double(i) * (high - low) / double(Np);
 
-    std::complex<double> fx_d = tri.eval_dispersive(si) / fxd_0;
+    std::complex<double> fx_d = tri.eval_dispersive(si);
 
     s.push_back(sqrt(si) / mPi);
     disp.push_back(fx_d);
