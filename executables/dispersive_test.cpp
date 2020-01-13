@@ -14,13 +14,6 @@
 
 int main(int argc, char** argv)
 {
-
-  int jp = 0;
-  if (argc == 2)
-  {
-    jp = std::stoi(argv[1]);
-  }
-
   // Start a breit_wigner object for rho exchange.
   // This will serve as our LHC being convoluted in the triangle diagram
   breit_wigner left_hand_cut(.770, .145);
@@ -59,13 +52,11 @@ int main(int argc, char** argv)
 
   clock_t begin = clock();
 
-  std::complex<double> fxd_0 = tri.eval(jp, low);   // Normalization
-
   for (int i = 0; i < Np; i++)
   {
     double si = low + double(i) * (high - low) / double(Np);
 
-    std::complex<double> fx_d = tri.eval(jp, si) / fxd_0;
+    std::complex<double> fx_d = tri.eval(si);
 
     s.push_back(sqrt(si) / mPi);
     disp.push_back(fx_d);

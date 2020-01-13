@@ -28,7 +28,7 @@ public:
   {};
 
   // Evalate the diagram
-  std::complex<double> eval(int jp, double s);
+  std::complex<double> eval(double s);
 
   // ---------------------------------------------------------------------------
   // Utilities
@@ -67,7 +67,7 @@ private:
   void update_thresholds()
   {
     // s & t final-state thresholds
-    s_thresh =  (m1 + m2) * (m1 + m2);
+    s_thresh = (m1 + m2) * (m1 + m2);
     t_thresh = (p2 + m1) * (p2 + m1);
 
     // regular and psueodo threshold
@@ -94,12 +94,12 @@ private:
   std::complex<double> t_plus(double s);
 
   // Calculation of dispersion integrals
-  double exc = 0.005; // small interval around pseudo-threshold to exclude
-  std::complex<double> s_dispersion(int jp, double s, double low, double high);
-  std::complex<double> s_dispersion_inf(int jp, double s, double low);
+  double exc = EPS; // small interval around pseudo-threshold to exclude
+  std::complex<double> s_dispersion(double s, double low, double high);
+  std::complex<double> s_dispersion_inf(double s, double low);
 
   // Dispersion over t
-  std::complex<double> t_dispersion(int jp, double s);
+  std::complex<double> t_dispersion(   double s);
 
   // Dispersion kernel functions
   std::complex<double> projection(int jp, double s, double tp);
