@@ -15,6 +15,7 @@
 //-----------------------------------------------------------------------------
 const double conv = (M_PI / 180.);
 const double EPS = 1.e-6;
+const double M_EULER = 0.577215;
 
 //Masses
 const double mPi = 0.13957061;
