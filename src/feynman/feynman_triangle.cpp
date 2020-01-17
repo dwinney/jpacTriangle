@@ -18,7 +18,7 @@ std::complex<double> feynman_triangle::eval(double s)
     std::complex<double> sum = 0.;
     for (int i = 0; i < xN; i++)
     {
-      double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
+      double tp = t_thresh + tan(M_PI * abscissas[i] / 2.);
 
       std::complex<double> temp;
       temp = lhc_func->disc(tp) * kernel(s, tp);
@@ -54,21 +54,21 @@ std::complex<double> feynman_triangle::kernel_integrand(double s, double t, doub
 {
   std::complex<double> a, b, c, d;
 
-  a = p2 * p2;
-  b = m1*m1 + (x - 1.) * p2*p2 + x * p1*p1 - x * s - t;
-  c = (1. - x) * (t - ieps) + x * m1*m1 + x*(x-1.)* p1*p1;
+  a = p2sq;
+  b = m1sq + (x - 1.) * p2sq + x * (p1sq + ieps) - x * s - t;
+  c = (1. - x) * t + x * m1sq + x*(x-1.)* (p1sq + ieps);
   d = b * b - 4. * a * c; // discriminant
 
   // Roots of the polynomial
-  std::complex<double> y_plus = (-b + sqrt(xr * d + ieps)) / (2. * a);
-  std::complex<double> y_minus = (-b - sqrt(xr * d + ieps)) / (2. * a);
+  std::complex<double> y_plus = (-b + sqrt(xr * d)) / (2. * a);
+  std::complex<double> y_minus = (-b - sqrt(xr * d)) / (2. * a);
 
   std::complex<double> result;
   result = log(y_plus + x - xr) - log(y_minus + x - xr);
   result -= log(y_plus) - log(y_minus);
-  result /= sqrt(xr * d + ieps);
+  result /= sqrt(xr * d);
 
-  return result;
+  return result / M_PI;
 };
 
 // ---------------------------------------------------------------------------

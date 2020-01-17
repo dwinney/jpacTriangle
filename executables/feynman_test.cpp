@@ -55,13 +55,11 @@ int main()
 
   clock_t begin = clock();
 
-  std::complex<double> fxf_0 = tri.eval(low);   // Normalization
-
   for (int i = 0; i < Np; i++)
   {
     double si = low + double(i) * (high - low) / double(Np);
 
-    std::complex<double> fx_f = tri.eval(si) / fxf_0;
+    std::complex<double> fx_f = tri.eval(si);
 
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);

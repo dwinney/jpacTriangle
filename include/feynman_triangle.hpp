@@ -81,6 +81,9 @@ private:
   std::vector<double> weights, abscissas;
   void check_weights();
 
+  // Two-point functions
+  std::complex<double> two_point_0(double s);
+
   // Feynman triangle kernel
   // function of energies s and one feynman parameter x
   std::complex<double> kernel_integrand(double s, double t, double x);
