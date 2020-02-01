@@ -94,7 +94,7 @@ std::complex<double> dispersive_triangle::b(double s)
   std::complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
   {
-    double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
+    double tp = (r_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
     temp = lhc_func->disc(tp) / tp;
@@ -116,8 +116,8 @@ std::complex<double> dispersive_triangle::Kacser(double s)
 {
   std::complex<double> result;
 
-  result = sqrt(pow(sqrt(s) + p2, 2.) - p1sq - ieps);
-  result *= sqrt(pow(sqrt(s) - p2, 2.) - p1sq - ieps);
+  result = sqrt(pow(sqrt(s) + mPi, 2.) - mDec2 - ieps);
+  result *= sqrt(pow(sqrt(s) - mPi, 2.) - mDec2 - ieps);
   result *= rho(s);
 
   return result;
@@ -125,19 +125,19 @@ std::complex<double> dispersive_triangle::Kacser(double s)
 
 std::complex<double> dispersive_triangle::rho(double s)
 {
-  return sqrt(Kallen(s, m1sq, m2sq)) / s;
+  return sqrt(Kallen(s, mPi2, mPi2)) / s;
 };
 
 // ---------------------------------------------------------------------------
 // complex Bounds of integration
 std::complex<double> dispersive_triangle::t_minus(double s)
 {
-  return (p1sq + ieps) + m1sq - (s + p1sq + ieps - p2sq) * (s + m1sq - m2sq) / (2. * s) - Kacser(s) / 2.;
+  return (mDec2 + ieps) + mPi2 - (s + mDec2 + ieps - mPi2) / 2. - Kacser(s) / 2.;
 };
 
 std::complex<double> dispersive_triangle::t_plus(double s)
 {
-return (p1sq + ieps) + m1sq - (s + p1sq + ieps - p2sq) * (s + m1sq - m2sq) / (2. * s) + Kacser(s) / 2.;
+  return (mDec2 + ieps) + mPi2 - (s + mDec2 + ieps - mPi2) / 2. + Kacser(s) / 2.;
 };
 
 // ---------------------------------------------------------------------------

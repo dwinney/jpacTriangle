@@ -21,12 +21,8 @@ int main(int argc, char** argv)
   // Initialize a triangle object passing the above propogator
   dispersive_triangle tri(&left_hand_cut);
 
-  // Set the two external particles: omega and pion
-  // here argument 1 >= argument 2
-  tri.set_externalMasses(0.780, mPi);
-
-  // Set the two other intermediate particles, in this case both pions
-  tri.set_internalMasses(mPi, mPi);
+  // Set the decaying particle
+  tri.set_decayMass(0.780);
 
   // Choose the name for the output files to have (sans and extentions)
   std::string filename = "omega";
@@ -35,7 +31,7 @@ int main(int argc, char** argv)
   double low = 1.e-3;
   double high = 81. * mPi * mPi;
 
-  int Np = 200; // Number of points to plot
+  int Np = 100; // Number of points to plot
 
 // ---------------------------------------------------------------------------
 // You shouldnt need to change anything below this line
