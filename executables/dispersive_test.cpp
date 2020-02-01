@@ -35,7 +35,7 @@ int main(int argc, char** argv)
   double low = 1.e-3;
   double high = 81. * mPi * mPi;
 
-  int Np = 100; // Number of points to plot
+  int Np = 200; // Number of points to plot
 
 // ---------------------------------------------------------------------------
 // You shouldnt need to change anything below this line

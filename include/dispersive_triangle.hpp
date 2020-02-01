@@ -68,7 +68,7 @@ private:
   {
     // s & t final-state thresholds
     s_thresh = (m1 + m2) * (m1 + m2);
-    t_thresh = (p2 + m1) * (p2 + m1);
+    t_thresh = (p1 + m1) * (p1 + m1);
 
     // regular and psueodo threshold
     p_thresh = (p1 - p2) * (p1 - p2);
@@ -76,7 +76,7 @@ private:
   };
 
   // Integration quantities
-  int xN = 200;
+  int xN = 600;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();
@@ -87,7 +87,9 @@ private:
   {
     return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
   };
-  std::complex<double> phase_space(double s);
+
+  // Two-body phase space
+  std::complex<double> rho(double s);
 
   // Complex bounds of integtion
   std::complex<double> t_minus(double s);
@@ -98,10 +100,10 @@ private:
   std::complex<double> s_dispersion(double s, double low, double high);
   std::complex<double> s_dispersion_inf(double s, double low);
 
-  // Dispersion over t
-  std::complex<double> t_dispersion(   double s);
+  // Cross-channel projected amplitude, b(s).
+  std::complex<double> b(double s);
 
-  // Dispersion kernel functions
+  // Angular kernel functions
   std::complex<double> projection(int jp, double s, double tp);
   std::complex<double> Q_0(double s, double tp);
   std::complex<double> Q_1(double s, double tp);

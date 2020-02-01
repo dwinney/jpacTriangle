@@ -25,8 +25,8 @@ std::complex<double> dispersive_triangle::projection(int jp, double s, double tp
 std::complex<double> dispersive_triangle::Q_0(double s, double tp)
 {
   std::complex<double> result;
-  result = log(tp - t_minus(s));
-  result -= log(tp - t_plus(s));
+  result = log(tp + ieps - t_minus(s));
+  result -= log(tp + ieps - t_plus(s));
 
   result /= Kacser(s);
 

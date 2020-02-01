@@ -16,12 +16,12 @@ std::complex<double> dispersive_triangle::eval(double s)
   // this is alwys the case for decays, but to keep the code general I consider the other case
   if (p_thresh < s_thresh)
   {
-    return s_dispersion_inf(s, s_thresh);
+    return 1. + s_dispersion_inf(s, s_thresh);
   }
   else
   {
     std::complex<double> temp;
-    temp = s_dispersion(s, s_thresh + EPS, p_thresh - exc);
+    temp = 1. + s_dispersion(s, s_thresh + EPS, p_thresh - exc);
     temp += s_dispersion_inf(s, p_thresh + exc);
 
     return temp;
@@ -35,9 +35,6 @@ std::complex<double> dispersive_triangle::s_dispersion(double s, double low, dou
   double w[xN + 1], x[xN + 1];
   gauleg(low, high, x, w, xN);
 
-  // Subtract off the pole at s = sp
-  std::complex<double> sub_point = phase_space(s) * t_dispersion(s);
-
   // Integrate
   std::complex<double> sum = 0.;
   for (int i = 1; i <= xN; i++)
@@ -45,7 +42,7 @@ std::complex<double> dispersive_triangle::s_dispersion(double s, double low, dou
     double sp = x[i];
     std::complex<double> temp;
 
-    temp = phase_space(sp) * t_dispersion(sp) - sub_point;
+    temp = rho(sp) * b(sp) - rho(s) * b(s);
     temp *= s / sp;
     temp /= (sp - s - ieps);
 
@@ -56,7 +53,7 @@ std::complex<double> dispersive_triangle::s_dispersion(double s, double low, dou
   std::complex<double> log_term;
   log_term = log(high - s * xr) - log(high);
   log_term -= log(low - s * xr) - log(low);
-  log_term *= sub_point;
+  log_term *= rho(s) * b(s);
 
   return (sum + log_term) / M_PI;
 };
@@ -66,8 +63,6 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
 {
   check_weights();
 
-  std::complex<double> sub_point = phase_space(s) * t_dispersion(s);
-
   // Integrate
   std::complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
@@ -75,7 +70,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
     double sp = low + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = phase_space(sp) * t_dispersion(sp) - sub_point;
+    temp = rho(sp) * b(sp) - rho(s) * b(s);
     temp *= s / sp;
     temp /= (sp - s - ieps);
     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
@@ -84,7 +79,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
   }
 
   // subtracted point
-  std::complex<double> log_term = - sub_point;
+  std::complex<double> log_term = - rho(s) * b(s);
   log_term *= log(low - s * xr) - log(low);
 
   return (sum + log_term) / M_PI;
@@ -92,7 +87,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion intgral over t
-std::complex<double> dispersive_triangle::t_dispersion(double s)
+std::complex<double> dispersive_triangle::b(double s)
 {
   check_weights();
 
@@ -102,10 +97,9 @@ std::complex<double> dispersive_triangle::t_dispersion(double s)
     double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = lhc_func->disc(tp) * Q_1(s, tp);
-    temp /= tp;
-    temp *= (M_PI / 2.);
-    temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
+    temp = lhc_func->disc(tp) / tp;
+    temp *= Q_1(s, tp);
+    temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.);
 
     sum += weights[i] * temp;
   }
@@ -124,13 +118,12 @@ std::complex<double> dispersive_triangle::Kacser(double s)
 
   result = sqrt(pow(sqrt(s) + p2, 2.) - p1sq - ieps);
   result *= sqrt(pow(sqrt(s) - p2, 2.) - p1sq - ieps);
-  result *= sqrt(Kallen(s, m1sq, m2sq));
-  result /= s;
+  result *= rho(s);
 
   return result;
 };
 
-std::complex<double> dispersive_triangle::phase_space(double s)
+std::complex<double> dispersive_triangle::rho(double s)
 {
   return sqrt(Kallen(s, m1sq, m2sq)) / s;
 };
@@ -151,7 +144,7 @@ return (p1sq + ieps) + m1sq - (s + p1sq + ieps - p2sq) * (s + m1sq - m2sq) / (2.
 // UTILITY FUNCTIONS
 
 // -----------------------------------------------------------------------------
-// Check whether or not the integration weights are already saved.
+// Check whether or not the integration weights are already generated
 void dispersive_triangle::check_weights()
 {
   if (WG_GENERATED == false)
