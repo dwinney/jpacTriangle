@@ -23,8 +23,8 @@
 class feynman_triangle
 {
 public:
-  feynman_triangle(lefthand_cut * b_x)
-  : lhc_func(b_x)
+  feynman_triangle(lefthand_cut * a_x)
+  : lhc_func(a_x)
   {};
 
   // Evalate the diagram
@@ -38,18 +38,10 @@ public:
     WG_GENERATED = false;
   }
 
-  void set_externalMasses(double m1, double m2)
+  void set_decayMass(double m)
   {
-    p1 = m1; p2 = m2;
-    p1sq = m1 * m1; p2sq = m2*m2;
-
-    update_thresholds();
-  };
-
-  void set_internalMasses(double q1, double q2)
-  {
-    m1 = q1; m2 = q2;
-    m1sq = q1 * q1; m2sq = q2*q2;
+    mDec = m;
+    mDec2 = m * m;
     update_thresholds();
   };
 
@@ -57,34 +49,36 @@ public:
 private:
   lefthand_cut * lhc_func;
 
-  double p1 = 0., p2 = 0.; // external masses
-  double m1 = 0., m2 = 0.; // internal loop mass
-
-  double p1sq, p2sq, m1sq, m2sq; // masses squared
+  // Masses
+  double mDec, mDec2;
+  double mPi2 = mPi * mPi;
 
   // Physical thresholds
-  double s_thresh, t_thresh, p_thresh, r_thresh;
+  double s_thresh, p_thresh, r_thresh;
   void update_thresholds()
   {
-    // s & t final-state thresholds
-    s_thresh = (m1 + m2) * (m1 + m2);
-    t_thresh = (p2 + m1) * (p2 + m1);
-
+    // s final-state thresholds
+    s_thresh = 4. * mPi2;
     // regular and psueodo threshold
-    p_thresh = (p1 - p2) * (p1 - p2);
-    r_thresh = (p1 + p2) * (p1 + p2);
+    p_thresh = (mDec - mPi) * (mDec - mPi);
+    r_thresh = (mDec + mPi) * (mDec + mPi);
   };
 
+
   // Integration quantities
-  int xN = 200;
+  int xN = 300;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();
 
-  // Two-point functions
-  std::complex<double> two_point_0(double s);
+  // Two-point functions, from polynomial contribution
+  std::complex<double> mP1(double s);
 
-  // Feynman triangle kernel
+  // Feynman triangle kernels
+  std::complex<double> mT1(double s, double t);
+  std::complex<double> mT1_yintegral1(double s, double t, double x, double y);
+  std::complex<double> mT1_yintegral2(double s, double t, double x, double y);
+
   // function of energies s and one feynman parameter x
   std::complex<double> kernel_integrand(double s, double t, double x);
   std::complex<double> kernel(double s, double t);

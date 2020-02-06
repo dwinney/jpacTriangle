@@ -9,7 +9,8 @@
 
 #include "feynman_triangle.hpp"
 
-std::complex<double> feynman_triangle::two_point_0(double s)
+// Once subtracted polynomial contribution (P^0(s))
+std::complex<double> feynman_triangle::mP1(double s)
 {
   check_weights();
 
@@ -17,13 +18,11 @@ std::complex<double> feynman_triangle::two_point_0(double s)
   for (int i = 0; i < xN; i++)
   {
     double x_i = abscissas[i];
-
-    std::complex<double> temp = x_i * (1. - x_i) * (s + ieps) - m1sq;
-    sum += weights[i] * log(4. * M_PI / temp);
+    std::complex<double> temp = x_i * (1. - x_i) * (s + ieps) - mPi2;
+    sum += weights[i] * log(4.* M_PI / temp);
   }
 
-  result = M_EULER - sum;
-  result /= 16. * M_PI * M_PI;
+  result = sum / 16. * M_PI * M_PI;
 
   return result;
 };

@@ -26,10 +26,7 @@ int main()
 
   // Set the two external particles: omega and pion
   // here argument 1 >= argument 2
-  tri.set_externalMasses(0.780, mPi);
-
-  // Set the two other intermediate particles, in this case both pions
-  tri.set_internalMasses(mPi, mPi);
+  tri.set_decayMass(0.780);
 
   // Choose the name for the output files to have (sans and extentions)
   std::string filename = "omega";

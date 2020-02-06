@@ -18,10 +18,11 @@ std::complex<double> feynman_triangle::eval(double s)
     std::complex<double> sum = 0.;
     for (int i = 0; i < xN; i++)
     {
-      double tp = t_thresh + tan(M_PI * abscissas[i] / 2.);
+      double tp = r_thresh + tan(M_PI * abscissas[i] / 2.);
 
       std::complex<double> temp;
-      temp = lhc_func->disc(tp) * kernel(s, tp);
+      temp = lhc_func->disc(tp) / tp;
+      temp *= mT1(s, tp) - mT1(0., tp);
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -30,7 +31,8 @@ std::complex<double> feynman_triangle::eval(double s)
 
     sum /= M_PI;
 
-    return sum;
+    std::complex<double> result = (mP1(s) - mP1(0.)) + sum;
+    return 1. + 0.5 * result;
 };
 
 // Triangle function from the perturbation theory result
@@ -54,9 +56,9 @@ std::complex<double> feynman_triangle::kernel_integrand(double s, double t, doub
 {
   std::complex<double> a, b, c, d;
 
-  a = p2sq;
-  b = m1sq + (x - 1.) * p2sq + x * (p1sq + ieps) - x * s - t;
-  c = (1. - x) * t + x * m1sq + x*(x-1.)* (p1sq + ieps);
+  a = mPi2;
+  b = mPi2 + (x - 1.) * mPi2 + x * (mDec2 + ieps) - x * s - t;
+  c = (1. - x) * t + x * mPi2 + x*(x-1.)* (mDec2 + ieps);
   d = b * b - 4. * a * c; // discriminant
 
   // Roots of the polynomial
