@@ -22,7 +22,7 @@ std::complex<double> feynman_triangle::eval(double s)
 
       std::complex<double> temp;
       temp = lhc_func->disc(tp) / tp;
-      temp *= mT1(s, tp) - mT1(0., tp);
+      temp *= mT1(s, tp);
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -31,8 +31,7 @@ std::complex<double> feynman_triangle::eval(double s)
 
     sum /= M_PI;
 
-    std::complex<double> result = (mP1(s) - mP1(0.)) + sum;
-    return 1. + 0.5 * result;
+    return 1. + mP1(s) + sum;
 };
 
 // Triangle function from the perturbation theory result

@@ -25,14 +25,14 @@ std::complex<double> feynman_triangle::mT1(double s, double t)
 
     // the integrand is the analytic form of the y_integral evaluated at:
     // y = 1 - x and y = 0
-    sum1 += weights[i] * (mT1_yintegral1(s,t,x_i,1.-x_i));
-    sum2 += weights[i] * (mT1_yintegral2(s,t,x_i,1.-x_i));
+    sum1 += weights[i] * (mT1_yintegral1(s,t,x_i,1.-x_i) - mT1_yintegral1(0.,t,x_i,1.-x_i));
+    sum2 += weights[i] * (mT1_yintegral2(s,t,x_i,1.-x_i) - mT1_yintegral2(0.,t,x_i,1.-x_i));
   }
 
   std::complex<double> result;
   result = sum1 + sum2 / (4. * M_PI);
 
-  return result / (8. * M_PI);
+  return result / (16. * M_PI);
 };
 
 // ---------------------------------------------------------------------------

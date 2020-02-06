@@ -19,10 +19,11 @@ std::complex<double> feynman_triangle::mP1(double s)
   {
     double x_i = abscissas[i];
     std::complex<double> temp = x_i * (1. - x_i) * (s + ieps) - mPi2;
-    sum += weights[i] * log(4.* M_PI / temp);
+
+    sum += weights[i] * log(- mPi2 / temp);
   }
 
-  result = sum / 16. * M_PI * M_PI;
+  result = sum / 32. * M_PI * M_PI;
 
   return result;
 };
