@@ -16,6 +16,7 @@
 #include <cmath>
 #include <iomanip>
 
+#include "rational_integrals.hpp"
 #include "constants.hpp"
 #include "utilities.hpp"
 #include "lefthand_cut.hpp"
@@ -76,8 +77,8 @@ private:
 
   // Feynman triangle kernels
   std::complex<double> mT1(double s, double t);
-  std::complex<double> mT1_yintegral1(double s, double t, double x, double y);
-  std::complex<double> mT1_yintegral2(double s, double t, double x, double y);
+  std::complex<double> mT1_yintegral1(double s, double t, double x);
+  std::complex<double> mT1_yintegral2(double s, double t, double x);
 
   // function of energies s and one feynman parameter x
   std::complex<double> kernel_integrand(double s, double t, double x);
