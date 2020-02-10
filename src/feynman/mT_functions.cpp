@@ -29,7 +29,7 @@ std::complex<double> feynman_triangle::mT1(double s, double t)
     sum2 += weights[i] * ( mT1_yintegral2(s, t, x_i) - mT1_yintegral2(0., t, x_i) );
   }
 
-  return sum2;
+  return sum1;
 };
 
 // ---------------------------------------------------------------------------
@@ -44,7 +44,7 @@ std::complex<double> feynman_triangle::mT1_yintegral1(double s, double t, double
   // coeffs of denominator polynomial
   a = mPi2;
   b = mPi2 + (x - 1.) * mPi2 + x * (mDec2 + ieps) - x * s - (t - xi*.15);
-  c = (1. - x) * t + x * mPi2 + x*(x-1.)* (mDec2 + ieps);
+  c = (1. - x) * (t - xi*.15) + x * mPi2 + x*(x-1.)* (mDec2 + ieps);
 
   // coeffs of numerator polynomial
   e = mPi2;

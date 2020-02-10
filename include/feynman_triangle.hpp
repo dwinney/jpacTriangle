@@ -67,7 +67,7 @@ private:
 
 
   // Integration quantities
-  int xN = 300;
+  int xN = 500;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();

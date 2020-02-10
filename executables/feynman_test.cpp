@@ -33,7 +33,7 @@ int main()
 
   // Plotting bounds
   double low = 1.e-3;
-  double high = 81 * mPi * mPi;
+  double high = 16 * mPi * mPi;
 
   int Np = 100; // Number of points to plot
 

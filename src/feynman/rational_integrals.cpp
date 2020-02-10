@@ -47,7 +47,7 @@ std::complex<double> ri_poly2(double y,
   term1 /= a*a * sqrt(-d);
 
   std::complex<double> term2;
-  term2 = log(a*y*y + b*y + c);
+  term2 = log(a*y*y + b*y + c + ieps);
   term2 *= a*f - b*e;
   term2 /= 2.*a*a;
 
