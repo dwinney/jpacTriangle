@@ -56,12 +56,13 @@ int main()
   {
     double si = low + double(i) * (high - low) / double(Np);
 
+    // may have issue if too close to threshold so just add an offset
     if (abs(si - sthPi) < 0.001)
     {
       si += EPS;
     }
 
-    std::complex<double> fx_f = tri.eval(si);
+    std::complex<double> fx_f = tri.eval(0, si);
 
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);
