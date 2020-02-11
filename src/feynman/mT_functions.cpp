@@ -23,13 +23,15 @@ std::complex<double> feynman_triangle::mT1(double s, double t)
   {
     double x_i = abscissas[i];
 
-    // the integrand is the analytic form of the y_integral evaluated at:
-    // y = 1 - x and y = 0
+    // the integrand is the analytic form of the y_integral subtracted at:
+    // s = 0
     sum1 += weights[i] * ( mT1_yintegral1(s, t, x_i) - mT1_yintegral1(0., t, x_i) );
     sum2 += weights[i] * ( mT1_yintegral2(s, t, x_i) - mT1_yintegral2(0., t, x_i) );
   }
 
-  return sum1;
+  std::complex<double> result = sum1 - sum2 * 2.;
+
+  return result / M_PI;
 };
 
 // ---------------------------------------------------------------------------
@@ -43,13 +45,13 @@ std::complex<double> feynman_triangle::mT1_yintegral1(double s, double t, double
 
   // coeffs of denominator polynomial
   a = mPi2;
-  b = mPi2 + (x - 1.) * mPi2 + x * (mDec2 + ieps) - x * s - (t - xi*.15);
-  c = (1. - x) * (t - xi*.15) + x * mPi2 + x*(x-1.)* (mDec2 + ieps);
+  b = mPi2 + (x - 1.) * mPi2 + x * mDec2 - x * s - t;
+  c = (1. - x) * t + x * mPi2 + x*(x-1.)* mDec2 - ieps;
 
   // coeffs of numerator polynomial
   e = mPi2;
-  f = x * (mDec2 + ieps + mPi2 - s);
-  g = x*x * (mDec2 + ieps);
+  f = x * (mDec2 + mPi2 - s);
+  g = x*x * mDec2;
 
   // Evaluate definite integral with bounds y = [0, 1-x]
   return ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g);
@@ -62,8 +64,8 @@ std::complex<double> feynman_triangle::mT1_yintegral2(double s, double t, double
 
   // coeffs of denominator polynomial
   a = mPi2;
-  b = mPi2 + (x - 1.) * mPi2 + x * (mDec2 + ieps) - x * s - (t - xi*.15);
-  c = (1. - x) * (t - xi*.15) + x * mPi2 + x * (x-1.) * (mDec2 + ieps);
+  b = mPi2 + (x - 1.) * mPi2 + x * mDec2 - x * s - t;
+  c = (1. - x) * t + x * mPi2 + x * (x-1.) * mDec2 - ieps;
 
   // Evaluate definite integral with bounds y = [0, 1-x]
   return ri_log1(1. - x, a, b, c) - ri_log1(0., a, b, c);

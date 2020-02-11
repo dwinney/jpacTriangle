@@ -47,7 +47,7 @@ std::complex<double> ri_poly2(double y,
   term1 /= a*a * sqrt(-d);
 
   std::complex<double> term2;
-  term2 = log(a*y*y + b*y + c + ieps);
+  term2 = log(a*y*y + b*y + c * xr);
   term2 *= a*f - b*e;
   term2 /= 2.*a*a;
 
@@ -71,13 +71,32 @@ std::complex<double> ri_log1(double y,
   term1 *= sqrt(-d * xr) / a;
 
   std::complex<double> term2;
-  term2 = y * log(xr / (a*y*y + b*y + c - ieps));
+  term2 = y * log(xr / (a*y*y + b*y + c * xr));
 
   std::complex<double> term3;
-  term3 = log(a*y*y + b*y + c + ieps);
+  term3 = log(a*y*y + b*y + c);
   term3 *= -b / (2. * a);
 
   std::complex<double> term4 = 2.*y;
 
   return term1 + term2 + term3 + term4;
 };
+// std::complex<double> ri_log1(double y,
+//     std::complex<double> a,
+//     std::complex<double> b,
+//     std::complex<double> c)
+// {
+//   std::complex<double> sqrtd = sqrt(xr *4.*a*c - b*b); // discriminant
+//
+//   std::complex<double> term1;
+//   term1 = atan((2.*a*y + b) / sqrtd);
+//   term1 *= sqrtd / a;
+//
+//   std::complex<double> term2;
+//   term2 = log(a*y*y + b*y + c);
+//   term2 *= (2.*a*y + b) / (2.*a);
+//
+//   std::complex<double> term3 = - 2.*y;
+//
+//   return term1 + term2 + term3;
+// };

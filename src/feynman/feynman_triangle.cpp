@@ -15,25 +15,23 @@ std::complex<double> feynman_triangle::eval(double s)
 {
     check_weights();
 
-    return mT1(s, .770);
+    std::complex<double> sum = 0.;
+    for (int i = 0; i < xN; i++)
+    {
+      double tp = r_thresh + tan(M_PI * abscissas[i] / 2.);
 
-    // std::complex<double> sum = 0.;
-    // for (int i = 0; i < xN; i++)
-    // {
-    //   double tp = r_thresh + tan(M_PI * abscissas[i] / 2.);
-    //
-    //   std::complex<double> temp;
-    //   temp = lhc_func->disc(tp) / tp;
-    //   temp *= mT1(s, tp);
-    //   temp *= (M_PI / 2.);
-    //   temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
-    //
-    //   sum += weights[i] * temp;
-    // }
-    //
-    // sum /= M_PI;
-    //
-    // return sum;
+      std::complex<double> temp;
+      temp = lhc_func->disc(tp) / tp;
+      temp *= mT1(s, tp);
+      temp *= (M_PI / 2.);
+      temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
+
+      sum += weights[i] * temp;
+    }
+
+    sum /= M_PI;
+
+    return 1. + mP1(s) + sum;
 };
 
 // Triangle function from the perturbation theory result

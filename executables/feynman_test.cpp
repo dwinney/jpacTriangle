@@ -33,7 +33,7 @@ int main()
 
   // Plotting bounds
   double low = 1.e-3;
-  double high = 16 * mPi * mPi;
+  double high = 81 * mPi * mPi;
 
   int Np = 100; // Number of points to plot
 
@@ -55,6 +55,11 @@ int main()
   for (int i = 0; i < Np; i++)
   {
     double si = low + double(i) * (high - low) / double(Np);
+
+    if (abs(si - sthPi) < 0.001)
+    {
+      si += EPS;
+    }
 
     std::complex<double> fx_f = tri.eval(si);
 
