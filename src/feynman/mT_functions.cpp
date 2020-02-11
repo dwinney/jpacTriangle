@@ -9,6 +9,35 @@
 #include "feynman_triangle.hpp"
 
 // ---------------------------------------------------------------------------
+// Vanilla Triangle function
+// ---------------------------------------------------------------------------
+
+std::complex<double> feynman_triangle::mT0(double s, double t)
+{
+  check_weights();
+
+  //integrate over x
+  std::complex<double> sum = 0.;
+  for (int i = 0; i < xN; i++)
+  {
+    double x_i = abscissas[i];
+
+    // coeffs of denominator polynomial
+    std::complex<double> a, b, c;
+
+    a = mPi2;
+    b = mPi2 + (x_i - 1.) * mPi2 + x_i * mDec2 - x_i * s - t;
+    c = (1. - x_i) * t + x_i * mPi2 + x_i*(x_i-1.)* mDec2;
+
+    // the integrand is the analytic form of the y_integral subtracted at:
+    // s = 0
+    sum += weights[i] * (ri_poly1(1.-x_i,a,b,c) - ri_poly1(0.,a,b,c));
+  }
+
+  return sum / M_PI;
+};
+
+// ---------------------------------------------------------------------------
 // Once-subtracted
 // ---------------------------------------------------------------------------
 

@@ -7,26 +7,20 @@
 
 #include "rational_integrals.hpp"
 
-// // ---------------------------------------------------------------------------
-// // Integral over 1/(a y^2 + b y + c)
-// std::complex<double> ri_poly1(double y,
-//   std::complex<double> a,
-//   std::complex<double> b,
-//   std::complex<double> c)
-// {
-//   std::complex<double> d = b * b - 4. * a * c; // discriminant
-//
-//   // Roots of the polynomial
-//   std::complex<double> y_plus = (-b + sqrt(xr * d)) / (2. * a);
-//   std::complex<double> y_minus = (-b - sqrt(xr * d)) / (2. * a);
-//
-//   std::complex<double> result;
-//   result = log(y_plus + x - xr) - log(y_minus + x - xr);
-//   result -= log(y_plus) - log(y_minus);
-//   result /= sqrt(xr * d);
-//
-//   return result;
-// };
+// ---------------------------------------------------------------------------
+// Integral over 1/(a y^2 + b y + c)
+std::complex<double> ri_poly1(double y,
+  std::complex<double> a,
+  std::complex<double> b,
+  std::complex<double> c)
+{
+  std::complex<double> d = b * b - 4. * a * c; // discriminant
+
+  std::complex<double> result = atan((2.*a*y+b) / sqrt(-d*xr));
+  result *= 2. / sqrt(-d*xr);
+
+  return result;
+};
 
 // ---------------------------------------------------------------------------
 // Integral over (e y^2 + f y + g) / (a y ^2 + b y + c)
@@ -81,22 +75,3 @@ std::complex<double> ri_log1(double y,
 
   return term1 + term2 + term3 + term4;
 };
-// std::complex<double> ri_log1(double y,
-//     std::complex<double> a,
-//     std::complex<double> b,
-//     std::complex<double> c)
-// {
-//   std::complex<double> sqrtd = sqrt(xr *4.*a*c - b*b); // discriminant
-//
-//   std::complex<double> term1;
-//   term1 = atan((2.*a*y + b) / sqrtd);
-//   term1 *= sqrtd / a;
-//
-//   std::complex<double> term2;
-//   term2 = log(a*y*y + b*y + c);
-//   term2 *= (2.*a*y + b) / (2.*a);
-//
-//   std::complex<double> term3 = - 2.*y;
-//
-//   return term1 + term2 + term3;
-// };

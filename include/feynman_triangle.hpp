@@ -29,7 +29,7 @@ public:
   {};
 
   // Evalate the diagram
-  std::complex<double> eval(double s);
+  std::complex<double> eval(int n, double s);
 
   // ---------------------------------------------------------------------------
   // Utilities
@@ -76,13 +76,12 @@ private:
   std::complex<double> mP1(double s);
 
   // Feynman triangle kernels
+  std::complex<double> mT0(double s, double t);
+
   std::complex<double> mT1(double s, double t);
   std::complex<double> mT1_yintegral1(double s, double t, double x);
   std::complex<double> mT1_yintegral2(double s, double t, double x);
 
-  // function of energies s and one feynman parameter x
-  std::complex<double> kernel_integrand(double s, double t, double x);
-  std::complex<double> kernel(double s, double t);
 };
 
 

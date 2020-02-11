@@ -11,7 +11,7 @@
 #include "feynman_triangle.hpp"
 
 // Evaluate the convolution of the LHC function with triangle function
-std::complex<double> feynman_triangle::eval(double s)
+std::complex<double> feynman_triangle::eval(int n, double s)
 {
     check_weights();
 
@@ -21,8 +21,10 @@ std::complex<double> feynman_triangle::eval(double s)
       double tp = r_thresh + tan(M_PI * abscissas[i] / 2.);
 
       std::complex<double> temp;
-      temp = lhc_func->disc(tp) / tp;
+      temp = lhc_func->disc(tp);
+      temp /= tp;
       temp *= mT1(s, tp);
+      // temp *= mT0(s, tp);
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -32,44 +34,6 @@ std::complex<double> feynman_triangle::eval(double s)
     sum /= M_PI;
 
     return 1. + mP1(s) + sum;
-};
-
-// Triangle function from the perturbation theory result
-std::complex<double> feynman_triangle::kernel(double s, double t)
-{
-  check_weights();
-
-  // integrate over x
-  std::complex<double> sum = 0.;
-  for (int i = 0; i < xN; i++)
-  {
-    double x_i = abscissas[i];
-    sum += weights[i] * kernel_integrand(s, t, x_i);
-  }
-
-  return sum;
-};
-
-// Logarithm from integrating over y and z
-std::complex<double> feynman_triangle::kernel_integrand(double s, double t, double x)
-{
-  std::complex<double> a, b, c, d;
-
-  a = mPi2;
-  b = mPi2 + (x - 1.) * mPi2 + x * (mDec2 + ieps) - x * s - t;
-  c = (1. - x) * t + x * mPi2 + x*(x-1.)* (mDec2 + ieps);
-  d = b * b - 4. * a * c; // discriminant
-
-  // Roots of the polynomial
-  std::complex<double> y_plus = (-b + sqrt(xr * d)) / (2. * a);
-  std::complex<double> y_minus = (-b - sqrt(xr * d)) / (2. * a);
-
-  std::complex<double> result;
-  result = log(y_plus + x - xr) - log(y_minus + x - xr);
-  result -= log(y_plus) - log(y_minus);
-  result /= sqrt(xr * d);
-
-  return result / M_PI;
 };
 
 // ---------------------------------------------------------------------------
