@@ -92,9 +92,11 @@ private:
   std::complex<double> b(double s);
 
   // Angular kernel functions
-  std::complex<double> projection(int jp, double s, double tp);
   std::complex<double> Q_0(double s, double tp);
-  std::complex<double> Q_1(double s, double tp);
+  std::complex<double> Q(int n, double s, double tp);
+
+  std::complex<double> P_0(int n, double s, double tp);
+  std::complex<double> P_1(int n, double s, double tp);
 
 
 };

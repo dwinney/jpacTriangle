@@ -97,8 +97,8 @@ std::complex<double> dispersive_triangle::b(double s)
     double tp = (r_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = lhc_func->disc(tp) / tp;
-    temp *= Q_1(s, tp);
+    temp = lhc_func->disc(tp);
+    temp *= P_1(1, s, tp);
     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.);
 
     sum += weights[i] * temp;
@@ -106,7 +106,7 @@ std::complex<double> dispersive_triangle::b(double s)
 
   sum /= M_PI;
 
-  return (1. + sum);
+  return sum;
 };
 
 // ---------------------------------------------------------------------------
@@ -123,6 +123,7 @@ std::complex<double> dispersive_triangle::Kacser(double s)
   return result;
 };
 
+// Two particle phase-space function
 std::complex<double> dispersive_triangle::rho(double s)
 {
   return sqrt(Kallen(s, mPi2, mPi2)) / s;
