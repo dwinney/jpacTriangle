@@ -19,6 +19,7 @@
 #include "constants.hpp"
 #include "utilities.hpp"
 #include "lefthand_cut.hpp"
+#include "rational_integrals.hpp"
 
 class scalar_triangle
 {
@@ -72,7 +73,7 @@ private:
   void update_thresholds()
   {
     // s & t final-state thresholds
-    s_thresh =  (m1 + m2) * (m1 + m2);
+    s_thresh = (m1 + m2) * (m1 + m2);
     t_thresh = (p2 + m1) * (p2 + m1);
 
     // regular and psueodo threshold
@@ -81,7 +82,7 @@ private:
   };
 
   // Integration quantities
-  int xN = 200;
+  int xN = 300;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();
@@ -91,8 +92,9 @@ private:
 
   // Feynman triangle kernel
   // function of energies s and one feynman parameter x
-  std::complex<double> kernel_integrand(double s, double t, double x);
   std::complex<double> triangle_kernel(double s, double t);
+  std::complex<double> T0_integrand(double s, double t, double x);
+  std::complex<double> T1_integrand(double s, double t, double x);
 
   // ---------------------------------------------------------------------------
   // Dispersive FUNCTIONS
@@ -113,10 +115,13 @@ private:
   std::complex<double> s_dispersion(double s, double low, double high);
   std::complex<double> s_dispersion_inf(double s, double low);
 
+  std::complex<double> b(double s);
 
   // Dispersion kernel functions
-  std::complex<double> projection(double s, double tp);
-  std::complex<double> t_dispersion(double s);
+  std::complex<double> Q_0(double s, double tp);
+  std::complex<double> Q(int n, double s, double tp);
+  std::complex<double> P_1(double s, double tp);
+
 };
 
 #endif

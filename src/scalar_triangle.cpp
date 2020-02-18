@@ -22,7 +22,7 @@ std::complex<double> scalar_triangle::eval_feynman(double s)
     std::complex<double> sum = 0.;
     for (int i = 0; i < xN; i++)
     {
-      double tp = (t_thresh) + tan(M_PI * abscissas[i] / 2.);
+      double tp = r_thresh + tan(M_PI * abscissas[i] / 2.);
 
       std::complex<double> temp;
       temp = lhc_func->disc(tp) * triangle_kernel(s, tp);
@@ -47,14 +47,14 @@ std::complex<double> scalar_triangle::triangle_kernel(double s, double t)
   for (int i = 0; i < xN; i++)
   {
     double x_i = abscissas[i];
-    sum += weights[i] * kernel_integrand(s, t, x_i);
+    sum += weights[i] * T0_integrand(s, t, x_i);
   }
 
   return sum / M_PI;
 };
 
 // Logarithm from integrating over y and z
-std::complex<double> scalar_triangle::kernel_integrand(double s, double t, double x)
+std::complex<double> scalar_triangle::T0_integrand(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
 
@@ -74,6 +74,27 @@ std::complex<double> scalar_triangle::kernel_integrand(double s, double t, doubl
 
   return result;
 };
+
+std::complex<double> scalar_triangle::T1_integrand(double s, double t, double x)
+{
+  std::complex<double> a, b, c, d;
+  std::complex<double> e, f, g;
+
+  // coeffs of denominator polynomial [a y^2 + b y + c]
+  a = p2 * p2;
+  b = m1*m1 + (x - 1.) * p2*p2 + x * (p1*p1) - x * s - t;
+  c = (1. - x) * t + x * m1*m1 + x*(x-1.)* (p1*p1) - ieps;
+
+  // coeffs of numerator polynomial [ e y^2 + f y + g ]
+  e = 0.;
+  f = -1.;
+  g = 1. - x;
+
+  // Evaluate definite integral with bounds y = [0, 1-x]
+  return ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g);
+};
+
+
 
 // ---------------------------------------------------------------------------
 // EVALUTE THE TRIANGLE THE KT WAY
@@ -100,17 +121,17 @@ std::complex<double> scalar_triangle::eval_dispersive(double s)
 // calculate the dispersion integral over s with finite bounds of integration
 std::complex<double> scalar_triangle::s_dispersion(double s, double low, double high)
 {
-  double w[xN + 1 ], x[xN + 1];
+  double w[xN + 1], x[xN + 1];
   gauleg(low, high, x, w, xN);
 
   // Subtract off the pole at s = sp
-  std::complex<double> sub_point = t_dispersion(s);
+  std::complex<double> sub_point = b(s);
 
   std::complex<double> sum = 0.;
   for (int i = 1; i <= xN; i++)
   {
     std::complex<double> temp;
-    temp = t_dispersion(x[i]) - sub_point;
+    temp = b(x[i]) - sub_point;
     temp /= x[i] * (x[i] - s - ieps);
 
     sum += w[i] * temp;
@@ -129,7 +150,7 @@ std::complex<double> scalar_triangle::s_dispersion_inf(double s, double low)
 {
   check_weights();
 
-  std::complex<double> sub_point = t_dispersion(s);
+  std::complex<double> sub_point = b(s);
 
   std::complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
@@ -137,7 +158,7 @@ std::complex<double> scalar_triangle::s_dispersion_inf(double s, double low)
     double sp = low + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = t_dispersion(sp) - sub_point;
+    temp = b(sp) - sub_point;
     temp /= sp * (sp - s - ieps);
     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -152,17 +173,17 @@ std::complex<double> scalar_triangle::s_dispersion_inf(double s, double low)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion intgral over t
-std::complex<double> scalar_triangle::t_dispersion(double s)
+std::complex<double> scalar_triangle::b(double s)
 {
   check_weights();
 
   std::complex<double> sum = 0.;
   for (int i = 0; i < xN; i++)
   {
-    double tp = (t_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
+    double tp = (r_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = lhc_func->disc(tp) * projection(s, tp);
+    temp = lhc_func->disc(tp) * Q_0(s, tp);
     temp *= (M_PI / 2.);
     temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -203,16 +224,39 @@ std::complex<double> scalar_triangle::t_plus(double s)
 
 // ---------------------------------------------------------------------------
 // Angular projection kernel
-std::complex<double> scalar_triangle::projection(double s, double tp)
+std::complex<double> scalar_triangle::Q_0(double s, double tp)
 {
   std::complex<double> result;
-  result = log(tp - t_minus(s));
-  result -= log(tp - t_plus(s));
+  result = log(tp - ieps - t_minus(s));
+  result -= log(tp - ieps - t_plus(s));
+
   result /= Kacser(s);
 
   return result;
 };
 
+std::complex<double> scalar_triangle::Q(int n, double s, double tp)
+{
+  switch (n)
+  {
+    case 0: return Q_0(s,tp);
+    case 1: return tp * Q_0(s,tp) - 1.;
+    case 2: return tp * tp * Q_0(s,tp) - tp - 0.5* (pow(t_plus(s), 2.) - pow(t_minus(s), 2.));
+    default: std::cout << "Not enough Q's!!! \n"; exit(0);
+  }
+};
+
+// P-wave projecton
+std::complex<double> scalar_triangle::P_1(double s, double tp)
+{
+  std::complex<double> result;
+  result = 2. * Q(1, s, tp);
+  result += (s - p1*p1 - 3.*m1*m1) * Q(0, s,tp);
+
+  result /= Kacser(s);
+
+  return result;
+};
 // ---------------------------------------------------------------------------
 // UTILITY FUNCTIONS
 
