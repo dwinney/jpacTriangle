@@ -100,6 +100,8 @@ private:
   // Dispersive FUNCTIONS
 
   // Kacser function analytically continues momenta between s and t channels
+  std::complex<double> p(double s);
+  std::complex<double> q(double s);
   std::complex<double> Kacser(double s);
   std::complex<double> Kallen(std::complex<double> x, std::complex<double> y, std::complex<double> z)
   {
@@ -118,9 +120,8 @@ private:
   std::complex<double> b(double s);
 
   // Dispersion kernel functions
-  std::complex<double> Q_0(double s, double tp);
   std::complex<double> Q(int n, double s, double tp);
-  std::complex<double> P_1(double s, double tp);
+  std::complex<double> projector(int ell, double s, double tp);
 
 };
 

@@ -47,7 +47,7 @@ std::complex<double> scalar_triangle::triangle_kernel(double s, double t)
   for (int i = 0; i < xN; i++)
   {
     double x_i = abscissas[i];
-    sum += weights[i] * T0_integrand(s, t, x_i);
+    sum += weights[i] * T1_integrand(s, t, x_i);
   }
 
   return sum / M_PI;
@@ -183,7 +183,7 @@ std::complex<double> scalar_triangle::b(double s)
     double tp = (r_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = lhc_func->disc(tp) * Q_0(s, tp);
+    temp = lhc_func->disc(tp) * projector(1, s, tp);
     temp *= (M_PI / 2.);
     temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
@@ -197,7 +197,18 @@ std::complex<double> scalar_triangle::b(double s)
 
 // ---------------------------------------------------------------------------
 // Kacser function which includes the correct analytic structure of
-// product of breakup momenta, p(s) * q(s)
+// product of breakup momenta, 4 * p(s) * q(s)
+std::complex<double> scalar_triangle::p(double s)
+{
+    std::complex<double> temp = sqrt(pow(sqrt(s) - p2, 2.) - p1*p1 - ieps) * sqrt(pow(sqrt(s) + p2, 2.) - p1*p1 - ieps);
+    return temp / (2. * sqrt(s));
+};
+
+std::complex<double> scalar_triangle::q(double s)
+{
+    return sqrt(xr*s - 4.*mPi*mPi) / 2.;
+};
+
 std::complex<double> scalar_triangle::Kacser(double s)
 {
   std::complex<double> result;
@@ -224,39 +235,46 @@ std::complex<double> scalar_triangle::t_plus(double s)
 
 // ---------------------------------------------------------------------------
 // Angular projection kernel
-std::complex<double> scalar_triangle::Q_0(double s, double tp)
+
+// Q functions. Polynomial of t with approprate logs
+std::complex<double> scalar_triangle::Q(int ell, double s, double tp)
 {
-  std::complex<double> result;
-  result = log(tp - ieps - t_minus(s));
-  result -= log(tp - ieps - t_plus(s));
+  // The first Legendre function of the second type.
+  // Subsequent orders can be given in terms of this.
+  std::complex<double> Q0;
+  Q0 = log(tp - ieps - t_minus(s));
+  Q0 -= log(tp - ieps - t_plus(s));
+  Q0 /= Kacser(s);
 
-  result /= Kacser(s);
-
-  return result;
-};
-
-std::complex<double> scalar_triangle::Q(int n, double s, double tp)
-{
-  switch (n)
+  switch (ell)
   {
-    case 0: return Q_0(s,tp);
-    case 1: return tp * Q_0(s,tp) - 1.;
-    case 2: return tp * tp * Q_0(s,tp) - tp - 0.5* (pow(t_plus(s), 2.) - pow(t_minus(s), 2.));
+    case 0: return Q0;
+    case 1: return tp * Q0 - 1.;
+    case 2: return tp * tp * Q0 - tp - 0.5* (pow(t_plus(s), 2.) - pow(t_minus(s), 2.));
     default: std::cout << "Not enough Q's!!! \n"; exit(0);
   }
 };
 
-// P-wave projecton
-std::complex<double> scalar_triangle::P_1(double s, double tp)
+// Partial wave projections
+std::complex<double> scalar_triangle::projector(int ell, double s, double tp)
 {
-  std::complex<double> result;
-  result = 2. * Q(1, s, tp);
-  result += (s - p1*p1 - 3.*m1*m1) * Q(0, s,tp);
+  switch (ell)
+  {
+    case 0: return Q(0, s, tp);
+    case 1:
+      {
+        std::complex<double> result;
+        result = 2. * Q(1, s, tp);
+        result += (s - p1*p1 - 3.*m1*m1) * Q(0, s, tp);
 
-  result /= Kacser(s);
+        result /= Kacser(s);
 
-  return result;
+        return result * (q(s) / p(s));
+      }
+    default:  std::cout << "Not enough projectors!!! \n"; exit(0);
+  }
 };
+
 // ---------------------------------------------------------------------------
 // UTILITY FUNCTIONS
 
