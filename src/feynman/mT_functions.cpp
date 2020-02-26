@@ -9,7 +9,7 @@
 #include "feynman_triangle.hpp"
 
 // ---------------------------------------------------------------------------
-// Vanilla Triangle function
+// Vanilla Triangle function (no powers of k^2 in numerator)
 // ---------------------------------------------------------------------------
 
 std::complex<double> feynman_triangle::mT0(double s, double t)
@@ -38,7 +38,7 @@ std::complex<double> feynman_triangle::mT0(double s, double t)
 };
 
 // ---------------------------------------------------------------------------
-// Once-subtracted
+// k^2 in the numerator
 // ---------------------------------------------------------------------------
 
 // Evaluate the kernel function by integrating over x

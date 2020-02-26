@@ -15,6 +15,7 @@ std::complex<double> feynman_triangle::eval(int n, double s)
 {
     check_weights();
 
+    // Calculate the dispersion piece coming from the triangle
     std::complex<double> sum = 0.;
     for (int i = 0; i < xN; i++)
     {
@@ -22,18 +23,40 @@ std::complex<double> feynman_triangle::eval(int n, double s)
 
       std::complex<double> temp;
       temp = lhc_func->disc(tp);
-      temp /= tp;
-      temp *= mT1(s, tp);
-      // temp *= mT0(s, tp);
+      temp *= triangle_kernel(n, s, tp);
+
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
 
       sum += weights[i] * temp;
     }
-
     sum /= M_PI;
 
-    return 1. + mP1(s) + sum;
+    // if needed add the polynomial contribution
+    if (n == 1)
+    {
+      sum += 1. + mP1(s);
+    }
+
+    return sum;
+};
+
+std::complex<double> feynman_triangle::triangle_kernel(int n, double s, double t)
+{
+  switch (n)
+  {
+    // unsubtracted
+    case 0:
+    {
+      return mT0(s, t);
+    }
+    // once-subtracted
+    case 1:
+    {
+      return mT1(s, t) / t;
+    }
+    default: std::cout << "Number of subtractions not implemented yet! Quitting... \n"; exit(0);
+  }
 };
 
 // ---------------------------------------------------------------------------

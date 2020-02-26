@@ -12,11 +12,20 @@
 #include "feynman_triangle.hpp"
 
 #include <iostream>
+#include <iomanip>
+#include <cstring>
 #include <string>
 #include <ctime>
 
-int main()
+int main( int argc, char** argv )
 {
+  int n = 0;
+
+  for (int i = 0; i < argc; i++)
+  {
+    if (std::strcmp(argv[i],"-n")==0) n = atof(argv[i+1]);
+  }
+
   // Start a breit_wigner object for rho exchange.
   // This will serve as our LHC being convoluted in the triangle diagram
   breit_wigner left_hand_cut(.770, .145);
@@ -62,7 +71,7 @@ int main()
       si += EPS;
     }
 
-    std::complex<double> fx_f = tri.eval(0, si);
+    std::complex<double> fx_f = tri.eval(n, si);
 
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);

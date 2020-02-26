@@ -75,9 +75,11 @@ private:
   // Two-point functions, from polynomial contribution
   std::complex<double> mP1(double s);
 
-  // Feynman triangle kernels
-  std::complex<double> mT0(double s, double t);
+  // Feynman triangle kernel
+  std::complex<double> triangle_kernel(int n, double s, double t);
 
+  // Extra functions for the triangle
+  std::complex<double> mT0(double s, double t);
   std::complex<double> mT1(double s, double t);
   std::complex<double> mT1_yintegral1(double s, double t, double x);
   std::complex<double> mT1_yintegral2(double s, double t, double x);
