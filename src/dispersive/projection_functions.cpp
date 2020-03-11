@@ -7,6 +7,56 @@
 
 #include "dispersive_triangle.hpp"
 
+std::complex<double> dispersive_triangle::projector(int n, int j, int jp, double s, double tp)
+{
+  std::complex<double> result = 0.;
+
+  switch (j)
+  {
+    // s-wave projection
+    case 0:
+      {
+        switch (jp)
+        {
+          // s wave, scalar exchange
+          case 0: result = Q(n, s, tp); break;
+
+          // s wave, vector exchange
+          case 1: //
+          {
+            result = Q(n+1, s, tp);
+            result += (2.*s - mDec2 - 3.*mPi2) / 4. * Q(n, s, tp);
+            break;
+          }
+          default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
+        }
+        break;
+      }
+
+    // p-wave projection
+    case 1:
+      {
+        switch (jp)
+        {
+          // p - wave, scalar exchange
+          case 0:
+          {
+            result = 2. * Q(n+1, s, tp);
+            result += (s - mDec2 - 3.*mPi2) * Q(n, s, tp);
+
+            result /= Kacser(s);
+            break;
+          }
+          default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
+        }
+        break;
+      }
+  }
+
+  result /= pow(tp, n);
+  return result;
+};
+
 // ---------------------------------------------------------------------------
 // Angular projection Q kernel functions
 // These are of the form
@@ -33,31 +83,4 @@ std::complex<double> dispersive_triangle::Q(int n, double s, double tp)
     case 2: return tp * tp * Q_0(s,tp) - tp - 0.5* (pow(t_plus(s), 2.) - pow(t_minus(s), 2.));
     default: std::cout << "Not enough Q's!!! \n"; exit(0);
   }
-};
-
-// ---------------------------------------------------------------------------
-// Angular projection P_{nj} kernel functions
-// combinations of the above with n subtractions
-//  and spin j projection onto s channel
-
-std::complex<double> dispersive_triangle::P_0(int n, double s, double tp)
-{
-  std::complex<double> result;
-  result = Q(n, s, tp);
-  result /= pow(tp, n);
-
-  return result;
-};
-
-// P-wave projector with n subtractions
-std::complex<double> dispersive_triangle::P_1(int n, double s, double tp)
-{
-  std::complex<double> result;
-  result = 2. * Q(n+1, s, tp);
-  result += (s - mDec2 - 3.*mPi2) * Q(n, s,tp);
-
-  result /= Kacser(s);
-
-  result /= pow(tp, n);
-  return -result;
 };

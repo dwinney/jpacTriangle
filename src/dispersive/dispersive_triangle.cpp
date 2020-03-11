@@ -10,19 +10,19 @@
 
 #include "dispersive_triangle.hpp"
 
-std::complex<double> dispersive_triangle::eval(double s)
+std::complex<double> dispersive_triangle::eval(int j, int jp, double s)
 {
   // if pseudo threshold is in the bounds of integration, exclude a small interval around it
   // this is alwys the case for decays, but to keep the code general I consider the other case
   if (p_thresh < s_thresh)
   {
-    return 1. + s_dispersion_inf(s, s_thresh);
+    return 1. + s_dispersion_inf(j, jp, s, s_thresh);
   }
   else
   {
     std::complex<double> temp;
-    temp = 1. + s_dispersion(s, s_thresh + EPS, p_thresh - exc);
-    temp += s_dispersion_inf(s, p_thresh + exc);
+    temp = 1. + s_dispersion(j, jp, s, s_thresh + EPS, p_thresh - exc);
+    temp += s_dispersion_inf(j, jp, s, p_thresh + exc);
 
     return temp;
   }
@@ -30,7 +30,7 @@ std::complex<double> dispersive_triangle::eval(double s)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion integral over s with finite bounds of integration
-std::complex<double> dispersive_triangle::s_dispersion(double s, double low, double high)
+std::complex<double> dispersive_triangle::s_dispersion(int j, int jp, double s, double low, double high)
 {
   double w[xN + 1], x[xN + 1];
   gauleg(low, high, x, w, xN);
@@ -42,7 +42,7 @@ std::complex<double> dispersive_triangle::s_dispersion(double s, double low, dou
     double sp = x[i];
     std::complex<double> temp;
 
-    temp = rho(sp) * b(sp) - rho(s) * b(s);
+    temp = rho(sp) * b(j, jp, sp) - rho(s) * b(j, jp, s);
     temp *= s / sp;
     temp /= (sp - s - ieps);
 
@@ -53,13 +53,13 @@ std::complex<double> dispersive_triangle::s_dispersion(double s, double low, dou
   std::complex<double> log_term;
   log_term = log(high - s * xr) - log(high);
   log_term -= log(low - s * xr) - log(low);
-  log_term *= rho(s) * b(s);
+  log_term *= rho(s) * b(j, jp, s);
 
   return (sum + log_term) / M_PI;
 };
 
 // calculate the dispersion integral over s up to infinity
-std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
+std::complex<double> dispersive_triangle::s_dispersion_inf(int j, int jp, double s, double low)
 {
   check_weights();
 
@@ -70,7 +70,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
     double sp = low + tan(M_PI * abscissas[i] / 2.);
 
     std::complex<double> temp;
-    temp = rho(sp) * b(sp) - rho(s) * b(s);
+    temp = rho(sp) * b(j, jp, sp) - rho(s) * b(j, jp, s);
     temp *= s / sp;
     temp /= (sp - s - ieps);
     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
@@ -79,7 +79,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
   }
 
   // subtracted point
-  std::complex<double> log_term = - rho(s) * b(s);
+  std::complex<double> log_term = - rho(s) * b(j, jp, s);
   log_term *= log(low - s * xr) - log(low);
 
   return (sum + log_term) / M_PI;
@@ -87,7 +87,7 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(double s, double low)
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion intgral over t
-std::complex<double> dispersive_triangle::b(double s)
+std::complex<double> dispersive_triangle::b(int j, int jp, double s)
 {
   check_weights();
 
@@ -98,7 +98,7 @@ std::complex<double> dispersive_triangle::b(double s)
 
     std::complex<double> temp;
     temp = lhc_func->disc(tp);
-    temp *= P_1(1, s, tp);
+    temp *= projector(0, j, jp, s, tp);
     temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.);
 
     sum += weights[i] * temp;

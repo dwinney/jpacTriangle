@@ -9,11 +9,23 @@
 #include "dispersive_triangle.hpp"
 
 #include <iostream>
+#include <iomanip>
+#include <cstring>
 #include <string>
 #include <ctime>
 
 int main(int argc, char** argv)
 {
+  // Desired quantum numbers
+  int j = 0, jp = 0;
+
+  // Parse inputs
+  for (int i = 0; i < argc; i++)
+  {
+    if (std::strcmp(argv[i],"-j")==0) j = atof(argv[i+1]);
+    if (std::strcmp(argv[i],"-jp")==0) jp = atof(argv[i+1]);
+  }
+
   // Start a breit_wigner object for rho exchange.
   // This will serve as our LHC being convoluted in the triangle diagram
   breit_wigner left_hand_cut(.770, .145);
@@ -52,7 +64,7 @@ int main(int argc, char** argv)
   {
     double si = low + double(i) * (high - low) / double(Np);
 
-    std::complex<double> fx_d = tri.eval(si);
+    std::complex<double> fx_d = tri.eval(j, jp, si);
 
     s.push_back(sqrt(si) / mPi);
     disp.push_back(fx_d);

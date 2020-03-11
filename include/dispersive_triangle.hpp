@@ -28,7 +28,7 @@ public:
   {};
 
   // Evalate the diagram
-  std::complex<double> eval(double s);
+  std::complex<double> eval(int j, int jp, double s);
 
   // ---------------------------------------------------------------------------
   // Utilities
@@ -85,19 +85,17 @@ private:
 
   // Calculation of dispersion integrals
   double exc = EPS; // small interval around pseudo-threshold to exclude
-  std::complex<double> s_dispersion(double s, double low, double high);
-  std::complex<double> s_dispersion_inf(double s, double low);
+  std::complex<double> s_dispersion(int j, int jp, double s, double low, double high);
+  std::complex<double> s_dispersion_inf(int j, int jp, double s, double low);
 
   // Cross-channel projected amplitude, b(s).
-  std::complex<double> b(double s);
+  std::complex<double> b(int j, int jp, double s);
 
   // Angular kernel functions
   std::complex<double> Q_0(double s, double tp);
   std::complex<double> Q(int n, double s, double tp);
 
-  std::complex<double> P_0(int n, double s, double tp);
-  std::complex<double> P_1(int n, double s, double tp);
-
+  std::complex<double> projector(int n, int j, int jp, double s, double tp);
 
 };
 
