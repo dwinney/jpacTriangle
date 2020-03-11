@@ -29,7 +29,7 @@ public:
   {};
 
   // Evalate the diagram
-  std::complex<double> eval(int n, double s);
+  std::complex<double> eval(int n, int j, double s);
 
   // ---------------------------------------------------------------------------
   // Utilities
@@ -67,16 +67,20 @@ private:
 
 
   // Integration quantities
-  int xN = 200;
+  int xN = 400;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();
+
+  // Kacser function analytically continues momenta between s and t channels
+  std::complex<double> Kacser(double s);
+  std::complex<double> Kallen(double x, double y, double z);
 
   // Two-point functions, from polynomial contribution
   std::complex<double> mP1(double s);
 
   // Feynman triangle kernel
-  std::complex<double> triangle_kernel(int n, double s, double t);
+  std::complex<double> triangle_kernel(int n, int j, double s, double t);
 
   // Extra functions for the triangle
   std::complex<double> mT0(double s, double t);

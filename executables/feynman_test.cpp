@@ -19,11 +19,14 @@
 
 int main( int argc, char** argv )
 {
-  int n = 0;
+  // Desired quantum numbers
+  int n = 0, j = 0;
 
+  // Parse inputs
   for (int i = 0; i < argc; i++)
   {
     if (std::strcmp(argv[i],"-n")==0) n = atof(argv[i+1]);
+    if (std::strcmp(argv[i],"-j")==0) j = atof(argv[i+1]);
   }
 
   // Start a breit_wigner object for rho exchange.
@@ -71,7 +74,7 @@ int main( int argc, char** argv )
       si += EPS;
     }
 
-    std::complex<double> fx_f = tri.eval(n, si);
+    std::complex<double> fx_f = tri.eval(n, j, si);
 
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);
