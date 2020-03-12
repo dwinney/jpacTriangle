@@ -7,6 +7,16 @@
 
 #include "rational_integrals.hpp"
 
+// redefine arctangent in terms of logarithms for complex argument to better control
+// singularity structure
+std::complex<double> c_atan(std::complex<double> z)
+{
+  std::complex<double> result = log((z + xi) / (z - xi));
+  result /= -2.*xi;
+
+  return result;
+};
+
 // ---------------------------------------------------------------------------
 // Integral over 1/(a y^2 + b y + c)
 std::complex<double> ri_poly1(double y,
@@ -14,10 +24,10 @@ std::complex<double> ri_poly1(double y,
   std::complex<double> b,
   std::complex<double> c)
 {
-  std::complex<double> d = b * b - 4. * a * c; // discriminant
+  std::complex<double> d = 4. * a * c - b * b; // discriminant
 
-  std::complex<double> result = atan((2.*a*y+b) / sqrt(-d*xr));
-  result *= 2. / sqrt(-d*xr);
+  std::complex<double> result = c_atan((2.*a*y+b) / sqrt(d*xr));;
+  result *= 2. / sqrt(d*xr);
 
   return result;
 };
@@ -36,7 +46,7 @@ std::complex<double> ri_poly2(double y,
 
   // Antiderivative done by mathematica
   std::complex<double> term1;
-  term1 = atan((2. * a * y + b) / sqrt(-d));
+  term1 = c_atan((2. * a * y + b) / sqrt(-d));
   term1 *= b*b*e - a*f*b + 2.*a*(a*g-c*e);
   term1 /= a*a * sqrt(-d);
 
@@ -61,7 +71,7 @@ std::complex<double> ri_log1(double y,
   std::complex<double> d = b * b - 4. * a * c; // discriminant
 
   std::complex<double> term1;
-  term1 = - atan((2.*a*y + b) / sqrt(-d * xr));
+  term1 = - c_atan((2.*a*y + b) / sqrt(-d * xr));
   term1 *= sqrt(-d * xr) / a;
 
   std::complex<double> term2;
