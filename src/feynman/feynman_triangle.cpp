@@ -12,7 +12,7 @@
 
 // ---------------------------------------------------------------------------
 // Evaluate the convolution of the LHC function with triangle function
-std::complex<double> feynman_triangle::eval(int n, int j, double s)
+std::complex<double> feynman_triangle::eval(int j, int jp, double s)
 {
     check_weights();
 
@@ -24,7 +24,7 @@ std::complex<double> feynman_triangle::eval(int n, int j, double s)
 
       std::complex<double> temp;
       temp = lhc_func->disc(tp);
-      temp *= triangle_kernel(n, j, s, tp);
+      temp *= triangle_kernel(j, jp, s, tp);
 
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
@@ -33,71 +33,42 @@ std::complex<double> feynman_triangle::eval(int n, int j, double s)
     }
     sum /= M_PI;
 
-    // if needed add the polynomial contribution
-    if (n == 1)
-    {
-      sum += 1. + mP1(s);
-    }
-
     return sum;
 };
 
 // ---------------------------------------------------------------------------
 // Triangle kernel which encodes all the spin stuff
-std::complex<double> feynman_triangle::triangle_kernel(int n, int j, double s, double t)
+std::complex<double> feynman_triangle::triangle_kernel(int j, int jp, double s, double t)
 {
-  switch (n)
+  switch (j)
   {
-    // unsubtracted
+    // s - wave
     case 0:
     {
-      switch (j)
-      {
-        // s - wave
-        case 0: return mT0(s, t);
-
-        // p - wave
-        case 1:
+        switch (jp)
         {
-          std::complex<double> result;
-          result = 2. * mT1(s,t) + (s - mDec2 - 3.*mPi2) * mT0(s,t);
+          // scalar exchange
+          case 0: return mT0(s, t);
 
-          return result;
+          // vector exchange
+          case 1: return mT1(s,t) + (2. * s - mDec2 - 3.*mPi2) * mT0(s,t);
         }
-      }
     }
-    // once-subtracted
-    case 1:
-    {
-      return mT1(s, t) / t;
-    }
-    default: std::cout << "Number of subtractions not implemented yet! Quitting... \n"; exit(0);
+
+    // // p - wave
+    // case 1:
+    // {
+    //   std::complex<double> result;
+    //   result = 2. * mT1(s,t) + (s - mDec2 - 3.*mPi2) * mT0(s,t);
+    //
+    //   return result;
+    // }
+  default: std::cout << "\n j and jp combination not available! Quitting... \n"; exit(0);
   }
 };
 
 // ---------------------------------------------------------------------------
 // UTILITY FUNCTIONS
-
-// ---------------------------------------------------------------------------
-// Kallen triangle function
-std::complex<double> feynman_triangle::Kallen(double x, double y, double z)
-{
-  return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
-};
-
-// ---------------------------------------------------------------------------
-// Kacser function which includes the correct analytic structure of
-// product of breakup momenta, 4 * p(s) * q(s)
-std::complex<double> feynman_triangle::Kacser(double s)
-{
-  std::complex<double> result;
-
-  result = sqrt(pow(sqrt(s) + mPi, 2.) - mDec2 - ieps);
-  result *= sqrt(pow(sqrt(s) - mPi, 2.) - mDec2 - ieps);
-  result *= sqrt(Kallen(s, mPi2, mPi2)) / s;
-
-  return result;
-};
 
 // -----------------------------------------------------------------------------
 // Check whether or not the integration weights are already saved.

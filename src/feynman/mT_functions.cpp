@@ -27,7 +27,7 @@ std::complex<double> feynman_triangle::mT0(double s, double t)
 
     a = mPi2;
     b = mPi2 + (x_i - 1.) * mPi2 + x_i * mDec2 - x_i * s - t;
-    c = (1. - x_i) * t + x_i * mPi2 + x_i*(x_i-1.)* mDec2;
+    c = (1. - x_i) * t + x_i * mPi2 + x_i*(x_i-1.)* mDec2 - ieps;
 
     // the integrand is the analytic form of the y_integral subtracted at:
     // s = 0
