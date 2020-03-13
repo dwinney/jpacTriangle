@@ -24,10 +24,10 @@ std::complex<double> ri_poly1(double y,
   std::complex<double> b,
   std::complex<double> c)
 {
-  std::complex<double> d = 4. * a * c - b * b; // discriminant
+  std::complex<double> d = b*b - 4. * a * c; // discriminant
 
-  std::complex<double> result = c_atan((2.*a*y+b) / sqrt(d*xr));;
-  result *= 2. / sqrt(d*xr);
+  std::complex<double> result = c_atan((2.*a*y+b) / sqrt(-d*xr));;
+  result *= 2. / sqrt(-d*xr);
 
   return result;
 };

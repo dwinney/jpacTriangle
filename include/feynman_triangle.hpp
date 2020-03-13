@@ -67,7 +67,7 @@ private:
 
 
   // Integration quantities
-  int xN = 400;
+  int xN = 150;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();
@@ -75,14 +75,14 @@ private:
   // Two-point functions, from polynomial contribution
   std::complex<double> mP1(double s);
 
-  // Feynman triangle kernel
-  std::complex<double> triangle_kernel(int j, int jp, double s, double t);
+  // Feynman triangle kernel for n subtractions spin j projection and spin jp exchange
+  std::complex<double> triangle_kernel(int n, int j, int jp, double s, double t);
 
-  // Extra functions for the triangle
-  std::complex<double> mT0(double s, double t);
-  std::complex<double> mT1(double s, double t);
-  std::complex<double> mT1_yintegral1(double s, double t, double x);
-  std::complex<double> mT1_yintegral2(double s, double t, double x);
+  // We build the above from a basis of functions which we evaluate with these
+  std::complex<double> mT(int n, int m, double s, double t);
+  std::complex<double> mT_integrand(int m, double s, double t, double x);
+  std::complex<double> mT0_yintegrand(double s, double t, double x);
+  std::complex<double> mT1_yintegrand(double s, double t, double x);
 
 };
 

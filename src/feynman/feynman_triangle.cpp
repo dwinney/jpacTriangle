@@ -24,7 +24,7 @@ std::complex<double> feynman_triangle::eval(int j, int jp, double s)
 
       std::complex<double> temp;
       temp = lhc_func->disc(tp);
-      temp *= triangle_kernel(j, jp, s, tp);
+      temp *= triangle_kernel(1, j, jp, s, tp);
 
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
@@ -33,38 +33,7 @@ std::complex<double> feynman_triangle::eval(int j, int jp, double s)
     }
     sum /= M_PI;
 
-    return sum;
-};
-
-// ---------------------------------------------------------------------------
-// Triangle kernel which encodes all the spin stuff
-std::complex<double> feynman_triangle::triangle_kernel(int j, int jp, double s, double t)
-{
-  switch (j)
-  {
-    // s - wave
-    case 0:
-    {
-        switch (jp)
-        {
-          // scalar exchange
-          case 0: return mT0(s, t);
-
-          // vector exchange
-          case 1: return mT1(s,t) + (2. * s - mDec2 - 3.*mPi2) * mT0(s,t);
-        }
-    }
-
-    // // p - wave
-    // case 1:
-    // {
-    //   std::complex<double> result;
-    //   result = 2. * mT1(s,t) + (s - mDec2 - 3.*mPi2) * mT0(s,t);
-    //
-    //   return result;
-    // }
-  default: std::cout << "\n j and jp combination not available! Quitting... \n"; exit(0);
-  }
+    return 1. + sum;
 };
 
 // ---------------------------------------------------------------------------
