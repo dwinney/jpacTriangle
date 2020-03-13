@@ -79,10 +79,11 @@ private:
   std::complex<double> triangle_kernel(int n, int j, int jp, double s, double t);
 
   // We build the above from a basis of functions which we evaluate with these
-  std::complex<double> mT(int n, int m, double s, double t);
-  std::complex<double> mT_integrand(int m, double s, double t, double x);
-  std::complex<double> mT0_yintegrand(double s, double t, double x);
-  std::complex<double> mT1_yintegrand(double s, double t, double x);
+  std::complex<double> mT(int n, int k, int z, double s, double t);
+  std::complex<double> mT_integrand(int k, int z, double s, double t, double x);
+  std::complex<double> int_mT00(double s, double t, double x);
+  std::complex<double> int_mT10(double s, double t, double x);
+  std::complex<double> int_mT01(double s, double t, double x);
 
 };
 
