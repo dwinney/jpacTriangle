@@ -129,6 +129,21 @@ std::complex<double> dispersive_triangle::rho(double s)
   return sqrt(Kallen(s, mPi2, mPi2)) / s;
 };
 
+// Ratio of agular momentum barrier factors that are removed when partial wave projecting
+std::complex<double> dispersive_triangle::barrier_ratio(int l, double s)
+{
+  if (l == 0)
+  {
+    return 1.;
+  }
+  else
+  {
+    std::complex<double> result = sqrt(Kallen(s, mPi2, mPi2));
+    result /= sqrt(pow(sqrt(s) + mPi, 2.) - mDec2 - ieps) * sqrt(pow(sqrt(s) - mPi, 2.) - mDec2 - ieps);
+    return pow(result, xr * double(l));
+  }
+};
+
 // ---------------------------------------------------------------------------
 // complex Bounds of integration
 std::complex<double> dispersive_triangle::t_minus(double s)

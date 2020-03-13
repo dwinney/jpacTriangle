@@ -76,6 +76,9 @@ private:
     return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
   };
 
+  // Ratio of barrier factors that need to be taken out
+  std::complex<double> barrier_ratio(int l, double s);
+
   // Two-body phase space
   std::complex<double> rho(double s);
 

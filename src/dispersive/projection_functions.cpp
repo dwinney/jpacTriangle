@@ -25,7 +25,7 @@ std::complex<double> dispersive_triangle::projector(int n, int j, int jp, double
           case 1: //
           {
             result = Q(n+1, s, tp);
-            result += (2.*s - mDec2 - 3.*mPi2) / 4. * Q(n, s, tp);
+            result += (2.*s - mDec2 - 3.*mPi2) * Q(0, s, tp);
             break;
           }
           default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
@@ -43,26 +43,32 @@ std::complex<double> dispersive_triangle::projector(int n, int j, int jp, double
           {
             result = 2. * Q(n+1, s, tp);
             result += (s - mDec2 - 3.*mPi2) * Q(n, s, tp);
+            break;
+          }
 
-            result /= Kacser(s);
+          // p - wave, vector exchange
+          case 1:
+          {
+            result = 2. * Q(n+2, s, tp);
+            result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(n+1, s, tp);
+            result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(n,s,tp);
             break;
           }
           default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
         }
+        result /= Kacser(s);
         break;
       }
   }
-
-  result /= pow(tp, n);
+  result *= barrier_ratio(j, s);
+  result /= pow(tp, double(n));
   return result;
 };
 
 // ---------------------------------------------------------------------------
 // Angular projection Q kernel functions
-// These are of the form
-//
+// These are of the form:
 // 1/Kacser(s) * \int_{t_minus}^{t_plus} x^n / (tp - tp - ieps)
-
 std::complex<double> dispersive_triangle::Q_0(double s, double tp)
 {
   std::complex<double> result;
@@ -70,7 +76,6 @@ std::complex<double> dispersive_triangle::Q_0(double s, double tp)
   result -= log(tp - ieps - t_plus(s));
 
   result /= Kacser(s);
-
   return result;
 };
 
