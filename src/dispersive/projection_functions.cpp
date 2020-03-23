@@ -15,50 +15,67 @@ std::complex<double> dispersive_triangle::projector(int n, int j, int jp, double
   {
     // s-wave projection
     case 0:
+    {
+      switch (jp)
       {
-        switch (jp)
-        {
-          // s wave, scalar exchange
-          case 0: result = Q(n, s, tp); break;
+        // s wave, scalar exchange
+        case 0: result = Q(n, s, tp); break;
 
-          // s wave, vector exchange
-          case 1: //
-          {
-            result = Q(n+1, s, tp);
-            result += (2.*s - mDec2 - 3.*mPi2) * Q(0, s, tp);
-            break;
-          }
-          default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
+        // s wave, vector exchange
+        case 1: //
+        {
+          result = Q(n+1, s, tp);
+          result += (2.*s - mDec2 - 3.*mPi2) * Q(0, s, tp);
+          break;
         }
-        break;
+        default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
       }
+      break;
+    }
 
     // p-wave projection
     case 1:
+    {
+      switch (jp)
       {
-        switch (jp)
+        // p - wave, scalar exchange
+        case 0:
         {
-          // p - wave, scalar exchange
-          case 0:
-          {
-            result = 2. * Q(n+1, s, tp);
-            result += (s - mDec2 - 3.*mPi2) * Q(n, s, tp);
-            break;
-          }
-
-          // p - wave, vector exchange
-          case 1:
-          {
-            result = 2. * Q(n+2, s, tp);
-            result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(n+1, s, tp);
-            result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(n,s,tp);
-            break;
-          }
-          default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
+          result = 2. * Q(n+1, s, tp);
+          result += (s - mDec2 - 3.*mPi2) * Q(n, s, tp);
+          break;
         }
-        result /= Kacser(s);
-        break;
+
+        // p - wave, vector exchange
+        case 1:
+        {
+          result = 2. * Q(n+2, s, tp);
+          result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(n+1, s, tp);
+          result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(n,s,tp);
+          break;
+        }
+        default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
       }
+      result /= Kacser(s);
+      break;
+    }
+
+    // d-wave projection
+    case 2:
+    {
+      if (jp == 0)
+      {
+        result = 12.* Q(n+2, s, tp);
+        result += (12. * s - 12. * mDec2 - 36. * mPi2) * Q(n+1, s, tp);
+        result += (3.*s*s - 6.*mDec2*s + 3.*mDec2*mDec2 - 18.*mPi2*s + 18.*mPi2*mDec2 + 27.*mPi2*mPi2 - 1.) * Q(n,s,tp);
+        result /= 2.;
+
+        result /= pow(Kacser(s), 2.);
+      }
+      break;
+    }
+
+    default: std::cout << "j and j' combination not available. Quitting... \n"; exit(0);
   }
   result *= barrier_ratio(j, s);
   result /= pow(tp, double(n));
