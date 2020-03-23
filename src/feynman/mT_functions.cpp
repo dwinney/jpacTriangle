@@ -46,6 +46,15 @@ std::complex<double> feynman_triangle::triangle_kernel(int n, int j, int jp, dou
       }
       break;
     }
+
+    // d - wave projection
+    case 2:
+    {
+      if (jp == 0)
+      {
+        return mT(n, 0, j, s, tp);
+      }
+    }
   default: std::cout << "\n j and jp combination not available! Quitting... \n"; exit(0);
   }
 
@@ -104,6 +113,10 @@ std::complex<double> feynman_triangle::mT_integrand(int k, int z, double s, doub
       if (z == 1)
       {
         return int_mT10(s, t, x);
+      }
+      if (z == 2)
+      {
+        return int_mT20(s, t, x);
       }
     }
     case 1:
@@ -165,6 +178,27 @@ std::complex<double> feynman_triangle::int_mT10(double s, double t, double x)
   return result;
 };
 
+std::complex<double> feynman_triangle::int_mT20(double s, double t, double x)
+{
+  std::complex<double> a, b, c, d;
+  std::complex<double> e, f, g;
+
+  // coeffs of denominator polynomial
+  a = mPi2;
+  b = mPi2 + (x - 1.) * mPi2 + x * mDec2 - x * s - t;
+  c = (1. - x) * t + x * mPi2 + x*(x-1.)* mDec2 - ieps;
+
+  // coeffs of numerator polynomial
+  e = 1.;
+  f = 2. *(x-1.);
+  g = x*x - 2.*x + 1.;
+
+  // Evaluate definite integral with bounds y = [0, 1-x]
+  std::complex<double> result;
+  result = ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g);
+
+  return result;
+};
 
 // ---------------------------------------------------------------------------
 // k^2 in the numerator

@@ -67,7 +67,7 @@ private:
 
 
   // Integration quantities
-  int xN = 150;
+  int xN = 200;
   bool WG_GENERATED = false;
   std::vector<double> weights, abscissas;
   void check_weights();
@@ -83,6 +83,7 @@ private:
   std::complex<double> mT_integrand(int k, int z, double s, double t, double x);
   std::complex<double> int_mT00(double s, double t, double x);
   std::complex<double> int_mT10(double s, double t, double x);
+  std::complex<double> int_mT20(double s, double t, double x);
   std::complex<double> int_mT01(double s, double t, double x);
 
 };
