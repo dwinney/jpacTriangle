@@ -102,7 +102,7 @@ std::complex<double> dispersive_triangle::Q(int n, double s, double tp)
   {
     case 0: return Q_0(s,tp);
     case 1: return tp * Q_0(s,tp) - 1.;
-    case 2: return tp * tp * Q_0(s,tp) - tp - 0.5* (pow(t_plus(s), 2.) - pow(t_minus(s), 2.));
+    case 2: return tp * tp * Q_0(s,tp) - tp - 0.5 * (pow(t_plus(s), 2.) - pow(t_minus(s), 2.)) / Kacser(s);
     default: std::cout << "Not enough Q's!!! \n"; exit(0);
   }
 };
