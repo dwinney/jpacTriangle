@@ -6,12 +6,12 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
-#include "feynman/feynman_triangle.hpp"
+#include "feynman/triangle_function.hpp"
 
 // ---------------------------------------------------------------------------
 // Triangle kernels
 // built from basis functions in appropriate combinations for spin polynomials
-std::complex<double> feynman_triangle::triangle_kernel(int n, int j, int jp, double s, double tp)
+std::complex<double> triangle_function::eval(int n, int j, int jp, double s, double tp)
 {
   std::complex<double> result;
 
@@ -62,7 +62,7 @@ std::complex<double> feynman_triangle::triangle_kernel(int n, int j, int jp, dou
 };
 
 // Takes selected basis function and subtracts it n times
-std::complex<double> feynman_triangle::mT(int n, int k, int z, double s, double t)
+std::complex<double> triangle_function::mT(int n, int k, int z, double s, double t)
 {
   integ.check_weights();
 
@@ -100,7 +100,7 @@ std::complex<double> feynman_triangle::mT(int n, int k, int z, double s, double 
 
 // Basis functions based on order of divergence.
 // Filters number of powers of k^2 in the numerator of the triangle function
-std::complex<double> feynman_triangle::mT_integrand(int k, int z, double s, double t, double x)
+std::complex<double> triangle_function::mT_integrand(int k, int z, double s, double t, double x)
 {
   switch (k)
   {
@@ -139,7 +139,7 @@ std::complex<double> feynman_triangle::mT_integrand(int k, int z, double s, doub
 // Vanilla Triangle functions (no powers of k^2 in numerator)
 // ---------------------------------------------------------------------------
 
-std::complex<double> feynman_triangle::int_mT00(double s, double t, double x)
+std::complex<double> triangle_function::int_mT00(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
   std::complex<double> e, f, g;
@@ -156,7 +156,7 @@ std::complex<double> feynman_triangle::int_mT00(double s, double t, double x)
   return result;
 };
 
-std::complex<double> feynman_triangle::int_mT10(double s, double t, double x)
+std::complex<double> triangle_function::int_mT10(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
   std::complex<double> e, f, g;
@@ -178,7 +178,7 @@ std::complex<double> feynman_triangle::int_mT10(double s, double t, double x)
   return result;
 };
 
-std::complex<double> feynman_triangle::int_mT20(double s, double t, double x)
+std::complex<double> triangle_function::int_mT20(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
   std::complex<double> e, f, g;
@@ -204,7 +204,7 @@ std::complex<double> feynman_triangle::int_mT20(double s, double t, double x)
 // k^2 in the numerator
 // ---------------------------------------------------------------------------
 
-std::complex<double> feynman_triangle::int_mT01(double s, double t, double x)
+std::complex<double> triangle_function::int_mT01(double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
   std::complex<double> e, f, g;

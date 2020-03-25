@@ -10,6 +10,7 @@
 
 #include "breit_wigner.hpp"
 #include "feynman/feynman_triangle.hpp"
+#include "utilities.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -34,11 +35,8 @@ int main( int argc, char** argv )
   breit_wigner left_hand_cut(.770, .145);
 
   // Initialize a triangle object passing the above propogator
-  feynman_triangle tri(&left_hand_cut);
-
-  // Set the two external particles: omega and pion
-  // here argument 1 >= argument 2
-  tri.set_decayMass(0.780);
+  // and the mass of the decaying particle
+  feynman_triangle tri(&left_hand_cut, 0.780);
 
   // Choose the name for the output files to have (sans and extentions)
   std::string filename = "omega";
