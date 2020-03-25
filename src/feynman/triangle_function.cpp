@@ -9,8 +9,8 @@
 #include "feynman/triangle_function.hpp"
 
 // ---------------------------------------------------------------------------
-// Triangle kernels
-// built from basis functions in appropriate combinations for spin polynomials
+// This is the final triangle function.
+// Combines appropriate combinations of basis functions to correspond to spin exchanges
 std::complex<double> triangle_function::eval(int n, int j, int jp, double s, double tp)
 {
   std::complex<double> result;
@@ -61,7 +61,8 @@ std::complex<double> triangle_function::eval(int n, int j, int jp, double s, dou
   return result;
 };
 
-// Takes selected basis function and subtracts it n times
+// ---------------------------------------------------------------------------
+// Takes selected basis function (specified by orders of k^2 and z) and subtracts it n times
 std::complex<double> triangle_function::mT(int n, int k, int z, double s, double t)
 {
   integ.check_weights();
@@ -106,24 +107,13 @@ std::complex<double> triangle_function::mT_integrand(int k, int z, double s, dou
   {
     case 0:
     {
-      if (z == 0)
-      {
-        return int_mT00(s, t, x);
-      }
-      if (z == 1)
-      {
-        return int_mT10(s, t, x);
-      }
-      if (z == 2)
-      {
-        return int_mT20(s, t, x);
-      }
+      return int_mT0(z, s, t, x);
     }
     case 1:
     {
       if (z == 0)
       {
-      return int_mT01(s, t, x);
+      return int_mT1(z, s, t, x);
       }
     }
     default:
@@ -136,10 +126,10 @@ std::complex<double> triangle_function::mT_integrand(int k, int z, double s, dou
 
 
 // ---------------------------------------------------------------------------
-// Vanilla Triangle functions (no powers of k^2 in numerator)
+// Vanilla Triangle function: mT_j{1}(s,t)
 // ---------------------------------------------------------------------------
 
-std::complex<double> triangle_function::int_mT00(double s, double t, double x)
+std::complex<double> triangle_function::int_mT0(int z, double s, double t, double x)
 {
   std::complex<double> a, b, c, d;
   std::complex<double> e, f, g;
@@ -149,49 +139,35 @@ std::complex<double> triangle_function::int_mT00(double s, double t, double x)
   b = mPi2 + (x - 1.) * mPi2 + x * mDec2 - x * s - t;
   c = (1. - x) * t + x * mPi2 + x*(x-1.)* mDec2 - ieps;
 
-  // Evaluate definite integral with bounds y = [0, 1-x]
-  std::complex<double> result;
-  result = ri_poly1(1. - x, a, b, c) - ri_poly1(0., a, b, c);
-
-  return result;
-};
-
-std::complex<double> triangle_function::int_mT10(double s, double t, double x)
-{
-  std::complex<double> a, b, c, d;
-  std::complex<double> e, f, g;
-
-  // coeffs of denominator polynomial
-  a = mPi2;
-  b = mPi2 + (x - 1.) * mPi2 + x * mDec2 - x * s - t;
-  c = (1. - x) * t + x * mPi2 + x*(x-1.)* mDec2 - ieps;
-
-  // coeffs of numerator polynomial
-  e = 0.;
-  f = -1.;
-  g = 1. - x;
-
-  // Evaluate definite integral with bounds y = [0, 1-x]
-  std::complex<double> result;
-  result = ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g);
-
-  return result;
-};
-
-std::complex<double> triangle_function::int_mT20(double s, double t, double x)
-{
-  std::complex<double> a, b, c, d;
-  std::complex<double> e, f, g;
-
-  // coeffs of denominator polynomial
-  a = mPi2;
-  b = mPi2 + (x - 1.) * mPi2 + x * mDec2 - x * s - t;
-  c = (1. - x) * t + x * mPi2 + x*(x-1.)* mDec2 - ieps;
-
-  // coeffs of numerator polynomial
-  e = 1.;
-  f = 2. *(x-1.);
-  g = x*x - 2.*x + 1.;
+  switch (z)
+  {
+    case 0:
+    {
+      e = 0.;
+      f = 0.;
+      g = 1.;
+      break;
+    }
+    case 1:
+    {
+      e = 0.;
+      f = -1.;
+      g = 1. - x;
+      break;
+    }
+    case 2:
+    {
+      e = 1.;
+      f = 2. *(x-1.);
+      g = x*x - 2.*x + 1.;
+      break;
+    }
+    default:
+    {
+      std::cout << " \n mT0: only j <= 2 implemented. Quiting... \n";
+      exit(0);
+    }
+  }
 
   // Evaluate definite integral with bounds y = [0, 1-x]
   std::complex<double> result;
@@ -201,28 +177,46 @@ std::complex<double> triangle_function::int_mT20(double s, double t, double x)
 };
 
 // ---------------------------------------------------------------------------
-// k^2 in the numerator
+// mT_j{k^2}(s,t)
 // ---------------------------------------------------------------------------
 
-std::complex<double> triangle_function::int_mT01(double s, double t, double x)
+std::complex<double> triangle_function::int_mT1(int z, double s, double t, double x)
 {
-  std::complex<double> a, b, c, d;
-  std::complex<double> e, f, g;
+  std::complex<double> a, b, c, d; // Denominator polynomial
+  std::complex<double> e, f, g, h, i; // Numerator polynomial
+  std::complex<double> j, k, l; // Log polynomial
 
   // coeffs of denominator polynomial
   a = mPi2;
   b = mPi2 + (x - 1.) * mPi2 + x * mDec2 - x * s - t;
   c = (1. - x) * t + x * mPi2 + x*(x-1.)* mDec2 - ieps;
 
-  // coeffs of numerator polynomial
-  e = mPi2;
-  f = x * (mDec2 + mPi2 - s);
-  g = x*x * mDec2;
+  switch (z)
+  {
+    case 0:
+    {
+      e = 0.;
+      f = 0.;
+      g = mPi2;
+      h = x * (mDec2 + mPi2 - s);
+      i = x*x * mDec2;
+
+      j = 0.;
+      k = 0.;
+      l = 1.;
+      break;
+    }
+    default:
+    {
+      std::cout << " \n mT1: only j <= 1 implemented. Quiting... \n";
+      exit(0);
+    }
+  }
 
   // Evaluate definite integral with bounds y = [0, 1-x]
   std::complex<double> result;
-  result = ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g);
-  result -= 2. * (ri_log1(1. - x, a, b, c) - ri_log1(0., a, b, c));
+  result = ri_poly4(1. - x, a, b, c, e, f, g, h, i) - ri_poly4(0., a, b, c, e, f, g, h, i);
+  result -= 2. * (ri_log2(1. - x, a, b, c, j, k, l) - ri_log2(0., a, b, c, j, k, l));
 
   return result;
 };
