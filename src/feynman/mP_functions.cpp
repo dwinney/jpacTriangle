@@ -7,7 +7,7 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
-#include "feynman_triangle.hpp"
+#include "feynman/feynman_triangle.hpp"
 
 // Once subtracted polynomial contribution (P^0(s))
 std::complex<double> feynman_triangle::mP1(double s)

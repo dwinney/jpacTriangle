@@ -6,7 +6,7 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
-#include "feynman_triangle.hpp"
+#include "feynman/feynman_triangle.hpp"
 
 // ---------------------------------------------------------------------------
 // Triangle kernels

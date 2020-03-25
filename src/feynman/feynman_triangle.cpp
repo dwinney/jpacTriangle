@@ -8,7 +8,7 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
-#include "feynman_triangle.hpp"
+#include "feynman/feynman_triangle.hpp"
 
 // ---------------------------------------------------------------------------
 // Evaluate the convolution of the LHC function with triangle function

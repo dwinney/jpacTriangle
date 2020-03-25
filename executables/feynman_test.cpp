@@ -9,7 +9,7 @@
 // ---------------------------------------------------------------------------
 
 #include "breit_wigner.hpp"
-#include "feynman_triangle.hpp"
+#include "feynman/feynman_triangle.hpp"
 
 #include <iostream>
 #include <iomanip>

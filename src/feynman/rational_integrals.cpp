@@ -5,7 +5,7 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
-#include "rational_integrals.hpp"
+#include "feynman/rational_integrals.hpp"
 
 // redefine arctangent in terms of logarithms for complex argument to better control
 // singularity structure
