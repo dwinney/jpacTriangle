@@ -19,6 +19,7 @@ const double M_EULER = 0.577215;
 
 //Masses
 const double mPi = 0.13957061;
+const double mPi2 = mPi*mPi;
 const double mK = 0.496;
 const double mEta = 0.54753;
 
@@ -26,7 +27,7 @@ const double mRho = .77545;
 const double mF2 = 1.2754;
 
 //Thresholds for pi, eta, and K
-const double sthPi = 4.*mPi*mPi;
+const double sthPi = 4.*mPi2;
 const double sthK = 4.*mK*mK;
 const double sthEta = 4.*mEta*mEta;
 

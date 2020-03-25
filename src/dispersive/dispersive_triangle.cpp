@@ -32,12 +32,12 @@ std::complex<double> dispersive_triangle::eval(int j, int jp, double s)
 // calculate the dispersion integral over s with finite bounds of integration
 std::complex<double> dispersive_triangle::s_dispersion(int j, int jp, double s, double low, double high)
 {
-  double w[xN + 1], x[xN + 1];
-  gauleg(low, high, x, w, xN);
+  double w[integ.xN + 1], x[integ.xN + 1];
+  NR_gauleg(low, high, x, w, integ.xN);
 
   // Integrate
   std::complex<double> sum = 0.;
-  for (int i = 1; i <= xN; i++)
+  for (int i = 1; i <= integ.xN; i++)
   {
     double sp = x[i];
     std::complex<double> temp;
@@ -61,21 +61,21 @@ std::complex<double> dispersive_triangle::s_dispersion(int j, int jp, double s, 
 // calculate the dispersion integral over s up to infinity
 std::complex<double> dispersive_triangle::s_dispersion_inf(int j, int jp, double s, double low)
 {
-  check_weights();
+  integ.check_weights();
 
   // Integrate
   std::complex<double> sum = 0.;
-  for (int i = 0; i < xN; i++)
+  for (int i = 0; i < integ.xN; i++)
   {
-    double sp = low + tan(M_PI * abscissas[i] / 2.);
+    double sp = low + tan(M_PI * integ.abscissas[i] / 2.);
 
     std::complex<double> temp;
     temp = rho(sp) * b(j, jp, sp) - rho(s) * b(j, jp, s);
     temp *= s / sp;
     temp /= (sp - s - ieps);
-    temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.); // jacobian
+    temp *= (M_PI / 2.) / pow(cos(M_PI * integ.abscissas[i] / 2.), 2.); // jacobian
 
-    sum += weights[i] * temp;
+    sum += integ.weights[i] * temp;
   }
 
   // subtracted point
@@ -89,19 +89,19 @@ std::complex<double> dispersive_triangle::s_dispersion_inf(int j, int jp, double
 // calculate the dispersion intgral over t
 std::complex<double> dispersive_triangle::b(int j, int jp, double s)
 {
-  check_weights();
+  integ.check_weights();
 
   std::complex<double> sum = 0.;
-  for (int i = 0; i < xN; i++)
+  for (int i = 0; i < integ.xN; i++)
   {
-    double tp = (r_thresh + EPS) + tan(M_PI * abscissas[i] / 2.);
+    double tp = (r_thresh + EPS) + tan(M_PI * integ.abscissas[i] / 2.);
 
     std::complex<double> temp;
     temp = lhc_func->disc(tp);
     temp *= projector(0, j, jp, s, tp);
-    temp *= (M_PI / 2.) / pow(cos(M_PI * abscissas[i] / 2.), 2.);
+    temp *= (M_PI / 2.) / pow(cos(M_PI * integ.abscissas[i] / 2.), 2.);
 
-    sum += weights[i] * temp;
+    sum += integ.weights[i] * temp;
   }
 
   sum /= M_PI;
@@ -154,37 +154,4 @@ std::complex<double> dispersive_triangle::t_minus(double s)
 std::complex<double> dispersive_triangle::t_plus(double s)
 {
   return (mDec2 + ieps) + mPi2 - (s + mDec2 + ieps - mPi2) / 2. + Kacser(s) / 2.;
-};
-
-// ---------------------------------------------------------------------------
-// UTILITY FUNCTIONS
-
-// -----------------------------------------------------------------------------
-// Check whether or not the integration weights are already generated
-void dispersive_triangle::check_weights()
-{
-  if (WG_GENERATED == false)
-  {
-
-    weights.clear(); abscissas.clear();
-
-    double w[xN + 1], a[xN + 1];
-    gauleg(0., 1., a, w, xN + 1);
-
-    for (int i = 1; i < xN + 1; i++)
-    {
-      weights.push_back(w[i]);
-      abscissas.push_back(a[i]);
-    }
-
-    if (weights.size() != xN || abscissas.size() != xN)
-    {
-      cout << "ERROR: wrong number of weights generated for some reason. Quitting... \n";
-      exit(0);
-    }
-    else
-    {
-      WG_GENERATED = true;
-    }
-  }
 };

@@ -64,27 +64,27 @@ std::complex<double> feynman_triangle::triangle_kernel(int n, int j, int jp, dou
 // Takes selected basis function and subtracts it n times
 std::complex<double> feynman_triangle::mT(int n, int k, int z, double s, double t)
 {
-  check_weights();
+  integ.check_weights();
 
   //integrate over x
   std::complex<double> sum = 0.;
-  for (int i = 0; i < xN; i++)
+  for (int i = 0; i < integ.xN; i++)
   {
-    double x_i = abscissas[i];
+    double x_i = integ.abscissas[i];
 
     switch (n)
     {
       // One subtraction
       case 1:
       {
-        sum += weights[i] * (mT_integrand(k, z, s, t, x_i) - mT_integrand(k, z, 0., t, x_i));
+        sum += integ.weights[i] * (mT_integrand(k, z, s, t, x_i) - mT_integrand(k, z, 0., t, x_i));
         break;
       }
 
       // No subtractions
       case 0:
       {
-        sum += weights[i] * (mT_integrand(k, z, s, t, x_i));
+        sum += integ.weights[i] * (mT_integrand(k, z, s, t, x_i));
         break;
       }
       default:

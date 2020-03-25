@@ -19,25 +19,23 @@
 #include "constants.hpp"
 #include "utilities.hpp"
 #include "lefthand_cut.hpp"
+#include "integration.hpp"
 
 class dispersive_triangle
 {
 public:
   dispersive_triangle(lefthand_cut * a_x)
-  : lhc_func(a_x)
+  : lhc_func(a_x), integ()
+  {};
+
+  dispersive_triangle(lefthand_cut * a_x, int n)
+  : lhc_func(a_x), integ(n)
   {};
 
   // Evalate the diagram
   std::complex<double> eval(int j, int jp, double s);
 
-  // ---------------------------------------------------------------------------
-  // Utilities
-  void set_Nint(int n)
-  {
-    xN = n;
-    WG_GENERATED = false;
-  };
-
+  // Setting utility
   void set_decayMass(double m1)
   {
     mDec = m1;
@@ -63,12 +61,10 @@ private:
     r_thresh = (mDec + mPi) * (mDec + mPi);
   };
 
-  // Integration quantities
-  int xN = 200;
-  bool WG_GENERATED = false;
-  std::vector<double> weights, abscissas;
-  void check_weights();
+  // Integration stuff
+  gauleg integ;
 
+  // ---------------------------------------------------------------------------
   // Kacser function analytically continues momenta between s and t channels
   std::complex<double> Kacser(double s);
   std::complex<double> Kallen(std::complex<double> x, std::complex<double> y, std::complex<double> z)

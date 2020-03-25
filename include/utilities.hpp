@@ -37,10 +37,6 @@ using std::complex;
 std::string st_nd_rd(int n);
 
 //-----------------------------------------------------------------------------
-// Numerical integration routine. Generates Gauss-Legendre weights and abscissas
-void gauleg(double x1, double x2, double x[], double w[], int n);
-
-//-----------------------------------------------------------------------------
 // Utility functions that take in a vector of complex<doubles> and return vectors of the same size
 // containing only the real or imaginary parts.
 std::vector<double> vec_real( std::vector<std::complex<double>> fx);
