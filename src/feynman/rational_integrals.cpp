@@ -82,7 +82,7 @@ std::complex<double> ri_poly4(double y,
 
   std::complex<double> term2;
   term2 = c_atan((2.*a*y+b) / sqrt(d));
-  term2 *= 3.*a*a*b*c*f + 2.*a*a*c*c*e - a*b*b*b*f - 4.*a*b*b*c*e;
+  term2 *= 3.*a*a*b*c*f + 2.*a*a*c*c*e - a*b*b*b*f - 4.*a*b*b*c*e + b*b*b*b*e;
   term2 /= a*a*a*a * sqrt(d);
 
   std::complex<double> term3;
@@ -142,7 +142,7 @@ std::complex<double> ri_log2(double y,
 
     std::complex<double> term3;
     term3 = 2.*a*y;
-    term3 *= -3.*a*b*(e*y+3.*f) + a*a*y*(4.*e*y+9.*f) - 12.*c*e*a;
+    term3 *= -3.*a*b*(e*y+3.*f) + a*a*y*(4.*e*y+9.*f) - 12.*c*e*a + 6. * b*b*e;
     term3 /= 36.*a*a*a;
 
     std::complex<double> term4;
