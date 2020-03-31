@@ -76,7 +76,7 @@ std::complex<double> ri_poly4(double y,
   std::complex<double> d = 4. * a * c - b * b; // discriminant
 
   std::complex<double> term1;
-  term1 = -0.5 * log(a*y*y + b*y + c);
+  term1 = -0.5 * log(a*y*y + b*y + c * xr);
   term1 *= a*a*c*f - a*b*b*f - 2.*a*b*c*e + b*b*b*e;
   term1 /= a*a*a*a;
 
@@ -110,7 +110,7 @@ std::complex<double> ri_log0(double y,
   term2 = y * log(xr / (a*y*y + b*y + c * xr));
 
   std::complex<double> term3;
-  term3 = log(a*y*y + b*y + c);
+  term3 = log(a*y*y + b*y + c * xr);
   term3 *= -b / (2. * a);
 
   std::complex<double> term4 = 2.*y;
@@ -146,8 +146,8 @@ std::complex<double> ri_log2(double y,
     term3 /= 36.*a*a*a;
 
     std::complex<double> term4;
-    term4 = -.6 * sqrt(d) * (-3.*a*b*f - 2.*a*c*e + 2.*b*b*e);
-    term4 *= c_atan((2.*a*y + b) / sqrt(d));
+    term4 = -6. * sqrt(xr*d) * (-3.*a*b*f - 2.*a*c*e + 2.*b*b*e);
+    term4 *= c_atan((2.*a*y + b) / sqrt(xr*d));
     term4 /= 36.*a*a*a;
 
     return term1 + term2 + term3 + term4 + g * ri_log0(y,a,b,c);
