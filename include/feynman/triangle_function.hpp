@@ -2,7 +2,7 @@
 // diagram associated with an intermediate t-channel exchange.
 //
 //
-// Author:       Daniel Winney (2019)
+// Author:       Daniel Winney (2020)
 // Affiliation:  Joint Physics Analysis Center (JPAC)
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
@@ -36,12 +36,13 @@ private:
   gauleg integ;
 
   // We build the above from a basis of functions which we evaluate with these
+  std::complex<double> mT(int n, int k, int j, double s, double t);
+  std::complex<double> mT_integrand(int k, int j, double s, double t, double x);
 
-  std::complex<double> mT(int n, int k, int z, double s, double t);
-  std::complex<double> mT_integrand(int k, int z, double s, double t, double x);
-
-  std::complex<double> int_mT0(int z, double s, double t, double x);
-  std::complex<double> int_mT1(int z, double s, double t, double x);
+  // Analytically calculated 4-dimensional (dimensionally-regularized) integrals
+  // int_mTell = mT_j{(k^2)^ell}(s,t)
+  std::complex<double> int_mT0(int j, double s, double t, double x);
+  std::complex<double> int_mT1(int j, double s, double t, double x);
 };
 
 #endif
