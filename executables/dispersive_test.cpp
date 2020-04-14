@@ -7,6 +7,7 @@
 
 #include "breit_wigner.hpp"
 #include "dispersive_triangle.hpp"
+#include "utilities.hpp"
 
 #include <iostream>
 #include <iomanip>
