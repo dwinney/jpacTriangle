@@ -13,12 +13,14 @@
 
 #include "constants.hpp"
 
+#include <iostream>
+
 // redefine arctangent in terms of logarithms for complex argument
 // to better control singularity structure
 std::complex<double> c_atan(std::complex<double> z);
 
 // Antiderivative of 1/(a y^2 + b y + c)
-std::complex<double> ri_poly1(double y,
+std::complex<double> ri_poly0(double y,
     std::complex<double> a,
     std::complex<double> b,
     std::complex<double> c);
