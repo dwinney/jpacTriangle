@@ -120,17 +120,17 @@ std::complex<double> triangle_function::int_mT0(int j, double s, double t, doubl
     case 0:
     {
       // 1
-      e = 0.;
+      g = 0.;
       f = 0.;
-      g = 1.;
+      e = 1.;
       break;
     }
     case 1:
     {
       // z
-      e = 0.;
+      g = 0.;
       f = -1.;
-      g = 1. - x;
+      e = 1. - x;
       break;
     }
     default:
@@ -171,16 +171,16 @@ std::complex<double> triangle_function::int_mT1(int j, double s, double t, doubl
     case 1:
     {
       // (x+y)^3
-      e = 0.;
-      f = 1.;
+      i = 0.;
+      h = 1.;
       g = 3.*x;
-      h = 3.*x*x;
-      i = x*x*x;
+      f = 3.*x*x;
+      e = x*x*x;
 
       // (x+y)
-      l = 0.;
+      m = 0.;
       n = 1.;
-      m = x;
+      l = x;
 
       result -= p * (ri_poly4(1. - x, a, b, c, e, f, g, h, i) - ri_poly4(0., a, b, c, e, f, g, h, i));
       result += 6. * (ri_log2(1. - x, a, b, c, l, n, m) - ri_log2(0., a, b, c, l, n, m));
@@ -190,9 +190,9 @@ std::complex<double> triangle_function::int_mT1(int j, double s, double t, doubl
     case 0:
     {
       // (x+y)^2
-      e = 1.;
+      g = 1.;
       f = 2. * x;
-      g = x * x;
+      e = x * x;
 
       result += p * (ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g));
       result -= 2. * (ri_log0(1. - x, a, b, c) - ri_log0(0., a, b, c));
