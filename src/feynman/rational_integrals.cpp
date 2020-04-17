@@ -54,7 +54,11 @@ std::complex<double> ri_poly2(double y,
   std::complex<double> poly_term;
   poly_term  = 2.*a*g*y;
 
-  std::complex<double> result = atan_term + log_term + poly_term;
+  std::complex<double> result = 0.;
+  result += atan_term;
+  result += log_term;
+  result += poly_term;
+
   result /= 2.*a*a;
   result += e * ri_poly0(y, a, b, c);
 
@@ -88,9 +92,11 @@ std::complex<double> ri_poly4(double y,
   poly_term += 3.*a*a*(a*h - b*i) * y*y;
   poly_term += -6. * a*(a*b*h+a*c*i-i*b*b) * y;
 
-  std::complex<double> result = poly_term;
+  std::complex<double> result = 0.;
+  result += poly_term;
   result += log_term;
   result += atan_term;
+
   result /= 6.*a*a*a*a;
 
   result += ri_poly2(y, a, b, c, e, f, g);
@@ -147,7 +153,11 @@ std::complex<double> ri_log2(double y,
     poly_term  = 2.*a*y;
     poly_term *= a*a*y*(9.*f+ 4.*g*y) - 3.*a*(3.*b*f+b*g*y + 4.*c*g) + 6.*b*b*g;
 
-    std::complex<double> result = log_term + poly_term + atan_term;
+    std::complex<double> result = 0.;
+    result = log_term;
+    result = poly_term;
+    result = atan_term;
+
     result /= 36.*a*a*a;
 
     result += e * ri_log0(y, a, b, c);

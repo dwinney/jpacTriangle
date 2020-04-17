@@ -170,22 +170,21 @@ std::complex<double> triangle_function::int_mT1(int j, double s, double t, doubl
   {
     case 1:
     {
-      // (x+y)^3
+      // z (x+y)^2
       i = 0.;
-      h = 1.;
-      g = 3.*x;
-      f = 3.*x*x;
-      e = x*x*x;
+      h = -1.; // problem child
+      g = 1. - 3.*x;
+      f = 2.*x - 3.*x*x;
+      e = x*x* (1. - x);
 
-      // (x+y)
+      // z
       m = 0.;
-      n = 1.;
-      l = x;
+      n = -1.; // problem child
+      l = 1. - x;
 
-      result -= p * (ri_poly4(1. - x, a, b, c, e, f, g, h, i) - ri_poly4(0., a, b, c, e, f, g, h, i));
-      result += 6. * (ri_log2(1. - x, a, b, c, l, n, m) - ri_log2(0., a, b, c, l, n, m));
-
-      // continue to subtract the k = 0 case
+      result = p * (ri_poly4(1. - x, a, b, c, e, f, g, h, i) - ri_poly4(0., a, b, c, e, f, g, h, i));
+      result -= 2. * (ri_log2(1. - x, a, b, c, l, n, m) - ri_log2(0., a, b, c, l, n, m));
+      break;
     }
     case 0:
     {
@@ -194,7 +193,7 @@ std::complex<double> triangle_function::int_mT1(int j, double s, double t, doubl
       f = 2. * x;
       e = x * x;
 
-      result += p * (ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g));
+      result = p * (ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g));
       result -= 2. * (ri_log0(1. - x, a, b, c) - ri_log0(0., a, b, c));
 
       break;
