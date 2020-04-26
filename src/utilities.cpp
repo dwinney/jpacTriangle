@@ -68,14 +68,6 @@ std::vector<double> vec_imag(std::vector<std::complex<double>> fx)
 };
 
 //-----------------------------------------------------------------------------
-// Evaluate the interpolation
-complex<double> interpolation::operator ()(double s)
-{
-  complex<double> result(r_inter.Eval(s), i_inter.Eval(s));
-  return result;
-};
-
-//-----------------------------------------------------------------------------
 // Simple function to call ROOT to print a plot
 void quick_plot(vector<double> s, vector<complex<double>> fx, string filename)
 {
