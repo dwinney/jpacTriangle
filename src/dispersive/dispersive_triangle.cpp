@@ -32,22 +32,18 @@ std::complex<double> dispersive_triangle::eval(int j, int jp, double s)
 // calculate the dispersion integral over s with finite bounds of integration
 std::complex<double> dispersive_triangle::s_dispersion(int j, int jp, double s, double low, double high)
 {
-  double w[integ.xN + 1], x[integ.xN + 1];
-  NR_gauleg(low, high, x, w, integ.xN);
-
-  // Integrate
-  std::complex<double> sum = 0.;
-  for (int i = 1; i <= integ.xN; i++)
+  auto F = [&](double sp)
   {
-    double sp = x[i];
     std::complex<double> temp;
-
     temp = rho(sp) * b(j, jp, sp) - rho(s) * b(j, jp, s);
     temp *= s / sp;
     temp /= (sp - s - ieps);
+    return temp;
+  };
 
-    sum += w[i] * temp;
-  }
+  double error;
+  std::complex<double> result;
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, low, high, 0, 1.E-9, &error);
 
   // Log term from subtracted singularity
   std::complex<double> log_term;
@@ -55,58 +51,47 @@ std::complex<double> dispersive_triangle::s_dispersion(int j, int jp, double s, 
   log_term -= log(low - s * xr) - log(low);
   log_term *= rho(s) * b(j, jp, s);
 
-  return (sum + log_term) / M_PI;
+  return (result + log_term) / M_PI;
 };
 
 // calculate the dispersion integral over s up to infinity
 std::complex<double> dispersive_triangle::s_dispersion_inf(int j, int jp, double s, double low)
 {
-  integ.check_weights();
-
-  // Integrate
-  std::complex<double> sum = 0.;
-  for (int i = 0; i < integ.xN; i++)
+  auto F = [&](double sp)
   {
-    double sp = low + tan(M_PI * integ.abscissas[i] / 2.);
-
     std::complex<double> temp;
     temp = rho(sp) * b(j, jp, sp) - rho(s) * b(j, jp, s);
     temp *= s / sp;
     temp /= (sp - s - ieps);
-    temp *= (M_PI / 2.) / pow(cos(M_PI * integ.abscissas[i] / 2.), 2.); // jacobian
+    return temp;
+  };
 
-    sum += integ.weights[i] * temp;
-  }
+  double error;
+  std::complex<double> result;
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, low, std::numeric_limits<double>::infinity(), 0, 1.E-9, &error);
 
   // subtracted point
   std::complex<double> log_term = - rho(s) * b(j, jp, s);
   log_term *= log(low - s * xr) - log(low);
 
-  return (sum + log_term) / M_PI;
+  return (result + log_term) / M_PI;
 };
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion intgral over t
 std::complex<double> dispersive_triangle::b(int j, int jp, double s)
 {
-  integ.check_weights();
-
-  std::complex<double> sum = 0.;
-  for (int i = 0; i < integ.xN; i++)
+  auto F = [&](double tp)
   {
-    double tp = (r_thresh + EPS) + tan(M_PI * integ.abscissas[i] / 2.);
+    return lhc_func->disc(tp) * projector(0, j, jp, s, tp);
+  };
 
-    std::complex<double> temp;
-    temp = lhc_func->disc(tp);
-    temp *= projector(0, j, jp, s, tp);
-    temp *= (M_PI / 2.) / pow(cos(M_PI * integ.abscissas[i] / 2.), 2.);
+  double error;
+  std::complex<double> result;
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, r_thresh, std::numeric_limits<double>::infinity(), 0, 1.E-9, &error);
+  result /= M_PI;
 
-    sum += integ.weights[i] * temp;
-  }
-
-  sum /= M_PI;
-
-  return sum;
+  return result;
 };
 
 // ---------------------------------------------------------------------------

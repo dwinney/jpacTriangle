@@ -17,21 +17,22 @@
 #include <cmath>
 #include <iomanip>
 
+#include <boost/math/quadrature/gauss_kronrod.hpp>
+
 #include "triangle_function.hpp"
 #include "constants.hpp"
 #include "lefthand_cut.hpp"
-#include "integration.hpp"
 
 class feynman_triangle
 {
 public:
   feynman_triangle(lefthand_cut * a_x, double m)
-  : lhc_func(a_x), integ(), kernel(m),
+  : lhc_func(a_x), kernel(m),
     mDec(m), mDec2(m*m), r_thresh((mDec + mPi) * (mDec + mPi))
   {};
 
   feynman_triangle(lefthand_cut * a_x, double m, int n)
-  : lhc_func(a_x), integ(n), kernel(m),
+  : lhc_func(a_x), kernel(m),
     mDec(m), mDec2(m*m), r_thresh((mDec + mPi) * (mDec + mPi))
   {};
 
@@ -47,9 +48,6 @@ private:
   // Mass of the decaying particle and the threshold X Pi threshold
   double mDec, mDec2;
   double r_thresh;
-
-  // Integration stuff
-  gauleg integ;
 
   // Two-point functions, from polynomial contribution
   std::complex<double> mP1(double s);

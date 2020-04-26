@@ -16,7 +16,6 @@
 #include <iomanip>
 
 #include "constants.hpp"
-#include "integration.hpp"
 #include "rational_integrals.hpp"
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>

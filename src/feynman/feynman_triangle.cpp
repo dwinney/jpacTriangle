@@ -14,24 +14,16 @@
 // Evaluate the convolution of the LHC function with triangle function
 std::complex<double> feynman_triangle::eval(int j, int jp, double s)
 {
-    integ.check_weights();
-
-    // Calculate the dispersion piece coming from the triangle
-    std::complex<double> sum = 0.;
-    for (int i = 0; i < integ.xN; i++)
+    auto F = [&](double tp)
     {
-      double tp = r_thresh + tan(M_PI * integ.abscissas[i] / 2.);
+      return lhc_func->disc(tp) *kernel.eval(1, j, jp, s, tp);
+    };
 
-      std::complex<double> temp;
-      temp = lhc_func->disc(tp);
-      temp *= kernel.eval(1, j, jp, s, tp); // one subtraction
+    double error;
+    std::complex<double> result;
+    result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, r_thresh, std::numeric_limits<double>::infinity(), 5, 1.E-9, &error);
 
-      temp *= (M_PI / 2.);
-      temp /= pow(cos(M_PI * integ.abscissas[i] / 2.), 2.); // jacobian
+    result /= M_PI;
 
-      sum += integ.weights[i] * temp;
-    }
-    sum /= M_PI;
-
-    return 1. + sum;
+    return 1. + result;
 };

@@ -16,20 +16,21 @@
 #include <cmath>
 #include <iomanip>
 
+#include <boost/math/quadrature/gauss_kronrod.hpp>
+
 #include "constants.hpp"
 #include "utilities.hpp"
 #include "lefthand_cut.hpp"
-#include "integration.hpp"
 
 class dispersive_triangle
 {
 public:
   dispersive_triangle(lefthand_cut * a_x)
-  : lhc_func(a_x), integ()
+  : lhc_func(a_x)
   {};
 
   dispersive_triangle(lefthand_cut * a_x, int n)
-  : lhc_func(a_x), integ(n)
+  : lhc_func(a_x)
   {};
 
   // Evalate the diagram
@@ -60,9 +61,6 @@ private:
     p_thresh = (mDec - mPi) * (mDec - mPi);
     r_thresh = (mDec + mPi) * (mDec + mPi);
   };
-
-  // Integration stuff
-  gauleg integ;
 
   // ---------------------------------------------------------------------------
   // Kacser function analytically continues momenta between s and t channels

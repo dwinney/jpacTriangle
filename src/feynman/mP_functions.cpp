@@ -12,18 +12,17 @@
 // Once subtracted polynomial contribution (P^0(s))
 std::complex<double> feynman_triangle::mP1(double s)
 {
-  integ.check_weights();
-
-  std::complex<double> result, sum = 0.;
-  for (int i = 0; i < integ.xN; i++)
+  auto F = [&](double x)
   {
-    double x_i = integ.abscissas[i];
-    std::complex<double> temp = mPi2 - x_i * (1. - x_i) * (s + ieps) ;
+    std::complex<double> temp = mPi2 - x * (1. - x) * (s + ieps) ;
+    return log(mPi2 / temp);
+  };
 
-    sum += integ.weights[i] * log(mPi2 / temp);
-  }
+  double error;
+  std::complex<double> result;
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, 0, 1, 5, 1.E-20, &error);
 
-  result = sum / M_PI;
+  result /= M_PI;
 
   return result;
 };

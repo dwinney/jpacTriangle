@@ -18,7 +18,7 @@ std::complex<double> triangle_function::eval(int n, int j, int jp, double s, dou
   switch (jp)
   {
     // scalar exchange
-    case 0: return mT(n, 0, j, s, tp);
+    case 0: return mT(n, 1, j, s, tp) / tp;
 
     // vector exchange
     case 1:
@@ -51,7 +51,7 @@ std::complex<double> triangle_function::mT(int n, int k, int j, double s, double
 
   double error;
   std::complex<double> result;
-  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, 0, 1, 0, 1.E-20, &error);
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, 0, 1, 5, 1.E-9, &error);
 
   return result / M_PI;
 };
