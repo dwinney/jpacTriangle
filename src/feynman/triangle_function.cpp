@@ -24,7 +24,8 @@ std::complex<double> triangle_function::eval(int n, int j, int jp, double s, dou
     case 1:
     {
       result = mT(n, 1, 0, s, tp);
-      result += 2. * s * mT(n - 1, 0, j, s, tp) - (mDec2 + 3. * mPi2) * mT(n, 0, j, s, tp);
+      result += 2. * s * mT(n - 1, 0, j, s, tp);
+      result -= (mDec2 + 3. * mPi2) * mT(n, 0, j, s, tp);
       break;
     }
     default:
@@ -43,54 +44,46 @@ std::complex<double> triangle_function::eval(int n, int j, int jp, double s, dou
 // Also actually does the numerical integration over the final parameter x
 std::complex<double> triangle_function::mT(int n, int k, int j, double s, double t)
 {
-  integ.check_weights();
-
-  //integrate over x
-  std::complex<double> sum = 0.;
-  for (int i = 0; i < integ.xN; i++)
+  auto F = [&](double x)
   {
-    double x_i = integ.abscissas[i];
+    return mT_integrand(n, k, j, s, t, x);
+  };
 
-    switch (n)
-    {
-      // One subtraction
-      case 1:
-      {
-        sum += integ.weights[i] * (mT_integrand(k, j, s, t, x_i) - mT_integrand(k, j, 0., t, x_i));
-        break;
-      }
+  double error;
+  std::complex<double> result;
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, 0, 1, 0, 1.E-20, &error);
 
-      // No subtractions
-      case 0:
-      {
-        sum += integ.weights[i] * (mT_integrand(k, j, s, t, x_i));
-        break;
-      }
-      default:
-      {
-        std::cout << "\n Error! Weird number of subtractions: " << n << " recieved. Quitting... \n";
-        exit(0);
-      }
-    }
-  }
-
-  return sum / M_PI;
+  return result / M_PI;
 };
 
 // ---------------------------------------------------------------------------
 // Basis functions based on order of divergence.
 // Filters number of powers of k^2 in the numerator of the triangle function
-std::complex<double> triangle_function::mT_integrand(int k, int j, double s, double t, double x)
+std::complex<double> triangle_function::mT_integrand(int n, int k, int j, double s, double t, double x)
 {
   switch (k)
   {
     case 0:
     {
-      return int_mT0(j, s, t, x);
+      if (n == 0)
+      {
+        return int_mT0(j, s, t, x);
+      }
+      else if (n == 1)
+      {
+        return int_mT0(j, s, t, x) - int_mT0(j, 0., t, x);
+      }
     }
     case 1:
     {
-      return int_mT1(j, s, t, x);
+      if (n == 0)
+      {
+        return int_mT1(j, s, t, x);
+      }
+      else if (n == 1)
+      {
+        return int_mT1(j, s, t, x) - int_mT1(j, 0., t, x);
+      }
     }
     default:
     {
@@ -168,6 +161,17 @@ std::complex<double> triangle_function::int_mT1(int j, double s, double t, doubl
   std::complex<double> result = 0.;
   switch (j)
   {
+    case 0:
+    {
+      // (x+y)^2
+      g = 1.;
+      f = 2. * x;
+      e = x * x;
+
+      result = p * (ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g));
+      result -= 2. * (ri_log0(1. - x, a, b, c) - ri_log0(0., a, b, c));
+      break;
+    }
     case 1:
     {
       // z (x+y)^2
@@ -184,18 +188,6 @@ std::complex<double> triangle_function::int_mT1(int j, double s, double t, doubl
 
       result = p * (ri_poly4(1. - x, a, b, c, e, f, g, h, i) - ri_poly4(0., a, b, c, e, f, g, h, i));
       result -= 2. * (ri_log2(1. - x, a, b, c, l, n, m) - ri_log2(0., a, b, c, l, n, m));
-      break;
-    }
-    case 0:
-    {
-      // (x+y)^2
-      g = 1.;
-      f = 2. * x;
-      e = x * x;
-
-      result = p * (ri_poly2(1. - x, a, b, c, e, f, g) - ri_poly2(0., a, b, c, e, f, g));
-      result -= 2. * (ri_log0(1. - x, a, b, c) - ri_log0(0., a, b, c));
-
       break;
     }
     default:

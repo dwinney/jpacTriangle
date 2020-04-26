@@ -24,7 +24,7 @@ std::complex<double> feynman_triangle::eval(int j, int jp, double s)
 
       std::complex<double> temp;
       temp = lhc_func->disc(tp);
-      temp *= kernel.eval(1, j, jp, s, tp);
+      temp *= kernel.eval(1, j, jp, s, tp); // one subtraction
 
       temp *= (M_PI / 2.);
       temp /= pow(cos(M_PI * integ.abscissas[i] / 2.), 2.); // jacobian

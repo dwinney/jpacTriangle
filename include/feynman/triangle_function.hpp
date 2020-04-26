@@ -19,6 +19,8 @@
 #include "integration.hpp"
 #include "rational_integrals.hpp"
 
+#include <boost/math/quadrature/gauss_kronrod.hpp>
+
 class triangle_function
 {
 public:
@@ -33,11 +35,10 @@ public:
 
 private:
   double mDec, mDec2;
-  gauleg integ;
 
   // We build the above from a basis of functions which we evaluate with these
   std::complex<double> mT(int n, int k, int j, double s, double t);
-  std::complex<double> mT_integrand(int k, int j, double s, double t, double x);
+  std::complex<double> mT_integrand(int n, int k, int j, double s, double t, double x);
 
   // Analytically calculated 4-dimensional (dimensionally-regularized) integrals
   // int_mTell = mT_j{(k^2)^ell}(s,t)
