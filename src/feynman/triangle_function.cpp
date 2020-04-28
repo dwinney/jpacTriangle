@@ -23,7 +23,7 @@ std::complex<double> triangle_function::eval(int n, int j, int jp, double s, dou
     // vector exchange
     case 1:
     {
-      result = mT(n, 1, 0, s, tp);
+      result = mT(n, 1, j, s, tp);
       result += 2. * s * mT(n - 1, 0, j, s, tp);
       result -= (mDec2 + 3. * mPi2) * mT(n, 0, j, s, tp);
       break;
@@ -44,14 +44,13 @@ std::complex<double> triangle_function::eval(int n, int j, int jp, double s, dou
 // Also actually does the numerical integration over the final parameter x
 std::complex<double> triangle_function::mT(int n, int k, int j, double s, double t)
 {
-  auto F = [&](double x)
+  auto dX = [&](double x)
   {
     return mT_integrand(n, k, j, s, t, x);
   };
 
-  double error;
   std::complex<double> result;
-  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, 0, 1, 5, 1.E-9, &error);
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(dX, 0, 1, 5, 1.E-9, NULL);
 
   return result / M_PI;
 };
@@ -176,18 +175,19 @@ std::complex<double> triangle_function::int_mT1(int j, double s, double t, doubl
     {
       // z (x+y)^2
       i = 0.;
-      h = -1.; // problem child
+      h = -1.;
       g = 1. - 3.*x;
       f = 2.*x - 3.*x*x;
       e = x*x* (1. - x);
 
       // z
       m = 0.;
-      n = -1.; // problem child
-      l = 1. - x;
+      n = -3.;
+      l = 1. - 3.*x;
 
       result = p * (ri_poly4(1. - x, a, b, c, e, f, g, h, i) - ri_poly4(0., a, b, c, e, f, g, h, i));
       result -= 2. * (ri_log2(1. - x, a, b, c, l, n, m) - ri_log2(0., a, b, c, l, n, m));
+      result /= 4.;
       break;
     }
     default:

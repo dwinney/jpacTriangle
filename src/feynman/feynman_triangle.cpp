@@ -14,14 +14,13 @@
 // Evaluate the convolution of the LHC function with triangle function
 std::complex<double> feynman_triangle::eval(int j, int jp, double s)
 {
-    auto F = [&](double tp)
+    auto dTp = [&](double tp)
     {
-      return lhc_func->disc(tp) *kernel.eval(1, j, jp, s, tp);
+      return lhc_func->disc(tp) * kernel.eval(1, j, jp, s, tp);
     };
 
-    double error;
     std::complex<double> result;
-    result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(F, r_thresh, std::numeric_limits<double>::infinity(), 5, 1.E-9, &error);
+    result = boost::math::quadrature::gauss_kronrod<double, 15>::integrate(dTp, r_thresh, std::numeric_limits<double>::infinity(), 5, 1.E-9, NULL);
 
     result /= M_PI;
 
