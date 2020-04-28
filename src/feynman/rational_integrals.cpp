@@ -154,9 +154,9 @@ std::complex<double> ri_log2(double y,
     poly_term *= a*a*y*(9.*f+ 4.*g*y) - 3.*a*(3.*b*f+b*g*y + 4.*c*g) + 6.*b*b*g;
 
     std::complex<double> result = 0.;
-    result = log_term;
-    result = poly_term;
-    result = atan_term;
+    result += log_term;
+    result += poly_term;
+    result += atan_term;
 
     result /= 36.*a*a*a;
 
