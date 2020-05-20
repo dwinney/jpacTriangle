@@ -1,3 +1,6 @@
 [submodule "jpacStyle"]
 	path = jpacStyle
 	url = https://github.com/dwinney/jpacStyle.git
+[submodule "cubature"]
+	path = cubature
+	url = https://github.com/stevengj/cubature.git

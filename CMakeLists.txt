@@ -53,7 +53,13 @@ else()
     message(SEND_ERROR "BOOST not found!")
 endif()
 
-# BUILD THE PLOTTING LIBRARY AS WELL
+# BUILD CUBATURE LIBRARY
+include_directories("cubature")
+file(GLOB_RECURSE CUB_INC "*.h")
+file(GLOB_RECURSE CUB_SRC "*.c")
+add_library( Cubature ${CUB_INC} ${CUB_SRC} )
+
+# BUILD THE PLOTTING LIBRARY
 include_directories("jpacStyle/include")
 include_directories("jpacStyle/src")
 file(GLOB_RECURSE PLOTINC "jpacStyle/include/*.hpp")
@@ -76,6 +82,7 @@ foreach( exefile ${EXE_FILES} )
     add_executable( ${exename} ${exefile} )
     target_link_libraries( ${exename} KT_triangle)
     target_link_libraries( ${exename} JpacStyle)
+    target_link_libraries( ${exename} Cubature)
     target_link_libraries( ${exename} ${ROOT_LIBRARIES})
     target_link_libraries( ${exename} ${BOOST_LIBRARIES})
 endforeach( exefile ${EXE_FILES} )
