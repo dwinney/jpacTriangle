@@ -10,7 +10,8 @@
 
 #include "breit_wigner.hpp"
 #include "feynman/feynman_triangle.hpp"
-#include "utilities.hpp"
+
+#include "jpacGraph1Dc.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -39,11 +40,11 @@ int main( int argc, char** argv )
   feynman_triangle tri(&left_hand_cut, 0.780);
 
   // Choose the name for the output files to have (sans and extentions)
-  std::string filename = "omega";
+  std::string filename = "omega_feyn.pdf";
 
   // Plotting bounds
   double low = 1.e-3;
-  double high = 81 * mPi * mPi;
+  double high = 81. * mPi2;
 
   int Np = 100; // Number of points to plot
 
@@ -84,11 +85,14 @@ int main( int argc, char** argv )
   std::cout << "Done in " << elapsed_secs << " seconds. \n";
   std::cout << "\n";
 
-  // Plot the vectors and save them in .pdf and .dat
-  quick_plot(s, feyn, filename + "_feyn");
-  quick_print(s, feyn, filename + "_feyn");
+  jpacGraph1Dc* plotter = new jpacGraph1Dc();
+  plotter->AddEntry(s, feyn, "");
+  plotter->SetLegend(false);
 
-  std::cout << "\n";
+  plotter->SetXaxis("#sqrt{s} / m_{#pi}", 0, 10);
+  plotter->Plot(filename);
+
+  delete plotter;
 
   return 1.;
 };

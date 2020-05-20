@@ -19,7 +19,6 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include "constants.hpp"
-#include "utilities.hpp"
 #include "lefthand_cut.hpp"
 
 class dispersive_triangle

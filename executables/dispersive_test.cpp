@@ -7,7 +7,8 @@
 
 #include "breit_wigner.hpp"
 #include "dispersive_triangle.hpp"
-#include "utilities.hpp"
+
+#include "jpacGraph1Dc.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -38,7 +39,7 @@ int main(int argc, char** argv)
   tri.set_decayMass(0.780);
 
   // Choose the name for the output files to have (sans and extentions)
-  std::string filename = "omega";
+  std::string filename = "omega_disp.pdf";
 
   // Plotting bounds
   double low = 1.e-3;
@@ -77,11 +78,13 @@ int main(int argc, char** argv)
   std::cout << "Done in " << elapsed_secs << " seconds. \n";
   std::cout << "\n";
 
-  // Plot the vectors and save them in .pdf and .dat
-  quick_plot(s, disp, filename + "_disp");
-  quick_print(s, disp, filename + "_disp");
+  jpacGraph1Dc* plotter = new jpacGraph1Dc();
+  plotter->AddEntry(s, disp, "");
+  plotter->SetLegend(false);
 
-  std::cout << "\n";
+  plotter->SetXaxis("#sqrt{s} / m_{#pi}", 0, 10);
+  plotter->Plot(filename);
 
+  delete plotter;
   return 1.;
 };

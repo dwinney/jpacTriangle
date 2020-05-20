@@ -38,7 +38,7 @@ function(update_deps_file deps)
 endfunction(update_deps_file)
 
 ## ROOT AND GSL
-find_package(ROOT REQUIRED)
+find_package(ROOT REQUIRED MathMore)
 if (ROOT_FOUND)
     include_directories(${ROOT_INCLUDE_DIRS})
     link_directories(${ROOT_LIBRARY_DIRS})
@@ -52,6 +52,13 @@ if (Boost_FOUND)
 else()
     message(SEND_ERROR "BOOST not found!")
 endif()
+
+# BUILD THE PLOTTING LIBRARY AS WELL
+include_directories("jpacStyle/include")
+include_directories("jpacStyle/src")
+file(GLOB_RECURSE PLOTINC "jpacStyle/include/*.hpp")
+file(GLOB_RECURSE PLOTSRC "jpacStyle/src/*.cpp")
+add_library( JpacStyle ${PLOTINC} ${PLOTSRC} )
 
 # BUILD LIBRARY FROM LOCAL FiLES
 include_directories("include")
@@ -68,6 +75,7 @@ foreach( exefile ${EXE_FILES} )
     get_filename_component( exename ${exefile} NAME_WE)
     add_executable( ${exename} ${exefile} )
     target_link_libraries( ${exename} KT_triangle)
+    target_link_libraries( ${exename} JpacStyle)
     target_link_libraries( ${exename} ${ROOT_LIBRARIES})
     target_link_libraries( ${exename} ${BOOST_LIBRARIES})
 endforeach( exefile ${EXE_FILES} )
