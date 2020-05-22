@@ -18,40 +18,39 @@
 #include <iomanip>
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
+#include "cubature.h"
 
-#include "triangle_function.hpp"
 #include "constants.hpp"
+#include "quantum_numbers.hpp"
 #include "lefthand_cut.hpp"
+#include "feynman/dF3_integrand.hpp"
 
 class feynman_triangle
 {
 public:
-  feynman_triangle(lefthand_cut * a_x, double m)
-  : lhc_func(a_x), kernel(m),
-    mDec(m), mDec2(m*m), r_thresh((mDec + mPi) * (mDec + mPi))
-  {};
-
-  feynman_triangle(lefthand_cut * a_x, double m, int n)
-  : lhc_func(a_x), kernel(m),
-    mDec(m), mDec2(m*m), r_thresh((mDec + mPi) * (mDec + mPi))
+  feynman_triangle(quantum_numbers * xqn, lefthand_cut * a_x)
+  : lhc_func(a_x), qns(xqn), integrand(qns)
   {};
 
   // Evalate the diagram
-  std::complex<double> eval(int j, int jp, double s);
+  std::complex<double> eval(double s);
+
+  // Evaluate using fixed-mass exchange with an infinitesimal width
+  std::complex<double> kernel(double s, double t);
 
 // ---------------------------------------------------------------------------
 private:
   // Isobar lineshape and triangle ampltiude to convolute
   lefthand_cut * lhc_func;
-  triangle_function kernel;
 
-  // Mass of the decaying particle and the threshold X Pi threshold
-  double mDec, mDec2;
-  double r_thresh;
+  // All the associated quantum numbers and parameters for the amplitude
+  quantum_numbers * qns;
 
-  // Two-point functions, from polynomial contribution
-  std::complex<double> mP1(double s);
+  // Feynman parameter integrand
+  dF3_integrand integrand;
+
+  // Wrapper for interfacing the integrand with hcubature routine
+  static int wrapped_integrand(unsigned ndim, const double *in, void *fdata, unsigned fdim, double *fval);
 };
-
 
 #endif
