@@ -1,6 +1,6 @@
 # kt_triangle
 
-Code for investigating properties of triangle diagrams using dispersive techniques in the context of Khuri-Treiman (see for example [[1]]((https://arxiv.org/abs/1910.03107))).
+Code for investigating properties of triangle diagrams using dispersive techniques in the context of Khuri-Treiman (see for example [[1]](https://arxiv.org/abs/1910.03107)).
 
 <p align="center">
   <img width="500" src="./doc/tri_diagram.png">
