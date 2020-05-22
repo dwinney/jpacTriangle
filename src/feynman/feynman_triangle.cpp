@@ -22,7 +22,7 @@ std::complex<double> feynman_triangle::eval(double s)
   };
 
   std::complex<double> result;
-  result = boost::math::quadrature::gauss_kronrod<double, 15>::integrate(dTp, r_thresh, std::numeric_limits<double>::infinity(), 5, 1.E-4, NULL);
+  result = boost::math::quadrature::gauss_kronrod<double, 15>::integrate(dTp, r_thresh, std::numeric_limits<double>::infinity(), 0, 1.E-4, NULL);
 
   result /= M_PI;
 
@@ -43,8 +43,9 @@ std::complex<double> feynman_triangle::kernel(double s, double t)
     // Fix the "masses" s and t
     integrand.set_energies(s, t);
 
+    // TODO: Set relative errors and max calls to actual good values 
     // Integrate over x and y
-    hcubature(2, wrapped_integrand, &integrand, 2, min, max, 2e6, 0, 1e-4, ERROR_PAIRED, val, err);
+    hcubature(2, wrapped_integrand, &integrand, 2, min, max, 2e6, 0, 1e-4, ERROR_INDIVIDUAL, val, err);
 
     // Assemble the result as a complex double
     std::complex<double> result = val[0] + xi * val[1];
@@ -69,4 +70,4 @@ int feynman_triangle::wrapped_integrand(unsigned ndim, const double *in, void *f
   fval[1] = std::imag(result);
 
   return 0.;
-}
+};
