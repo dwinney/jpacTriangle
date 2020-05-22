@@ -25,6 +25,7 @@ const double mK = 0.496;
 const double mEta = 0.54753;
 
 const double mRho = .77545;
+const double mRho2 = mRho * mRho;
 const double mF2 = 1.2754;
 
 //Thresholds for pi, eta, and K
