@@ -30,7 +30,27 @@ private:
   // All the associated quantum numbers and parameters for the amplitude
   quantum_numbers* qns;
 
-  double mDec2, s, t, psqr; // center of mass energies, t is the exchange particle mass
+  double D, D0;
+  double mDec2, P_sqr, P0_sqr = (mDec2 + mPi2) / 2.;
+  double s, t; // center of mass energies, t is the exchange particle mass
+
+  // Currently stored feynman parameters
+  double x, y ,z;
+  void update_fparams(double x, double y, double z);
+
+  // Dimensionally regularized integrals
+  // denom is the combined denominators of all the propagators
+  // ell is the degree of divergence
+  std::complex<double> T(int ell, double denom);
+
+  // The dimensionally regularized integrals but reparameterized
+  // in terms of the shifted loop momentum relevant for the triangle
+  // optional bool if True evaluates mT at s = 0
+  std::complex<double> mT(int k, bool SUB = false);
+
+  // mT with n subtractions applied
+  std::complex<double> sub_mT(int n, int k);
+
 };
 
 #endif
