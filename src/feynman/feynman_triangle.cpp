@@ -43,12 +43,14 @@ std::complex<double> feynman_triangle::kernel(double s, double t)
     // Fix the "masses" s and t
     integrand.set_energies(s, t);
 
-    // TODO: Set relative errors and max calls to actual good values 
+    // TODO: Set relative errors and max calls to actual good values
     // Integrate over x and y
     hcubature(2, wrapped_integrand, &integrand, 2, min, max, 2e6, 0, 1e-4, ERROR_INDIVIDUAL, val, err);
 
     // Assemble the result as a complex double
     std::complex<double> result = val[0] + xi * val[1];
+    result *= 2.; // Factor of 2 from the normalization of dF_3 integration measure
+
     return result;
 };
 
