@@ -35,7 +35,7 @@ int main( int argc, char** argv )
   quantum_numbers qns;
   qns.n = 1;
   qns.j = 1;
-  qns.jp = 0;
+  qns.jp = 1;
   qns.mDec = .780; // The decaying particle mass
 
   // Start a breit_wigner object for rho exchange.
@@ -71,16 +71,16 @@ int main( int argc, char** argv )
 
   clock_t begin = clock();
 
-  for (int i = 0; i < Np; i++)
+  for (int i = 0; i <= Np; i++)
   {
     double si = low + EPS + double(i) * (high - low) / double(Np);
-
+    // std::complex<double> fx_f = tri.eval(si);
     std::complex<double> fx_f = tri.kernel(si, mRho2);
 
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);
 
-    std::cout << std::left << std::setw(5) << i;
+    std::cout << std::left << std::setw(10) << i;
     std::cout << std::setw(15) << s[i];
     std::cout << std::setw(20) << feyn[i] << "\n";
   }
