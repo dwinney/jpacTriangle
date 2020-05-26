@@ -6,6 +6,40 @@
 // Email:        dwinney@iu.edu
 // ---------------------------------------------------------------------------
 
+
+#ifndef _DEBUG_
+#define _DEBUG_
+
+#include <iostream>
+#include <iomanip>
+
+// ---------------------------------------------------------------------------
+// Generic functions
+template<typename T>
+void debug(T x)
+{
+  std::cout << x << std::endl;
+};
+
+template<typename T, typename F>
+void debug(T x, F y)
+{
+  std::cout << std::left;
+  std::cout << std::setw(30) << x;
+  std::cout << std::setw(30) << y << std::endl;
+};
+
+template<typename T, typename F, typename G>
+void debug(T x, F y, G z)
+{
+  std::cout << std::left;
+  std::cout << std::setw(20) << x;
+  std::cout << std::setw(20) << y;
+  std::cout << std::setw(20) << z << std::endl;
+};
+
+#endif
+
 #ifndef _CONSTANT_
 #define _CONSTANT_
 
