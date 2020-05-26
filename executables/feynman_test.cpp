@@ -10,11 +10,10 @@
 
 #include "breit_wigner.hpp"
 #include "feynman/feynman_triangle.hpp"
+#include "constants.hpp"
 
 #include "jpacGraph1Dc.hpp"
 
-#include <iostream>
-#include <iomanip>
 #include <cstring>
 #include <string>
 #include <ctime>
@@ -34,8 +33,8 @@ int main( int argc, char** argv )
   // All the associated quantum numbers for the amplitude
   quantum_numbers qns;
   qns.n = 1;
-  qns.j = 1;
-  qns.jp = 1;
+  qns.j = j;
+  qns.jp = jp;
   qns.mDec = .780; // The decaying particle mass
 
   // Start a breit_wigner object for rho exchange.
@@ -64,7 +63,7 @@ int main( int argc, char** argv )
 // Calculate the triangle function first with the feynman representation
 
   std::cout << "\n";
-  std::cout << "Calculating Feynman triangle... \n";
+  std::cout << "Calculating Feynman triangle... \n\n";
 
   std::vector<double> s;
   std::vector< std::complex<double> > feyn;
@@ -80,15 +79,16 @@ int main( int argc, char** argv )
     s.push_back(sqrt(si) / mPi);
     feyn.push_back(fx_f);
 
-    std::cout << std::left << std::setw(10) << i;
-    std::cout << std::setw(15) << s[i];
-    std::cout << std::setw(20) << feyn[i] << "\n";
+    std::cout << std::left;
+    std::cout << std::setw(7)  << i;
+    std::cout << std::setw(15) << si;
+    std::cout << std::setw(30) << fx_f << std::endl;
   }
 
   clock_t end = clock();
   double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
-  std::cout << "Done in " << elapsed_secs << " seconds. \n";
+  std::cout << "\nDone in " << elapsed_secs << " seconds. \n";
   std::cout << "\n";
 
   jpacGraph1Dc* plotter = new jpacGraph1Dc();
