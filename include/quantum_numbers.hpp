@@ -11,7 +11,8 @@
 
 struct quantum_numbers
 {
-  int n = 1; // number of Subtractions
+  int n = 1; // number of Subtractions in s integral
+  int l = 0; // number of subtractions in t integral
   int j = 0, lam = 0; // spin and helicity projection in the s-channel
   int jp = 0, lamp = 0; // spin and helicity projections in the t-channel
 
