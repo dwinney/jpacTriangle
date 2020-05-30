@@ -27,19 +27,26 @@ private:
   quantum_numbers * qns;
   double mDec2;
 
-  // Kacser function analytically continues momenta between s and t channels
-  std::complex<double> Kacser(double s);
+  // Save s and t so dont need to pass them around
+  double s, t;
+  void set_energies(double xs, double xt)
+  {
+      s = xs; t = xt;
+  };
 
-  // Ratio of momenta q(s) / p(s) 
-  std::complex<double> barrier_ratio(int ell, double s);
+  // Kacser function analytically continues momenta between s and t channels
+  std::complex<double> Kacser();
 
   // Complex bounds of integtion
-  std::complex<double> t_minus(double s);
-  std::complex<double> t_plus(double s);
+  std::complex<double> t_minus();
+  std::complex<double> t_plus();
+
+  // Ratio of momenta q(s) / p(s)
+  std::complex<double> barrier_ratio(int ell);
 
   // Angular kernel functions
-  std::complex<double> Q_0(double s, double t);
-  std::complex<double> Q(int n, double s, double t);
+  std::complex<double> Q_0();
+  std::complex<double> Q(int n);
 
 };
 
