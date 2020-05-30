@@ -11,27 +11,8 @@
 #include "feynman/feynman_triangle.hpp"
 
 // ---------------------------------------------------------------------------
-// Evaluate the convolution of the LHC function with triangle function
-std::complex<double> feynman_triangle::eval(double s)
-{
-  double r_thresh = (qns->mDec + mPi) * (qns->mDec + mPi);
-
-  auto dTp = [&](double tp)
-  {
-    return lhc_func->disc(tp) * kernel(s, tp);
-  };
-
-  std::complex<double> result;
-  result = boost::math::quadrature::gauss_kronrod<double, 15>::integrate(dTp, r_thresh, std::numeric_limits<double>::infinity(), 0, 1.E-4, NULL);
-
-  result /= M_PI;
-
-  return 1. + result;
-};
-
-// ---------------------------------------------------------------------------
 // Evaluate the triangle assuming a fixed mass exchange with mass t
-std::complex<double> feynman_triangle::kernel(double s, double t)
+std::complex<double> feynman_triangle::eval(double s, double t)
 {
     // Desination for the result and assosiated errors
     double val[2], err[2];
@@ -45,7 +26,7 @@ std::complex<double> feynman_triangle::kernel(double s, double t)
 
     // TODO: Set relative errors and max calls to actual good values
     // Integrate over x and y
-    hcubature(2, wrapped_integrand, &integrand, 2, min, max, 2e6, 0, 1e-4, ERROR_INDIVIDUAL, val, err);
+    hcubature(2, wrapped_integrand, &integrand, 2, min, max, 2E7, 0, 1e-3, ERROR_INDIVIDUAL, val, err);
 
     // Assemble the result as a complex double
     std::complex<double> result = val[0] + xi * val[1];

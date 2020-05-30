@@ -16,7 +16,6 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
   // Store the feynman parameters so to not have to keep passing them
   update_fparams(x, y, z);
 
-  std::complex<double> result;
   switch (qns->jp)
   {
     case 0: return sub_mT(qns->n, 0);
@@ -28,8 +27,6 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
       exit(1);
     }
   }
-
- return result;
 };
 
 // ---------------------------------------------------------------------------
@@ -93,7 +90,7 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
 
   switch (qns->j)
   {
-    // S-wave
+    // S-wave projection
     case 0:
     {
       switch (k)
@@ -112,7 +109,8 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
       }
       break;
     }
-    // P-wave
+
+    // P-wave projection
     case 1:
     {
       switch (k)
@@ -125,7 +123,7 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
         // Triangle transform of k^2
         case 1:
         {
-          return (z - 2.*(x + y)) * T(1, denom) + z * (x + y)*(x + y) * psqr * T(0, denom);
+          return z * T(1, denom) + z*(x+y)*(x+y) * psqr * T(0, denom);
         }
         default: error(k);
       }
