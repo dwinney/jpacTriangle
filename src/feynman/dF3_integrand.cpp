@@ -16,10 +16,21 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
   // Store the feynman parameters so to not have to keep passing them
   update_fparams(x, y, z);
 
+  std::complex<double> result = 0.;
   switch (qns->jp)
   {
-    case 0: return sub_mT(qns->n, 0);
-    case 1: return sub_mT(qns->n, 1); - (mDec2 + 3. * mPi2) * sub_mT(qns->n, 0) + 2.*s * sub_mT(qns->n-1, 0);
+    case 0:
+    {
+      result = sub_mT(qns->n, 0);
+      break;
+    }
+    case 1:
+    {
+      result  = sub_mT(qns->n, 1);
+      result -= (mDec2 + 3. * mPi2) * sub_mT(qns->n, 0);
+      result += 2.*s * sub_mT(qns->n-1, 0);
+      break;
+    }
     default:
     {
       std::cout << "\nError! j' = " << qns->jp << " integrands";
@@ -27,6 +38,8 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
       exit(1);
     }
   }
+
+  return result;
 };
 
 // ---------------------------------------------------------------------------
@@ -43,14 +56,18 @@ std::complex<double> dF3_integrand::sub_mT(int n, int k)
     exit(1);
   }
 
-  std::complex<double> result;
   switch (n)
   {
     // No subtractions
-    case 0: return mT(k);
-
+    case 0:
+    {
+      return mT(k);
+    }
     // One subtraction
-    case 1: return mT(k) - mT(k, true);
+    case 1:
+    {
+      return mT(k) - mT(k, true);
+    }
     default:
     {
       std::cout << "\nError! n = " << n << " times subtracted integrands";
@@ -68,14 +85,14 @@ std::complex<double> dF3_integrand::sub_mT(int n, int k)
 std::complex<double> dF3_integrand::mT(int k, bool SUB)
 {
   // Whether or not to evaluate at s or at s = 0
-  double denom, psqr;
+  double denom, psqr, xs;
   if (SUB == true)
   {
-    denom = D0; psqr = P0_sqr;
+    denom = D0; psqr = P0_sqr; xs = 0.;
   }
   else
   {
-    denom = D, psqr = P_sqr;
+    denom = D, psqr = P_sqr; xs =  s;
   }
 
   // Error message
@@ -103,7 +120,7 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
         // Triangle transform of k^2
         case 1:
         {
-          return T(1, denom) + (x + y)*(x + y) * psqr * T(0, denom);
+          return T(1, denom) + (x*(1.-z)*mDec2 + y*(1.-z)*mPi2 - x*y*xs)*T(0, denom);
         }
         default: error(k);
       }
@@ -149,14 +166,12 @@ std::complex<double> dF3_integrand::T(int ell, double denom)
     case 0:
     {
       result = xr / (denom - ieps);
-      result /= (2. * M_PI);
       break;
     }
     // linearly divergent in ell^2
     case 1:
     {
-      result = log(denom - ieps);
-      result /= M_PI;
+      result = 2. * log(denom - ieps);
       break;
     }
     default:
@@ -166,7 +181,7 @@ std::complex<double> dF3_integrand::T(int ell, double denom)
       exit(1);
     }
   }
-  return result;
+  return result / (2. * M_PI);
 }
 
 // ---------------------------------------------------------------------------
@@ -174,7 +189,7 @@ std::complex<double> dF3_integrand::T(int ell, double denom)
 void dF3_integrand::set_energies(double xs, double xt)
 {
   s = xs; t = xt;
-  P_sqr = P0_sqr - s / 4.;
+  P_sqr = P0_sqr - xs / 4.;
 };
 
 void dF3_integrand::update_fparams(double xx, double yy, double zz)
