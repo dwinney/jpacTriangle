@@ -22,13 +22,13 @@ int main( int argc, char** argv )
 {
   // Desired quantum numbers
   int j = 0, jp = 0;
-  int Np = 10;
+  int Np = 35;
   // Parse inputs
   for (int i = 0; i < argc; i++)
   {
     if (std::strcmp(argv[i],"-j")==0) j = atoi(argv[i+1]);
     if (std::strcmp(argv[i],"-jp")==0) jp = atoi(argv[i+1]);
-    if (std::strcmp(argv[i],"-N")==0) Np = atoi(argv[i+1]);
+    if (std::strcmp(argv[i],"-n")==0) Np = atoi(argv[i+1]);
   }
 
   // All the associated quantum numbers for the amplitude
@@ -59,6 +59,13 @@ int main( int argc, char** argv )
 
   std::cout << "\n";
   std::cout << "Calculating Feynman triangle... \n\n";
+
+  std::cout << std::left;
+  std::cout << std::setw(7)  << "i";
+  std::cout << std::setw(15) << "sqrt(s)/mPi";
+  std::cout << std::setw(30) << "disp";
+  std::cout << std::setw(30) << "feynman";
+  std::cout << std::setw(15) << "abs(disp - feyn)" << std::endl;
 
   std::vector<double> s;
   std::vector< std::complex<double> > feyn, disp;
@@ -94,7 +101,7 @@ int main( int argc, char** argv )
   plotter->AddEntry(s, feyn, "feynman");
   plotter->AddEntry(s, disp, "dispersive");
 
-  plotter->SetLegend(0.68, 0.75);
+  plotter->SetLegend(0.75, 0.75);
 
   plotter->SetXaxis("#sqrt{s} / m_{#pi}", 0, 10);
   plotter->Plot(filename);
