@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 
     std::cout << std::left;
     std::cout << std::setw(7)  << i;
-    std::cout << std::setw(15) << si;
+    std::cout << std::setw(15) << sqrt(si) / mPi;
     std::cout << std::setw(30) << fx_d << std::endl;
   }
 
