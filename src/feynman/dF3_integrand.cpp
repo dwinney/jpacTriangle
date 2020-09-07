@@ -85,14 +85,14 @@ std::complex<double> dF3_integrand::sub_mT(int n, int k)
 std::complex<double> dF3_integrand::mT(int k, bool SUB)
 {
   // Whether or not to evaluate at s or at s = 0
-  double denom, psqr, xs;
+  double denom, delta, xs;
   if (SUB == true)
   {
-    denom = D0; psqr = P0_sqr; xs = 0.;
+    denom = D0; delta = P0;
   }
   else
   {
-    denom = D, psqr = P_sqr; xs =  s;
+    denom = D,  delta = P;
   }
 
   // Error message
@@ -120,7 +120,7 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
         // Triangle transform of k^2
         case 1:
         {
-          return T(1, denom) + (x*(1.-z)*mDec2 + y*(1.-z)*mPi2 - x*y*xs)*T(0, denom);
+          return T(1, denom) + delta * T(0, denom);
         }
         default: error(k);
       }
@@ -140,7 +140,7 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
         // Triangle transform of k^2
         case 1:
         {
-          return z * T(1, denom) + z*(x+y)*(x+y) * psqr * T(0, denom);
+          return - (1. - 3. * z) * T(1, denom) / 2. + z * delta * T(0, denom);
         }
         default: error(k);
       }
@@ -152,6 +152,8 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
       exit(1);
     }
   }
+
+  return 0.;
 };
 
 // ---------------------------------------------------------------------------
@@ -189,7 +191,6 @@ std::complex<double> dF3_integrand::T(int ell, double denom)
 void dF3_integrand::set_energies(double xs, double xt)
 {
   s = xs; t = xt;
-  P_sqr = P0_sqr - xs / 4.;
 };
 
 void dF3_integrand::update_fparams(double xx, double yy, double zz)
@@ -200,4 +201,8 @@ void dF3_integrand::update_fparams(double xx, double yy, double zz)
   // Update the denominators
   D0 = z*t + (1.-z)*mPi2 - x*z*mDec2 - y*z* mPi2;
   D  = D0 - x*y* s;
+
+  // update P's
+  P0 = x*(1.-z)*mDec2 + y*(1.-z)*mPi2;
+  P  = P0 - x*y*s;
 };

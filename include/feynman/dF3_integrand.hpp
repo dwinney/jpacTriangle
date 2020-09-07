@@ -31,7 +31,8 @@ private:
   quantum_numbers* qns;
 
   double D, D0;
-  double mDec2, P_sqr, P0_sqr = (mDec2 + mPi2) / 2.;
+  double P, P0;
+  double mDec2;
   double s, t; // center of mass energies, t is the exchange particle mass
 
   // Currently stored feynman parameters
