@@ -25,74 +25,53 @@ std::complex<double> projection_function::eval(double s, double t)
     exit(1);
   };
 
-  switch (qns->j)
+  int jjp = 10 * qns->j + qns->jp;
+
+  switch (jjp)
   {
-    // s-wave projection
+
+    // s wave, scalar exchange
     case 0:
     {
-      switch (qns->jp)
-      {
-        // s wave, scalar exchange
-        case 0:
-        {
-          result = Q(qns->l);
-          break;
-        }
-
-        // s wave, vector exchange
-        case 1: //
-        {
-          result  = Q(qns->l+1);
-          result += (2.*s - mDec2 - 3.*mPi2) * Q(qns->l);
-          break;
-        }
-        default: error();
-      }
+      result = Q(qns->l);
       break;
     }
 
-    // p-wave projection
-    case 1:
+    // s wave, vector exchange
+    case 1: //
     {
-      switch (qns->jp)
-      {
-        // p - wave, scalar exchange
-        case 0:
-        {
-          result = 2. * Q(qns->l+1);
-          result += (s - mDec2 - 3.*mPi2) * Q(qns->l);
-          break;
-        }
-
-        // p - wave, vector exchange
-        case 1:
-        {
-          result = 2. * Q(qns->l+2);
-          result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(qns->l+1);
-          result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(qns->l);
-          break;
-        }
-        default: error();
-      }
-
-      result /= Kacser();
+      result  = Q(qns->l+1);
+      result += (2.*s - mDec2 - 3.*mPi2) * Q(qns->l);
       break;
     }
 
-    // d-wave projection
-    case 2:
+    // p - wave, scalar exchangze
+    case 10:
     {
-      if (qns->jp == 0)
-      {
-        result = 12.* Q(qns->l+2);
-        result += (12. * s - 12. * mDec2 - 36. * mPi2) * Q(qns->l+1);
-        result += (3.*s*s - 6.*mDec2*s + 3.*mDec2*mDec2 - 18.*mPi2*s + 18.*mPi2*mDec2 + 27.*mPi2*mPi2 - 1.) * Q(qns->l);
-        result /= 2.;
-
-        result /= pow(Kacser(), 2.);
-      }
+      result = 2. * Q(qns->l+1);
+      result += (s - mDec2 - 3.*mPi2) * Q(qns->l);
       break;
     }
+
+    // p - wave, vector exchange
+    case 11:
+    {
+      result = 2. * Q(qns->l+2);
+      result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(qns->l+1);
+      result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(qns->l);
+      break;
+    }
+
+    // d-wave scalar exchange
+    case 20:
+    {
+      result = 12.* Q(qns->l+2);
+      result += (12. * s - 12. * mDec2 - 36. * mPi2) * Q(qns->l+1);
+      result += (3.*s*s - 6.*mDec2*s + 3.*mDec2*mDec2 - 18.*mPi2*s + 18.*mPi2*mDec2 + 27.*mPi2*mPi2 - 1.) * Q(qns->l);
+      result /= 2.;
+      break;
+    }
+     
     default: error();
   }
 
@@ -171,9 +150,9 @@ std::complex<double> projection_function::barrier_ratio(int ell)
   else
   {
     std::complex<double> result;
-    result  = sqrt(Kallen(s, mPi2, mPi2));
-    result /= sqrt(pow(sqrt(s) + mPi, 2.) - mDec2 - ieps);
-    result /= sqrt(pow(sqrt(s) - mPi, 2.) - mDec2 - ieps);
+    result  = s;
+    result /= pow(sqrt(s) + mPi, 2.) - mDec2 - ieps;
+    result /= pow(sqrt(s) - mPi, 2.) - mDec2 - ieps;
 
     return pow(result, xr * double(ell));
   }

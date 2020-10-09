@@ -33,9 +33,9 @@ template<typename T, typename F, typename G>
 void debug(T x, F y, G z)
 {
   std::cout << std::left;
-  std::cout << std::setw(20) << x;
-  std::cout << std::setw(20) << y;
-  std::cout << std::setw(20) << z << std::endl;
+  std::cout << std::setw(30) << x;
+  std::cout << std::setw(30) << y;
+  std::cout << std::setw(30) << z << std::endl;
 };
 
 #endif

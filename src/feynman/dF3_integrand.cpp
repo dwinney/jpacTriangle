@@ -105,47 +105,39 @@ std::complex<double> dF3_integrand::mT(int k, bool SUB)
     exit(1);
   };
 
-  switch (qns->j)
+  int jk = 10 * qns->j + k;
+  switch (jk)
   {
-    // S-wave projection
+    // S-wave transform of 1
     case 0:
     {
-      switch (k)
-      {
-        // triangle transform of 1
-        case 0:
-        {
-          return T(0, denom);
-        }
-        // Triangle transform of k^2
-        case 1:
-        {
-          return T(1, denom) + delta * T(0, denom);
-        }
-        default: error(k);
-      }
-      break;
+      return T(0, denom);
     }
 
-    // P-wave projection
+    // s-wave transform of k^2
     case 1:
     {
-      switch (k)
-      {
-        // triangle transform of 1
-        case 0:
-        {
-          return z * T(0, denom);
-        }
-        // Triangle transform of k^2
-        case 1:
-        {
-          return - (1. - 3. * z) * T(1, denom) / 2. + z * delta * T(0, denom);
-        }
-        default: error(k);
-      }
-      break;
+      return T(1, denom) + delta * T(0, denom);
     }
+
+    // P-wave transofmr of 1
+    case 10:
+    {
+      return z * T(0, denom);
+    }
+    
+    // p-wave transform of k^2
+    case 11:
+    {
+      return  (3. * z - 1.) / 2. * T(1, denom) + z * delta * T(0, denom);
+    }
+
+    // d-wave transform of 1
+    case 20:
+    {
+      return T(1, denom) / 4. + z*z * T(0, denom);
+    }
+    
     default:
     {
       std::cout << "\nError! Feynman integrands for j > 1 not yet implimented. Quitting... \n";

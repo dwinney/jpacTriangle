@@ -19,7 +19,7 @@ int main( int argc, char** argv )
 {
   // Desired quantum numbers
   int j = 0, jp = 0;
-  int Np = 50;
+  int Np = 10;
   // Parse inputs
   for (int i = 0; i < argc; i++)
   {
