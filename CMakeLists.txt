@@ -59,8 +59,7 @@ endif()
 # BUILD CUBATURE LIBRARY
 include_directories("cubature")
 file(GLOB CUB_INC "cubature/cubature.h")
-file(GLOB CUB_SRC "cubature/hcubature.c")
-add_library( cubature SHARED ${CUB_INC} ${CUB_SRC} )
+file(GLOB CUB_SRC "cubature/*cubature.c")
 
 # BUILD THE PLOTTING LIBRARY
 include_directories("jpacStyle/include")
@@ -74,25 +73,24 @@ include_directories("include")
 include_directories("src")
 file(GLOB_RECURSE INC "include/*.hpp")
 file(GLOB_RECURSE SRC "src/*.cpp")
-add_library( jpacTriangle SHARED ${INC} ${SRC} )
+add_library( jpacTriangle SHARED ${INC} ${CUB_INC} ${SRC} ${CUB_SRC})
 
 # INSTALLATION SETTINGS
 set( LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib )
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
 
-install(TARGETS jpacTriangle jpacStyle cubature
-  LIBRARY DESTINATION "${LIBRARY_OUTPUT_DIRECTORY}" )
+install(TARGETS jpacTriangle jpacStyle
+LIBRARY DESTINATION "${LIBRARY_OUTPUT_DIRECTORY}" )
 
 # GRAB EXECUTABLES
 include_directories("executables")
 file(GLOB EXE_FILES "executables/*.cpp")
 update_deps_file("${EXE_FILES}")
 foreach( exefile ${EXE_FILES} )
-    get_filename_component( exename ${exefile} NAME_WE)
-    add_executable( ${exename} ${exefile} )
-    target_link_libraries( ${exename} jpacTriangle)
-    target_link_libraries( ${exename} jpacStyle)
-    target_link_libraries( ${exename} cubature)
-    target_link_libraries( ${exename} ${ROOT_LIBRARIES})
-    target_link_libraries( ${exename} ${BOOST_LIBRARIES})
+get_filename_component( exename ${exefile} NAME_WE)
+add_executable( ${exename} ${exefile} )
+target_link_libraries( ${exename} jpacTriangle)
+target_link_libraries( ${exename} jpacStyle)
+target_link_libraries( ${exename} ${ROOT_LIBRARIES})
+target_link_libraries( ${exename} ${BOOST_LIBRARIES})
 endforeach( exefile ${EXE_FILES} )
