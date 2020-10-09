@@ -1,9 +1,12 @@
 cmake_minimum_required (VERSION 2.9)
 
-project (KT-Triangle)
+project (jpacTriangle)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
+set(CMAKE_CXX_FLAGS "-fPIC -O3") 
+set(CMAKE_BUILD_TYPE "Release")
 
 #Compare the new contents with the existing file, if it exists and is the
 # same we don't want to trigger a make by changing its timestamp.
@@ -37,7 +40,7 @@ function(update_deps_file deps)
     include(${deps_file})
 endfunction(update_deps_file)
 
-## ROOT AND GSL
+## ROOT AND BOOST
 find_package(ROOT REQUIRED MathMore)
 if (ROOT_FOUND)
     include_directories(${ROOT_INCLUDE_DIRS})
@@ -55,23 +58,30 @@ endif()
 
 # BUILD CUBATURE LIBRARY
 include_directories("cubature")
-file(GLOB_RECURSE CUB_INC "*.h")
-file(GLOB_RECURSE CUB_SRC "*.c")
-add_library( Cubature ${CUB_INC} ${CUB_SRC} )
+file(GLOB CUB_INC "cubature/cubature.h")
+file(GLOB CUB_SRC "cubature/hcubature.c")
+add_library( cubature SHARED ${CUB_INC} ${CUB_SRC} )
 
 # BUILD THE PLOTTING LIBRARY
 include_directories("jpacStyle/include")
 include_directories("jpacStyle/src")
 file(GLOB_RECURSE PLOTINC "jpacStyle/include/*.hpp")
 file(GLOB_RECURSE PLOTSRC "jpacStyle/src/*.cpp")
-add_library( JpacStyle ${PLOTINC} ${PLOTSRC} )
+add_library( jpacStyle SHARED ${PLOTINC} ${PLOTSRC} )
 
 # BUILD LIBRARY FROM LOCAL FiLES
 include_directories("include")
 include_directories("src")
 file(GLOB_RECURSE INC "include/*.hpp")
 file(GLOB_RECURSE SRC "src/*.cpp")
-add_library( KT_triangle ${INC} ${SRC} )
+add_library( jpacTriangle SHARED ${INC} ${SRC} )
+
+# INSTALLATION SETTINGS
+set( LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin )
+
+install(TARGETS jpacTriangle jpacStyle cubature
+  LIBRARY DESTINATION "${LIBRARY_OUTPUT_DIRECTORY}" )
 
 # GRAB EXECUTABLES
 include_directories("executables")
@@ -80,9 +90,9 @@ update_deps_file("${EXE_FILES}")
 foreach( exefile ${EXE_FILES} )
     get_filename_component( exename ${exefile} NAME_WE)
     add_executable( ${exename} ${exefile} )
-    target_link_libraries( ${exename} KT_triangle)
-    target_link_libraries( ${exename} JpacStyle)
-    target_link_libraries( ${exename} Cubature)
+    target_link_libraries( ${exename} jpacTriangle)
+    target_link_libraries( ${exename} jpacStyle)
+    target_link_libraries( ${exename} cubature)
     target_link_libraries( ${exename} ${ROOT_LIBRARIES})
     target_link_libraries( ${exename} ${BOOST_LIBRARIES})
 endforeach( exefile ${EXE_FILES} )

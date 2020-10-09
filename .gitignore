@@ -2,3 +2,5 @@
 /gnuplot/
 *.cmake
 .vscode
+/bin/
+/lib/
