@@ -18,16 +18,15 @@ std::complex<double> projection_function::eval(double s, double t)
 
   auto error = [&] ()
   {
-    std::cout << "\n Error! projection_function:";
+    std::cout << "\nError! projection_function:";
     std::cout << " j = " << std::to_string(qns->j);
     std::cout << " and j' = " << std::to_string(qns->jp);
+    std::cout << " (code " << std::to_string(qns->id()) << ")";
     std::cout << " combination not available. Quitting... \n";
     exit(1);
   };
 
-  int jjp = 10 * qns->j + qns->jp;
-
-  switch (jjp)
+  switch (qns->id())
   {
 
     // s wave, scalar exchange
@@ -38,7 +37,7 @@ std::complex<double> projection_function::eval(double s, double t)
     }
 
     // s wave, vector exchange
-    case 1: //
+    case 10:
     {
       result  = Q(qns->l+1);
       result += (2.*s - mDec2 - 3.*mPi2) * Q(qns->l);
@@ -46,36 +45,50 @@ std::complex<double> projection_function::eval(double s, double t)
     }
 
     // p - wave, scalar exchangze
-    case 10:
+    case 1000:
     {
       result = 2. * Q(qns->l+1);
       result += (s - mDec2 - 3.*mPi2) * Q(qns->l);
+      result *= barrier_ratio(1);
       break;
     }
 
     // p - wave, vector exchange
-    case 11:
+    case 1010:
     {
       result = 2. * Q(qns->l+2);
       result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(qns->l+1);
       result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(qns->l);
+      result *= barrier_ratio(1);
       break;
     }
 
     // d-wave scalar exchange
-    case 20:
+    case 2000:
     {
       result = 12.* Q(qns->l+2);
       result += (12. * s - 12. * mDec2 - 36. * mPi2) * Q(qns->l+1);
       result += (3.*s*s - 6.*mDec2*s + 3.*mDec2*mDec2 - 18.*mPi2*s + 18.*mPi2*mDec2 + 27.*mPi2*mPi2 - 1.) * Q(qns->l);
+      result *= barrier_ratio(2);
       result /= 2.;
       break;
     }
      
+    // Omega case
+    case 11111:
+    {
+      result = 12.* Q(qns->l+2);
+      result += (12. * s - 12. * mDec2 - 36. * mPi2) * Q(qns->l+1);
+      result += (3.*s*s - 6.*mDec2*s + 3.*mDec2*mDec2 - 18.*mPi2*s + 18.*mPi2*mDec2 + 27.*mPi2*mPi2 - 1.) * Q(qns->l);
+      result *= 3. / 2.;
+
+      result -= Q(qns->l);
+      result /= 2.;
+      break;
+    };
     default: error();
   }
 
-  result *= barrier_ratio(qns->j);
   result /= pow(t, double(qns->l));
 
   return result;
