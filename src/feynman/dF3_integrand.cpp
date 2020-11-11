@@ -31,6 +31,11 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
       result += 2.*s * sub_mT(qns->n-1, 0);
       break;
     }
+    case 11:
+    {
+      result = - sub_mT(qns->n, 1) / sqrt(2.);
+      break;
+    }
     default:
     {
       std::cout << "\nError! j' = " << qns->jp << " integrands";
