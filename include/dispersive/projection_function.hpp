@@ -36,6 +36,8 @@ private:
 
   // Kacser function analytically continues momenta between s and t channels
   std::complex<double> Kacser();
+  std::complex<double> psqr();
+  std::complex<double> qsqr();
 
   // Complex bounds of integtion
   std::complex<double> t_minus();

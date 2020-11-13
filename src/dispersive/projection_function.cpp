@@ -37,7 +37,7 @@ std::complex<double> projection_function::eval(double s, double t)
     }
 
     // s wave, vector exchange
-    case 10:
+    case 1:
     {
       result  = Q(qns->l+1);
       result += (2.*s - mDec2 - 3.*mPi2) * Q(qns->l);
@@ -45,47 +45,64 @@ std::complex<double> projection_function::eval(double s, double t)
     }
 
     // p - wave, scalar exchangze
-    case 1000:
+    case 10:
     {
       result = 2. * Q(qns->l+1);
       result += (s - mDec2 - 3.*mPi2) * Q(qns->l);
-      result *= barrier_ratio(1);
+      result /= psqr();
       break;
     }
 
     // p - wave, vector exchange
-    case 1010:
+    case 11:
     {
       result = 2. * Q(qns->l+2);
       result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(qns->l+1);
       result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(qns->l);
-      result *= barrier_ratio(1);
+      result /= psqr();
       break;
     }
 
     // d-wave scalar exchange
-    case 2000:
+    case 20:
     {
-      result = 12.* Q(qns->l+2);
-      result += (12. * s - 12. * mDec2 - 36. * mPi2) * Q(qns->l+1);
-      result += (3.*s*s - 6.*mDec2*s + 3.*mDec2*mDec2 - 18.*mPi2*s + 18.*mPi2*mDec2 + 27.*mPi2*mPi2 - 1.) * Q(qns->l);
-      result *= barrier_ratio(2);
-      result /= 2.;
+      std::complex<double> term1, term2;
+
+      // z^2
+      term1  = 4.* Q(qns->l+2);
+      term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
+      term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
+      term1 /= psqr() * psqr();
+
+      // 1
+      term2  = Q(qns->l);
+      term2 *= qsqr() / psqr();
+
+      result = 3. * term1;
+      result -= term2;
+
       break;
     }
      
     // Omega case
     case 11111:
     {
-      result = 12.* Q(qns->l+2);
-      result += (12. * s - 12. * mDec2 - 36. * mPi2) * Q(qns->l+1);
-      result += (3.*s*s - 6.*mDec2*s + 3.*mDec2*mDec2 - 18.*mPi2*s + 18.*mPi2*mDec2 + 27.*mPi2*mPi2 - 1.) * Q(qns->l);
-      result *= 3. / 2.;
+      std::complex<double> term1, term2;
 
-      result -= Q(qns->l);
-      result /= 2.;
+      // q^2 * z^2
+      term1  = 4.* Q(qns->l+2);
+      term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
+      term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
+      term1 *= 1. / psqr();
+
+      // q^2 * 1
+      term2  = Q(qns->l);
+      term2 *= qsqr();
+
+      result = term2 - term1;
       break;
     };
+
     default: error();
   }
 
@@ -142,6 +159,25 @@ std::complex<double> Kallen(std::complex<double> x, std::complex<double> y, std:
 // ---------------------------------------------------------------------------
 // Kacser function which includes the correct analytic structure of
 // product of breakup momenta, p(s) * q(s)
+std::complex<double> projection_function::psqr()
+{
+    std::complex<double> result;
+    result = pow(sqrt(s) + mPi, 2.) - mDec2 - ieps;
+    result *= pow(sqrt(s) - mPi, 2.) - mDec2 - ieps;
+    result /= s;
+
+    return result;
+};
+
+std::complex<double> projection_function::qsqr()
+{
+    std::complex<double> result;
+    result  = Kallen(s, mPi2, mPi2);
+    result /= s;
+
+    return result;
+};
+
 std::complex<double> projection_function::Kacser()
 {
   std::complex<double> result;
@@ -154,6 +190,7 @@ std::complex<double> projection_function::Kacser()
 };
 
 // Ratio of agular momentum barrier factors that are removed when partial wave projecting
+// 1 / p^2(s)
 std::complex<double> projection_function::barrier_ratio(int ell)
 {
   if (ell == 0)

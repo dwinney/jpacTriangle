@@ -21,7 +21,16 @@ struct quantum_numbers
 
   inline int id()
   {
-    return 10000 * J + 1000 * j + 100 * lam + 10 * jp + lamp;
+    return 10000 * J + 1000 * lam + 100 * lamp + 10 * j + jp;
+  };
+
+  inline void set_id(int x)
+  {
+    J    = x % 10000; x -= 10000 * J;
+    lam  = x % 1000;  x -= 1000  * lam;
+    lamp = x % 100;   x -= 100   * lamp;
+    j    = x % 10;    x -= 10    * j;
+    jp   = x;
   };
 };
 
