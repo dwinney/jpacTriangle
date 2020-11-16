@@ -21,22 +21,19 @@
 int main( int argc, char** argv )
 {
   // Desired quantum numbers
-  int j = 0, jp = 0;
+  int id = 0;
   int Np = 35;
+  
   // Parse inputs
   for (int i = 0; i < argc; i++)
   {
-    if (std::strcmp(argv[i],"-j")==0) j = atoi(argv[i+1]);
-    if (std::strcmp(argv[i],"-jp")==0) jp = atoi(argv[i+1]);
-    if (std::strcmp(argv[i],"-n")==0) Np = atoi(argv[i+1]);
+    if (std::strcmp(argv[i],"-id")==0) id = atoi(argv[i+1]);
   }
 
   // All the associated quantum numbers for the amplitude
   quantum_numbers qns;
   qns.n = 1;
-  qns.l = 0;
-  qns.j = j;
-  qns.jp = jp;
+  qns.set_id(id);
   qns.mDec = .780; // The decaying particle mass
 
   // Initialize a triangle object
@@ -58,7 +55,7 @@ int main( int argc, char** argv )
 // Calculate the triangle function first with the feynman representation
 
   std::cout << "\n";
-  std::cout << "Calculating Feynman triangle... \n\n";
+  std::cout << "Calculating triangles... \n\n";
 
   std::cout << std::left;
   std::cout << std::setw(7)  << "i";

@@ -24,33 +24,43 @@ public:
   std::complex<double> eval(double x, double y, double z);
 
   // Fix the energies s and t
-  void set_energies(double s, double t);
+  inline void set_energies(double xs, double xt)
+  {
+    s = xs; t = xt;
+  };
 
 private:
   // All the associated quantum numbers and parameters for the amplitude
   quantum_numbers* qns;
 
-  double D, D0;
-  double P, P0;
+  double denom, delta;
+  double denom0, delta0;
   double mDec2;
   double s, t; // center of mass energies, t is the exchange particle mass
 
   // Currently stored feynman parameters
   double x, y ,z;
-  void update_fparams(double x, double y, double z);
+  inline void update_fparams(double xx, double yy, double zz)
+  {
+    // Save the feynman parameters so we dont have to keep passing them
+    x = xx; y = yy; z = zz;
+
+    // Update the denominators
+    denom0 = z*t + (1.-z)*mPi2 - x*z*mDec2 - y*z* mPi2;
+
+    // update P's
+    delta0 = x*(1.-z)*mDec2 + y*(1.-z)*mPi2;
+  };
 
   // Dimensionally regularized integrals
   // denom is the combined denominators of all the propagators
   // ell is the degree of divergence
-  std::complex<double> T(int ell, double denom);
+  std::complex<double> T(int ell);
 
   // The dimensionally regularized integrals but reparameterized
   // in terms of the shifted loop momentum relevant for the triangle
   // optional bool if True evaluates mT at s = 0
-  std::complex<double> mT(int k, bool SUB = false);
-
-  // mT with n subtractions applied
-  std::complex<double> sub_mT(int n, int k);
+  std::complex<double> mT(int id, bool SUB = false);
 
 };
 
