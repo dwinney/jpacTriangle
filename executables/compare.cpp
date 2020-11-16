@@ -22,7 +22,7 @@ int main( int argc, char** argv )
 {
   // Desired quantum numbers
   int id = 0;
-  int Np = 35;
+  int Np = 30;
   
   // Parse inputs
   for (int i = 0; i < argc; i++)

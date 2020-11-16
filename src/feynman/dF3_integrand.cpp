@@ -115,7 +115,7 @@ std::complex<double> dF3_integrand::mT(int id, bool SUB)
       // Omega case
       case 11111:
       {
-          result  = - T(1);
+          result  = - 2. * T(1);
           break;
       };
 
