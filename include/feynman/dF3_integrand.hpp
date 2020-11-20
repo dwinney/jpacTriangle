@@ -59,8 +59,7 @@ private:
 
   // The dimensionally regularized integrals but reparameterized
   // in terms of the shifted loop momentum relevant for the triangle
-  // optional bool if True evaluates mT at s = 0
-  std::complex<double> mT(int id, bool SUB = false);
+  std::complex<double> mT(int id, double _s);
 
 };
 

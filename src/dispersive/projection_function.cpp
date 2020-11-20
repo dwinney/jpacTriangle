@@ -83,6 +83,16 @@ std::complex<double> projection_function::eval(double s, double t)
 
       break;
     }
+
+    // a1 lam = 0 lamp = 0, s-wave, scalar exchange
+    case 10000:
+    {
+      result  = s * Q(qns->l+1);
+      result += (mDec2 - mPi2) * Q(qns->l+1);
+      result += (s - mDec2 - mPi2) * (mDec2 - mPi2) * Q(qns->l);
+
+      break;
+    };
      
     // Omega case
     case 11111:

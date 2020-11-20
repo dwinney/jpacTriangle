@@ -36,12 +36,12 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
       // No subtractions
       case 0:
       {
-        return mT(id);
+          return mT(id, s);
       }
       // One subtraction
       case 1:
       {
-        return mT(id) - mT(id, true);
+          return mT(id, s) - mT(id, 0.);
       }
       default:
       {
@@ -55,11 +55,9 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
 // ---------------------------------------------------------------------------
 // Triangle kernels
 // optional bool if True evaluates mT at s = 0
-std::complex<double> dF3_integrand::mT(int id, bool SUB)
+std::complex<double> dF3_integrand::mT(int id, double _s)
 {
   // Whether or not to evaluate at s or at s = 0
-  double _s;
-  (SUB == true) ? (_s = 0.) : (_s = s);
   denom = denom0 - x*y* _s,  delta = delta0 - x*y* _s;
 
   auto error = [&] ()
@@ -109,6 +107,15 @@ std::complex<double> dF3_integrand::mT(int id, bool SUB)
       case 20: 
       {
           result  = z*z * T(0);
+          break;
+      };
+
+      case 10000:
+      {
+          result  = (_s) * (T(1) + delta * T(0));
+          // result += (mDec2 - mPi2) * (T(1) + delta * T(0));
+          // result  = (_s + mDec2 - mPi2) * (T(1) + delta * T(0));
+          // result += (_s - mDec2 - mPi2)*(mDec2 - mPi2) * T(0);
           break;
       };
 
