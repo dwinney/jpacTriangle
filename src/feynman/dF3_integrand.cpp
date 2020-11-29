@@ -111,16 +111,14 @@ std::complex<double> dF3_integrand::mT(int id, double _s)
       };
 
       case 10000:
-      {
-          result  = (_s) * (T(1) + delta * T(0));
-          // result += (mDec2 - mPi2) * (T(1) + delta * T(0));
-          // result  = (_s + mDec2 - mPi2) * (T(1) + delta * T(0));
-          // result += (_s - mDec2 - mPi2)*(mDec2 - mPi2) * T(0);
+      { 
+          result  = (_s + mDec2 - mPi2) * (T(1) + delta * T(0));
+          result += (_s - mDec2 - mPi2)*(mDec2 - mPi2) * T(0);
           break;
       };
 
       // Omega case
-      case 11111:
+      case -11111:
       {
           result  = - 2. * T(1);
           break;

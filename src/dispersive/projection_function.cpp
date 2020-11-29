@@ -95,7 +95,7 @@ std::complex<double> projection_function::eval(double s, double t)
     };
      
     // Omega case
-    case 11111:
+    case -11111:
     {
       std::complex<double> term1, term2;
 

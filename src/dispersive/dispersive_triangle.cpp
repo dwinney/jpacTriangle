@@ -20,7 +20,8 @@ std::complex<double> dispersive_triangle::eval(double s, double t)
   result  = s_dispersion(4.*mPi2, p_thresh - exc);
   result += s_dispersion(p_thresh + exc, std::numeric_limits<double>::infinity());
 
-  return result;
+  return result + sum_rule() * s; 
+  // return result + (sum_rule() + 2.33772) * s;
 };
 
 // ---------------------------------------------------------------------------
@@ -37,7 +38,8 @@ std::complex<double> dispersive_triangle::s_dispersion(double low, double high)
   auto dsprime = [&](double sp)
   {
     std::complex<double> temp;
-    temp = rho(sp) * projector.eval(sp, t) - rho(s) * projector.eval(s, t);
+    temp = rho(sp) * projector.eval(sp, t) * (s / sp);
+    temp -= rho(s) * projector.eval(s, t);
     temp *= s / sp;
     temp /= (sp - s - ieps);
     return temp;
@@ -62,4 +64,20 @@ std::complex<double> dispersive_triangle::s_dispersion(double low, double high)
   }
 
   return (result + log_term) / M_PI;
+};
+
+std::complex<double> dispersive_triangle::sum_rule()
+{
+  auto dsprime = [&](double sp)
+  {
+    std::complex<double> temp;
+    temp = rho(sp) * projector.eval(sp, t);
+    temp /= sp * sp;
+    return temp;
+  };
+
+  std::complex<double> result;
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(dsprime, 4.*mPi2, std::numeric_limits<double>::infinity(), 0, 1.E-9, NULL);
+  
+  return result / M_PI;
 };

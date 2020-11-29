@@ -46,6 +46,8 @@ private:
   // Calculation of dispersion integrals
   double exc = 0.; // small interval around pseudo-threshold to exclude
   std::complex<double> s_dispersion(double low, double high);
+  
+  std::complex<double> sum_rule();
 };
 
 #endif
