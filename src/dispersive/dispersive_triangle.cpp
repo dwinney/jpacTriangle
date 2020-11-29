@@ -8,7 +8,7 @@
 
 #include "dispersive/dispersive_triangle.hpp"
 
-std::complex<double> dispersive_triangle::eval(double s, double t)
+std::complex<double> jpacTriangle::dispersive_triangle::eval(double s, double t)
 {
   // Store s and t so i dont have to keep passing them around
   fix_energies(s, t);
@@ -26,14 +26,14 @@ std::complex<double> dispersive_triangle::eval(double s, double t)
 
 // ---------------------------------------------------------------------------
 // Two particle phase-space function
-std::complex<double> dispersive_triangle::rho(double s)
+std::complex<double> jpacTriangle::dispersive_triangle::rho(double s)
 {
   return sqrt(Kallen(s, mPi2, mPi2)) / s;
 };
 
 // ---------------------------------------------------------------------------
 // calculate the dispersion integral over s with finite bounds of integration
-std::complex<double> dispersive_triangle::s_dispersion(double low, double high)
+std::complex<double> jpacTriangle::dispersive_triangle::s_dispersion(double low, double high)
 {
   auto dsprime = [&](double sp)
   {
@@ -66,7 +66,7 @@ std::complex<double> dispersive_triangle::s_dispersion(double low, double high)
   return (result + log_term) / M_PI;
 };
 
-std::complex<double> dispersive_triangle::sum_rule()
+std::complex<double> jpacTriangle::dispersive_triangle::sum_rule()
 {
   auto dsprime = [&](double sp)
   {

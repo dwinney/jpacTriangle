@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------------------
 // Evaluate the cross-channel exchange projected amplitude
 // Q_{jjp}(s,t)
-std::complex<double> projection_function::eval(double s, double t)
+std::complex<double> jpacTriangle::projection_function::eval(double s, double t)
 {
   set_energies(s, t);
 
@@ -125,7 +125,7 @@ std::complex<double> projection_function::eval(double s, double t)
 // Angular projection Q kernel functions
 // These are of the form:
 // 1/Kacser(s) * \int_{t_minus}^{t_plus} x^n / (tp - tp - ieps)
-std::complex<double> projection_function::Q_0()
+std::complex<double> jpacTriangle::projection_function::Q_0()
 {
   std::complex<double> result;
   result  = log(t - ieps - t_minus());
@@ -135,7 +135,7 @@ std::complex<double> projection_function::Q_0()
   return result;
 };
 
-std::complex<double> projection_function::Q(int k)
+std::complex<double> jpacTriangle::projection_function::Q(int k)
 {
   switch (k)
   {
@@ -161,7 +161,7 @@ std::complex<double> projection_function::Q(int k)
 
 // ---------------------------------------------------------------------------
 // Usual Kallen triangle function
-std::complex<double> Kallen(std::complex<double> x, std::complex<double> y, std::complex<double> z)
+std::complex<double> jpacTriangle::Kallen(std::complex<double> x, std::complex<double> y, std::complex<double> z)
 {
   return x * x + y * y + z * z - 2. * (x * z + y * z + x * y);
 };
@@ -169,7 +169,7 @@ std::complex<double> Kallen(std::complex<double> x, std::complex<double> y, std:
 // ---------------------------------------------------------------------------
 // Kacser function which includes the correct analytic structure of
 // product of breakup momenta, p(s) * q(s)
-std::complex<double> projection_function::psqr()
+std::complex<double> jpacTriangle::projection_function::psqr()
 {
     std::complex<double> result;
     result = pow(sqrt(s) + mPi, 2.) - mDec2 - ieps;
@@ -179,7 +179,7 @@ std::complex<double> projection_function::psqr()
     return result;
 };
 
-std::complex<double> projection_function::qsqr()
+std::complex<double> jpacTriangle::projection_function::qsqr()
 {
     std::complex<double> result;
     result  = Kallen(s, mPi2, mPi2);
@@ -188,7 +188,7 @@ std::complex<double> projection_function::qsqr()
     return result;
 };
 
-std::complex<double> projection_function::Kacser()
+std::complex<double> jpacTriangle::projection_function::Kacser()
 {
   std::complex<double> result;
 
@@ -201,7 +201,7 @@ std::complex<double> projection_function::Kacser()
 
 // Ratio of agular momentum barrier factors that are removed when partial wave projecting
 // 1 / p^2(s)
-std::complex<double> projection_function::barrier_ratio(int ell)
+std::complex<double> jpacTriangle::projection_function::barrier_ratio(int ell)
 {
   if (ell == 0)
   {
@@ -220,12 +220,12 @@ std::complex<double> projection_function::barrier_ratio(int ell)
 
 // ---------------------------------------------------------------------------
 // complex Bounds of integration
-std::complex<double> projection_function::t_minus()
+std::complex<double> jpacTriangle::projection_function::t_minus()
 {
   return (mDec2 + ieps) + mPi2 - (s + mDec2 + ieps - mPi2) / 2. - Kacser() / 2.;
 };
 
-std::complex<double> projection_function::t_plus()
+std::complex<double> jpacTriangle::projection_function::t_plus()
 {
   return (mDec2 + ieps) + mPi2 - (s + mDec2 + ieps - mPi2) / 2. + Kacser() / 2.;
 };

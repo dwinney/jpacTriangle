@@ -11,7 +11,7 @@
 
 // ---------------------------------------------------------------------------
 // Return the value of the integrand in terms of the feynman parameters
-std::complex<double> dF3_integrand::eval(double x, double y, double z)
+std::complex<double> jpacTriangle::dF3_integrand::eval(double x, double y, double z)
 {
     // Store the feynman parameters so to not have to keep passing them
     update_fparams(x, y, z);
@@ -55,7 +55,7 @@ std::complex<double> dF3_integrand::eval(double x, double y, double z)
 // ---------------------------------------------------------------------------
 // Triangle kernels
 // optional bool if True evaluates mT at s = 0
-std::complex<double> dF3_integrand::mT(int id, double _s)
+std::complex<double> jpacTriangle::dF3_integrand::mT(int id, double _s)
 {
   // Whether or not to evaluate at s or at s = 0
   denom = denom0 - x*y* _s,  delta = delta0 - x*y* _s;
@@ -132,7 +132,7 @@ std::complex<double> dF3_integrand::mT(int id, double _s)
 // ---------------------------------------------------------------------------
 // Dimensionally regularized integral of divergence order k
 // D is the combined denominators of all the propagators
-std::complex<double> dF3_integrand::T(int ell)
+std::complex<double> jpacTriangle::dF3_integrand::T(int ell)
 {
   std::complex<double> result;
   switch (ell)

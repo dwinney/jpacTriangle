@@ -15,26 +15,29 @@
 #include "quantum_numbers.hpp"
 #include "feynman/dF3_integrand.hpp"
 
-class feynman_triangle
+namespace jpacTriangle
 {
-public:
-  feynman_triangle(quantum_numbers * xqn)
-  : qns(xqn), integrand(qns)
-  {};
+  class feynman_triangle
+  {
+  public:
+    feynman_triangle(quantum_numbers * xqn)
+    : qns(xqn), integrand(qns)
+    {};
 
-  // Evalate the diagram at fixed CoM energy^2, s, and exchange mass^2, t
-  std::complex<double> eval(double s, double t);
+    // Evalate the diagram at fixed CoM energy^2, s, and exchange mass^2, t
+    std::complex<double> eval(double s, double t);
 
-// ---------------------------------------------------------------------------
-private:
-  // All the associated quantum numbers and parameters for the amplitude
-  quantum_numbers * qns;
+  // ---------------------------------------------------------------------------
+  private:
+    // All the associated quantum numbers and parameters for the amplitude
+    quantum_numbers * qns;
 
-  // Feynman parameter integrand
-  dF3_integrand integrand;
+    // Feynman parameter integrand
+    dF3_integrand integrand;
 
-  // Wrapper for interfacing the integrand with hcubature routine
-  static int wrapped_integrand(unsigned ndim, const double *in, void *fdata, unsigned fdim, double *fval);
-};
+    // Wrapper for interfacing the integrand with hcubature routine
+    static int wrapped_integrand(unsigned ndim, const double *in, void *fdata, unsigned fdim, double *fval);
+  };
+}
 
 #endif

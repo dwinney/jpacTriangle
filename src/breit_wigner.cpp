@@ -12,7 +12,7 @@
 
 // ---------------------------------------------------------------------------
 // Evaluate the Breit-Wigner
-std::complex<double> breit_wigner::eval(double s)
+std::complex<double> jpacTriangle::breit_wigner::eval(double s)
 {
   double real_part, imag_part;
   real_part = s - res_mass * res_mass;
@@ -21,7 +21,7 @@ std::complex<double> breit_wigner::eval(double s)
   return 1. / (real_part * xr - imag_part * xi);
 };
 
-std::complex<double> breit_wigner::disc(double s)
+std::complex<double> jpacTriangle::breit_wigner::disc(double s)
 {
   double im = std::imag(eval(s));
   return im * xr;

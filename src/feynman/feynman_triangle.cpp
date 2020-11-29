@@ -12,7 +12,7 @@
 
 // ---------------------------------------------------------------------------
 // Evaluate the triangle assuming a fixed mass exchange with mass t
-std::complex<double> feynman_triangle::eval(double s, double t)
+std::complex<double> jpacTriangle::feynman_triangle::eval(double s, double t)
 {
     // Desination for the result and assosiated errors
     double val[2], err[2];
@@ -37,7 +37,7 @@ std::complex<double> feynman_triangle::eval(double s, double t)
 
 // ---------------------------------------------------------------------------
 // Wrapper for the feynman parameter integrands to fit into hcubature
-int feynman_triangle::wrapped_integrand(unsigned ndim, const double *in, void *fdata, unsigned fdim, double *fval)
+int jpacTriangle::feynman_triangle::wrapped_integrand(unsigned ndim, const double *in, void *fdata, unsigned fdim, double *fval)
 {
   dF3_integrand* integrand = (dF3_integrand *) fdata;
 

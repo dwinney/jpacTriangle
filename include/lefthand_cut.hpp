@@ -10,21 +10,23 @@
 
 #include <complex>
 
-
-class lefthand_cut
+namespace jpacTriangle
 {
-public:
-  // Empty constructor
-  lefthand_cut(){};
+  class lefthand_cut
+  {
+  public:
+    // Empty constructor
+    lefthand_cut(){};
 
-  // ---------------------------------------------------------------------------
-  // THESE FUNCTIONS MUST BE OVERWRITTEN IN ANY SPECIFIC IMPLEMENTATION
+    // ---------------------------------------------------------------------------
+    // THESE FUNCTIONS MUST BE OVERWRITTEN IN ANY SPECIFIC IMPLEMENTATION
 
-  // Method to evalute the whole model for the lefthand cut
-  virtual std::complex<double> eval(double s) = 0;
+    // Method to evalute the whole model for the lefthand cut
+    virtual std::complex<double> eval(double s) = 0;
 
-  // Method to evaluate only the discontinuity
-  virtual std::complex<double> disc(double s) = 0;
+    // Method to evaluate only the discontinuity
+    virtual std::complex<double> disc(double s) = 0;
+  };
 };
 
 #endif

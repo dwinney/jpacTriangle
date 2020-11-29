@@ -15,6 +15,8 @@
 #include <string>
 #include <ctime>
 
+using namespace jpacTriangle;
+
 int main( int argc, char** argv )
 {
   // Desired quantum numbers
