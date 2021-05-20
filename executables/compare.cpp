@@ -12,6 +12,7 @@
 #include "dispersive/dispersive_triangle.hpp"
 #include "quantum_numbers.hpp"
 
+#include "triangle_plotter.hpp"
 #include "jpacGraph1Dc.hpp"
 
 #include <cstring>
@@ -24,12 +25,13 @@ int main( int argc, char** argv )
 {
   // Desired quantum numbers
   int id = 0;
-  int Np = 30;
+  int Np = 100;
   
   // Parse inputs
   for (int i = 0; i < argc; i++)
   {
     if (std::strcmp(argv[i],"-id")==0) id = atoi(argv[i+1]);
+    if (std::strcmp(argv[i],"-n")==0)  Np = atoi(argv[i+1]);
   }
 
   // All the associated quantum numbers for the amplitude
@@ -37,13 +39,14 @@ int main( int argc, char** argv )
   qns.n = 1;
   qns.set_id(id);
   qns.mDec = .780; // The decaying particle mass
+//   qns.mDec = .5478; // eta decay
 
   // Initialize a triangle object
   feynman_triangle tri_feyn(&qns);
   dispersive_triangle tri_disp(&qns);
 
   // Choose the name for the output files to have (sans and extentions)
-  std::string filename = "omega_compare.pdf";
+  std::string filename = "compare.pdf";
 
   // Plotting bounds
   double low = EPS;
@@ -57,7 +60,7 @@ int main( int argc, char** argv )
 // Calculate the triangle function first with the feynman representation
 
   std::cout << "\n";
-  std::cout << "Calculating triangles... \n\n";
+  std::cout << "Calculating triangles... id = " << id << "\n\n";
 
   std::cout << std::left;
   std::cout << std::setw(7)  << "i";
@@ -67,7 +70,7 @@ int main( int argc, char** argv )
   std::cout << std::setw(15) << "abs(disp - feyn)" << std::endl;
 
   std::vector<double> s;
-  std::vector< std::complex<double> > feyn, disp;
+  std::vector< std::complex<double> > tri[2];
 
   clock_t begin = clock();
 
@@ -77,10 +80,10 @@ int main( int argc, char** argv )
     s.push_back(sqrt(si) / mPi);
 
     std::complex<double> fx_f = tri_feyn.eval(si, mRho2);
-    feyn.push_back(fx_f);
+    tri[0].push_back(fx_f);
 
     std::complex<double> fx_d = tri_disp.eval(si, mRho2);
-    disp.push_back(fx_d);
+    tri[1].push_back(fx_d);
 
     std::cout << std::left;
     std::cout << std::setw(7)  << i;
@@ -96,13 +99,44 @@ int main( int argc, char** argv )
   std::cout << "\nDone in " << elapsed_secs << " seconds. \n";
   std::cout << "\n";
 
-  jpacGraph1Dc* plotter = new jpacGraph1Dc();
-  plotter->AddEntry(s, feyn, "feynman");
-  plotter->AddEntry(s, disp, "dispersive");
+  triangle_plotter* plotter = new triangle_plotter();
+  plotter->SetVerticals(2., qns.mDec / mPi - 1., qns.mDec / mPi + 1.);
+  plotter->AddEntry(s, tri);
+  plotter->SetXaxis("#sqrt{s} / m_{#pi}", 0, 9);
 
-  plotter->SetLegend(0.75, 0.75);
-
-  plotter->SetXaxis("#sqrt{s} / m_{#pi}", 0, 10);
+  switch (id)
+  {
+    case 0: 
+    {
+      plotter->SetLegend(0.7, 0.5);
+      plotter->SetYaxis("", -1.62, 2.);
+      break;
+    };
+    case 1: 
+    {
+      plotter->SetLegend(0.7, 0.2);
+      plotter->SetYaxis("", -0.1, 2.3);
+      break;
+    };
+    case 10:
+    {
+      plotter->SetLegend(0.7, 0.15);
+      plotter->SetYaxis("", -0.15, 0.3);
+      break;
+    };
+    case 11:
+    {
+      plotter->SetLegend(0.64, 0.7);
+      plotter->SetYaxis("", -0.02, 0.8);
+      break;
+    };
+    case -11111:
+    {
+      plotter->SetLegend(0.34, 0.65);
+      plotter->SetYaxis("", -0.1, 1.2);
+      break;
+    };
+  }
   plotter->Plot(filename);
 
   delete plotter;
