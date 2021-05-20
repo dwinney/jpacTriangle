@@ -21,7 +21,7 @@ namespace jpacTriangle
   {
   public:
     feynman_triangle(quantum_numbers * xqn)
-    : qns(xqn), integrand(qns)
+    : qns(xqn), integrand(xqn)
     {};
 
     // Evalate the diagram at fixed CoM energy^2, s, and exchange mass^2, t

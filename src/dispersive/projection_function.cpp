@@ -26,6 +26,7 @@ std::complex<double> jpacTriangle::projection_function::eval(double s, double t)
     exit(1);
   };
 
+    // debug(mDec2);
   switch (qns->id())
   {
 
@@ -110,6 +111,25 @@ std::complex<double> jpacTriangle::projection_function::eval(double s, double t)
       term2 *= qsqr();
 
       result = term2 - term1;
+      break;
+    };
+
+    case 11010:
+    {
+      std::complex<double> term1, term2;
+
+      // q^2 * z^2
+      term1  = 4.* Q(qns->l+2);
+      term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
+      term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
+      term1 *= 1. / psqr();
+
+      // q^2 * 1
+      term2  = Q(qns->l);
+      term2 *= qsqr();
+
+      result = term2 - term1;
+      result *= - sqrt(mDec2);
       break;
     };
 

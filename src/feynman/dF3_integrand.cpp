@@ -124,6 +124,12 @@ std::complex<double> jpacTriangle::dF3_integrand::mT(int id, double _s)
           break;
       };
 
+      case 11010:
+      {
+          result  = sqrt(mDec2) * 2. * T(1);
+          break;
+      };
+
       default: error();
   };
   return result;
