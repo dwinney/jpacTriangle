@@ -144,7 +144,7 @@ std::complex<double> jpacTriangle::projection_function::eval(double s, double t)
 // ---------------------------------------------------------------------------
 // Angular projection Q kernel functions
 // These are of the form:
-// 1/Kacser(s) * \int_{t_minus}^{t_plus} x^n / (tp - tp - ieps)
+// Q_n(s,t) = 1/Kacser(s) * \int_{t_minus}^{t_plus}dx  x^n / (x - t - ieps)
 std::complex<double> jpacTriangle::projection_function::Q_0()
 {
   std::complex<double> result;
@@ -170,6 +170,10 @@ std::complex<double> jpacTriangle::projection_function::Q(int k)
     case 2:
     {
       return t*t * Q_0() - t - 0.5 * (pow(t_plus(), 2.) - pow(t_minus(), 2.)) / Kacser();
+    }
+    case 3:
+    {
+      return t*t*t * Q_0() - t*t - t*(pow(t_plus(), 2.) - pow(t_minus(), 2.)) / (2.*Kacser()) - (pow(t_plus(), 3.) - pow(t_minus(), 3.)) / (3.*Kacser());
     }
     default:
     {
