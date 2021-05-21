@@ -12,133 +12,176 @@
 // Q_{jjp}(s,t)
 std::complex<double> jpacTriangle::projection_function::eval(double s, double t)
 {
-  set_energies(s, t);
+    set_energies(s, t);
 
-  std::complex<double> result = 0.;
+    std::complex<double> result = 0.;
 
-  auto error = [&] ()
-  {
-    std::cout << "\nError! projection_function:";
-    std::cout << " j = " << std::to_string(qns->j);
-    std::cout << " and j' = " << std::to_string(qns->jp);
-    std::cout << " (code " << std::to_string(qns->id()) << ")";
-    std::cout << " combination not available. Quitting... \n";
-    exit(1);
-  };
+    auto error = [&] ()
+    {
+        std::cout << "\nError! projection_function:";
+        std::cout << " j = " << std::to_string(qns->j);
+        std::cout << " and j' = " << std::to_string(qns->jp);
+        std::cout << " (code " << std::to_string(qns->id()) << ")";
+        std::cout << " combination not available. Quitting... \n";
+        exit(1);
+    };
 
     // debug(mDec2);
-  switch (qns->id())
-  {
-
-    // s wave, scalar exchange
-    case 0:
+    switch (qns->id())
     {
-      result = Q(qns->l);
-      break;
+
+        // s wave, scalar exchange
+        case 0:
+        {
+            result = Q(qns->l);
+            break;
+        }
+
+        // s wave, vector exchange
+        case 1:
+        {
+            result  = Q(qns->l+1);
+            result += (2.*s - mDec2 - 3.*mPi2) * Q(qns->l);
+            break;
+        }
+
+        // p - wave, scalar exchangze
+        case 10:
+        {
+            result = 2. * Q(qns->l+1);
+            result += (s - mDec2 - 3.*mPi2) * Q(qns->l);
+            result /= psqr();
+            break;
+        }
+
+        // p - wave, vector exchange
+        case 11:
+        {
+            result = 2. * Q(qns->l+2);
+            result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(qns->l+1);
+            result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(qns->l);
+            result /= psqr();
+            break;
+        }
+
+        // d-wave scalar exchange
+        case 20:
+        {
+            std::complex<double> term1, term2;
+
+            // z^2
+            term1  = 4.* Q(qns->l+2);
+            term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
+            term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
+            term1 /= psqr() * psqr();
+
+            // 1
+            term2  = Q(qns->l);
+            term2 *= qsqr() / psqr();
+
+            result = 3. * term1;
+            result -= term2;
+
+            break;
+        }
+
+        // a1 lam = 0 lamp = 0, s-wave, scalar exchange
+        case 10000:
+        {
+            result  = s * Q(qns->l+1);
+            result += (mDec2 - mPi2) * Q(qns->l+1);
+            result += (s - mDec2 - mPi2) * (mDec2 - mPi2) * Q(qns->l);
+
+            break;
+        };
+            
+        // Omega case
+        case -11111:
+        {
+            std::complex<double> term1, term2;
+
+            // q^2 * z^2
+            term1  = 4.* Q(qns->l+2);
+            term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
+            term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
+            term1 *= 1. / psqr();
+
+            // q^2 * 1
+            term2  = Q(qns->l);
+            term2 *= qsqr();
+
+            result = term2 - term1;
+            break;
+        };
+
+        case 11010:
+        {
+            std::complex<double> term1, term2;
+
+            // q^2 * z^2
+            term1  = 4.* Q(qns->l+2);
+            term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
+            term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
+            term1 *= 1. / psqr();
+
+            // q^2 * 1
+            term2  = Q(qns->l);
+            term2 *= qsqr();
+
+            result = term2 - term1;
+            result *= - sqrt(mDec2);
+            break;
+        };
+
+        case 11011:
+        {
+            auto F = [&](int i)
+            {
+                std::complex<double> term1, term2;
+                // q^2 * z^2
+                term1  = 4.* Q(qns->l+2 + i);
+                term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1 + i);
+                term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l + i);
+                term1 *= 1. / psqr();
+
+                // q^2 * 1
+                term2  = Q(qns->l+i);
+                term2 *= qsqr();
+
+                return term2 - term1; 
+            }; 
+
+            result = sqrt(mDec2) * (F(1) + (2.*s -mDec2-3.*mPi2)*F(0)); 
+
+            break;
+        };
+
+        case -420:
+        {
+            std::complex<double> term1, term2;
+
+            qns->l = 1;
+
+            // q^2 * z^2
+            term1  = 4.* Q(qns->l+2);
+            term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
+            term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
+            term1 *= 1. / psqr();
+
+            // q^2 * 1
+            term2  = Q(qns->l);
+            term2 *= qsqr();
+
+            result = term2 - term1;
+            break;
+        };
+
+        default: error();
     }
 
-    // s wave, vector exchange
-    case 1:
-    {
-      result  = Q(qns->l+1);
-      result += (2.*s - mDec2 - 3.*mPi2) * Q(qns->l);
-      break;
-    }
+    // result /= pow(t, double(qns->l));
 
-    // p - wave, scalar exchangze
-    case 10:
-    {
-      result = 2. * Q(qns->l+1);
-      result += (s - mDec2 - 3.*mPi2) * Q(qns->l);
-      result /= psqr();
-      break;
-    }
-
-    // p - wave, vector exchange
-    case 11:
-    {
-      result = 2. * Q(qns->l+2);
-      result += (5.*s + - 3. * mDec2 - 9. * mPi2) * Q(qns->l+1);
-      result += (2.*s*s - 3.*mDec2*s - 9.*mPi2*s + mDec2*mDec2 + 6.*mDec2*mPi2 + 9.*mPi2*mPi2) * Q(qns->l);
-      result /= psqr();
-      break;
-    }
-
-    // d-wave scalar exchange
-    case 20:
-    {
-      std::complex<double> term1, term2;
-
-      // z^2
-      term1  = 4.* Q(qns->l+2);
-      term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
-      term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
-      term1 /= psqr() * psqr();
-
-      // 1
-      term2  = Q(qns->l);
-      term2 *= qsqr() / psqr();
-
-      result = 3. * term1;
-      result -= term2;
-
-      break;
-    }
-
-    // a1 lam = 0 lamp = 0, s-wave, scalar exchange
-    case 10000:
-    {
-      result  = s * Q(qns->l+1);
-      result += (mDec2 - mPi2) * Q(qns->l+1);
-      result += (s - mDec2 - mPi2) * (mDec2 - mPi2) * Q(qns->l);
-
-      break;
-    };
-     
-    // Omega case
-    case -11111:
-    {
-      std::complex<double> term1, term2;
-
-      // q^2 * z^2
-      term1  = 4.* Q(qns->l+2);
-      term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
-      term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
-      term1 *= 1. / psqr();
-
-      // q^2 * 1
-      term2  = Q(qns->l);
-      term2 *= qsqr();
-
-      result = term2 - term1;
-      break;
-    };
-
-    case 11010:
-    {
-      std::complex<double> term1, term2;
-
-      // q^2 * z^2
-      term1  = 4.* Q(qns->l+2);
-      term1 += (4. * s - 4. * mDec2 - 12. * mPi2) * Q(qns->l+1);
-      term1 += (s*s - 2.*mDec2*s + mDec2*mDec2 - 6.*mPi2*s + 6.*mPi2*mDec2 + 9.*mPi2*mPi2) * Q(qns->l);
-      term1 *= 1. / psqr();
-
-      // q^2 * 1
-      term2  = Q(qns->l);
-      term2 *= qsqr();
-
-      result = term2 - term1;
-      result *= - sqrt(mDec2);
-      break;
-    };
-
-    default: error();
-  }
-
-  result /= pow(t, double(qns->l));
-
-  return result;
+    return result;
 };
 
 // ---------------------------------------------------------------------------

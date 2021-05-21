@@ -114,11 +114,37 @@ int main( int argc, char** argv )
         {
             nPi = 12;
             qns.mDec = 1.230; // omega decay
-            mEx      = .770;  // rho exchange
+            mEx      = .500;  // rho exchange
             filename = "a1_+11010.pdf";
         
-            plotter->SetLegend(0.34, 0.65);
-            plotter->SetYaxis("", -1.2, 0.1);
+            plotter->SetLegend(0.34, 0.7);
+            plotter->SetYaxis("", -0.9, 1.5);
+            break;
+        };
+
+        case 11011:
+        {
+            nPi = 12;
+            qns.mDec = 1.230; // omega decay
+            mEx      = .770;  // rho exchange
+            qns.extra_subtract =  -13.2376;
+            filename = "a1_+11011.pdf";
+        
+            plotter->SetLegend(0.34, 0.7);
+            plotter->SetYaxis("", -0.7, 9.);
+            break;
+        };
+
+        case -420:
+        {
+            nPi = 8;
+            qns.mDec = 0.780; // omega decay
+            mEx      = .770;  // rho exchange
+            qns.extra_subtract = 2.33772 + 0.0269102;
+            filename = "test_420.pdf";
+        
+            plotter->SetLegend(0.34, 0.4);
+            plotter->SetYaxis("", -0.7, 0.2);
             break;
         };
     }
@@ -163,9 +189,11 @@ int main( int argc, char** argv )
         std::cout << std::left;
         std::cout << std::setw(7)  << i;
         std::cout << std::setw(15) << sqrt(si) / mPi;
-        std::cout << std::setw(30) << fx_d;
-        std::cout << std::setw(30) << fx_f;
-        std::cout << std::setw(15) << std::abs(fx_d - fx_f) << std::endl;
+        // std::cout << std::setw(30) << fx_d;
+        // std::cout << std::setw(30) << fx_f;
+
+        // std::cout << std::setw(15) << std::abs(imag(fx_d) / imag(fx_f)) << std::endl;
+        std::cout << std::setw(15) << std::abs(real(fx_d) - real(fx_f)) / si << std::endl;
     }
 
     clock_t end = clock();
