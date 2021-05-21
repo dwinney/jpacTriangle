@@ -21,6 +21,7 @@ namespace jpacTriangle
     int jp = 0, lamp = 0; // spin and helicity projections in the t-channel
 
     double mDec = 0.;
+    double extra_subtract = 0.;
 
     inline int id()
     {

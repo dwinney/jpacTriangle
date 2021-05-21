@@ -20,8 +20,7 @@ std::complex<double> jpacTriangle::dispersive_triangle::eval(double s, double t)
   result  = s_dispersion(4.*mPi2, p_thresh - exc);
   result += s_dispersion(p_thresh + exc, std::numeric_limits<double>::infinity());
 
-  return result + sum_rule() * s; 
-  // return result + (sum_rule() + 2.33772) * s;
+  return result + (sum_rule() + qns->extra_subtract) * s;
 };
 
 // ---------------------------------------------------------------------------
@@ -46,7 +45,7 @@ std::complex<double> jpacTriangle::dispersive_triangle::s_dispersion(double low,
   };
 
   std::complex<double> result;
-  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(dsprime, low, high, 0, 1.E-9, NULL);
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(dsprime, low, high, 5, 1.E-9, NULL);
 
   std::complex<double> log_term;
   if (high == std::numeric_limits<double>::infinity())
@@ -77,7 +76,7 @@ std::complex<double> jpacTriangle::dispersive_triangle::sum_rule()
   };
 
   std::complex<double> result;
-  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(dsprime, 4.*mPi2, std::numeric_limits<double>::infinity(), 0, 1.E-9, NULL);
+  result = boost::math::quadrature::gauss_kronrod<double, 61>::integrate(dsprime, 4.*mPi2, std::numeric_limits<double>::infinity(), 5, 1.E-9, NULL);
   
   return result / M_PI;
 };
